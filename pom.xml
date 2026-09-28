@@ -43,7 +43,7 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.5.0</version>
                 <configuration>
-                    <mainClass>br.aacd.Main</mainClass>
+                    <mainClass>br.Main</mainClass>
                 </configuration>
             </plugin>
         </plugins>
