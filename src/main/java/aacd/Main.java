@@ -1,7 +1,7 @@
-package br;
+package aacd;
 
-import br.aacd.http.Http;
-import br.aacd.http.StaticHandler;
+import aacd.http.Http;
+import aacd.http.StaticHandler;
 import com.sun.net.httpserver.HttpServer;
 
 import java.net.InetAddress;

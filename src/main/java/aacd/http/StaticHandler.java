@@ -1,4 +1,4 @@
-package br.aacd.http;
+package aacd.http;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
