@@ -3,18 +3,21 @@ package aacd.model;
 public class Usuario {
     private int id;
     private String nome;
-    private String email;
+    private String identificador;
     private String senhaHash;
     private String perfil;
     private boolean ativo;
 
-    public Usuario(int id, String nome, String email, String senhaHash, String perfil, boolean ativo){
+    public Usuario(int id, String nome, String identificador, String senhaHash, String perfil, boolean ativo){
         if (nome == null || nome.isBlank()){
             throw new IllegalArgumentException("Nome não pode estar vazio");
         }
-        this.nome = nome;
+        this.nome = nome.trim();
 
-        setEmail(email);
+        if (identificador == null || identificador.isBlank()) {
+            throw new IllegalArgumentException("Login não pode estar vazio");
+        }
+        this.identificador = identificador.trim().toLowerCase();
 
         if (senhaHash == null || senhaHash.isBlank()){
             throw new IllegalArgumentException("Senha não pode estar vazio");
@@ -31,14 +34,14 @@ public class Usuario {
         this.ativo = ativo;
     }
 
-    public Usuario(String nome, String email, String senhaHash, String perfil){
-        this(0, nome, email, senhaHash, perfil, true);
+    public Usuario(String nome, String identificador, String senhaHash, String perfil){
+        this(0, nome, identificador, senhaHash, perfil, true);
     }
 
     //getters
     public int getId(){ return this.id; }
     public String getNome(){ return this.nome; }
-    public String getEmail(){ return this.email; }
+    public String getIdentificador(){ return this.identificador; }
     public String getSenhaHash(){ return this.senhaHash; }
     public String getPerfil(){ return this.perfil; }
     public boolean isAtivo(){ return this.ativo; }
@@ -54,17 +57,5 @@ public class Usuario {
 
     public void setAtivo(boolean ativo){
         this.ativo = ativo;
-    }
-
-    public void setEmail(String email) {
-        if (email == null || email.isBlank()) {
-            throw new IllegalArgumentException("Email não pode estar vazio");
-        }
-        email = email.trim().toLowerCase();
-
-        if (!email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
-            throw new IllegalArgumentException("Email inválido!");
-        }
-        this.email = email;
     }
 }

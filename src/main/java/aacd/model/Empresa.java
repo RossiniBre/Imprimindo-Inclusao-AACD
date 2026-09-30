@@ -4,39 +4,33 @@ public class Empresa {
     private int id;
     private int usuarioId;
     private String email;
-    private String razaoSocial;
     private String cnpj;
     private String telefone;
-    private boolean ativo;
 
-    public Empresa(int id, int usuarioId, String email, String razaoSocial, String telefone, String cnpj, boolean ativo) {
-
-        if (razaoSocial == null || razaoSocial.isBlank()) {
-            throw new IllegalArgumentException("Razao Social não pode estar vazio");
-        }
-        this.razaoSocial = razaoSocial;
+    public Empresa(int id, int usuarioId, String email, String telefone, String cnpj) {
 
         setEmail(email);
         setTelefone(telefone);
         setCnpj(cnpj);
 
+        if (usuarioId <= 0) {
+            throw new IllegalArgumentException("Usuário inválido!");
+        }
         this.usuarioId = usuarioId;
+
         this.id = id;
-        this.ativo = ativo;
     }
 
-    public Empresa(int usuarioId, String email, String razaoSocial, String telefone, String cnpj, boolean ativo){
-        this(0, usuarioId, email, razaoSocial, telefone, cnpj, ativo);
+    public Empresa(int usuarioId, String email, String telefone, String cnpj){
+        this(0, usuarioId, email, telefone, cnpj);
     }
 
     //getters
     public int getId(){ return this.id; }
     public int getUsuarioId(){ return this.usuarioId; }
-    public String getRazaoSocial(){ return this.razaoSocial; }
     public String getEmail(){ return this.email; }
     public String getTelefone(){ return this.telefone; }
     public String getCnpj(){ return this.cnpj; }
-    public boolean isAtivo(){ return this.ativo; }
 
     //setter
     public void setId(int id){
@@ -47,11 +41,9 @@ public class Empresa {
         }
     }
 
-    public void setAtivo(boolean ativo){
-        this.ativo = ativo;
-    }
-
     public void setCnpj(String cnpj) {
+        cnpj = cnpj == null ? null : cnpj.trim().toUpperCase();
+
         if (!isCnpjValido(cnpj)) {
             throw new IllegalArgumentException("CNPJ inválido!");
         }
@@ -82,11 +74,10 @@ public class Empresa {
 
     // pesquisa de validacao feita com IA
     private boolean isCnpjValido(String cnpj) {
-        if (cnpj == null || !cnpj.matches("\\d{14}")) {
+        if (cnpj == null || !cnpj.matches("[A-Z0-9]{12}\\d{2}")) {
             return false;
         }
-
-        if (cnpj.matches("(\\d)\\1{13}")) {
+        if (cnpj.matches("(.)\\1{13}")) {
             return false;
         }
 
@@ -96,7 +87,7 @@ public class Empresa {
         int soma = 0;
 
         for (int i = 0; i < 12; i++) {
-            soma += Character.getNumericValue(cnpj.charAt(i)) * pesos1[i];
+            soma += (cnpj.charAt(i) - '0') * pesos1[i];
         }
 
         int resto = soma % 11;
@@ -109,7 +100,7 @@ public class Empresa {
         soma = 0;
 
         for (int i = 0; i < 13; i++) {
-            soma += Character.getNumericValue(cnpj.charAt(i)) * pesos2[i];
+            soma += (cnpj.charAt(i) - '0') * pesos2[i];
         }
 
         resto = soma % 11;

@@ -23,12 +23,12 @@ USE `imprimindo_inclusao` ;
 CREATE TABLE IF NOT EXISTS `imprimindo_inclusao`.`usuario` (
   `idusuario` INT NOT NULL AUTO_INCREMENT,
   `nome` VARCHAR(100) NOT NULL,
-  `email` VARCHAR(150) NOT NULL,
+  `identificador` VARCHAR(150) NOT NULL,
   `senha_hash` VARCHAR(255) NOT NULL,
   `perfil` ENUM('ADMIN', 'EMPRESA', 'FUNCIONARIO') NOT NULL,
   `ativo` TINYINT NOT NULL DEFAULT '1',
   PRIMARY KEY (`idusuario`),
-  UNIQUE INDEX `email_UNIQUE` (`email` ASC) VISIBLE)
+  UNIQUE INDEX `identificador_UNIQUE` (`identificador` ASC) VISIBLE)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
@@ -40,11 +40,9 @@ COLLATE = utf8mb4_0900_ai_ci;
 CREATE TABLE IF NOT EXISTS `imprimindo_inclusao`.`empresa` (
   `idempresa` INT NOT NULL AUTO_INCREMENT,
   `usuario_id` INT NOT NULL,
-  `email` VARCHAR(30) UNIQUE NOT NULL,
-  `razao_social` VARCHAR(150) NOT NULL,
+  `email` VARCHAR(50) UNIQUE NOT NULL,
   `cnpj` CHAR(14) NOT NULL,
   `telefone` VARCHAR(11) NOT NULL,
-  `ativo` TINYINT NOT NULL DEFAULT '1',
   PRIMARY KEY (`idempresa`),
   UNIQUE INDEX `cnpj_UNIQUE` (`cnpj` ASC) VISIBLE,
   UNIQUE INDEX `usuario_id_UNIQUE` (`usuario_id` ASC) VISIBLE,
@@ -85,7 +83,6 @@ CREATE TABLE IF NOT EXISTS `imprimindo_inclusao`.`funcionario` (
   `usuario_id` INT NOT NULL,
   `cargo` VARCHAR(45) NULL DEFAULT NULL,
   `setor` VARCHAR(45) NULL DEFAULT NULL,
-  `ativo` TINYINT NOT NULL DEFAULT '1',
   PRIMARY KEY (`idfuncionario`),
   UNIQUE INDEX `usuario_id_UNIQUE` (`usuario_id` ASC) VISIBLE,
   CONSTRAINT `fk_funcionario_usuario`
@@ -114,35 +111,36 @@ COLLATE = utf8mb4_0900_ai_ci;
 -- Table `imprimindo_inclusao`.`solicitacao_impressao`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `imprimindo_inclusao`.`solicitacao_impressao` (
-  `idsolicitacao_impressao` INT NOT NULL AUTO_INCREMENT,
-  `empresa_id` INT NOT NULL,
-  `impressora_id` INT NULL DEFAULT NULL,
-  `titulo` VARCHAR(100) NOT NULL,
-  `descricao` TEXT NOT NULL,
-  `arquivo_modelo` VARCHAR(255) NOT NULL,
-  `quantidade` INT NOT NULL DEFAULT '1',
-  `status` ENUM('PENDENTE', 'ACEITA', 'RECUSADA', 'EM_IMPRESSAO', 'CONCLUIDA') NOT NULL DEFAULT 'PENDENTE',
-  `motivo_recusa` TEXT NULL DEFAULT NULL,
-  `decidido_por` INT NULL DEFAULT NULL,
-  `data_criacao` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `data_decisao` DATETIME NULL DEFAULT NULL,
-  PRIMARY KEY (`idsolicitacao_impressao`),
-  INDEX `idx_solicitacao_status` (`status` ASC) VISIBLE,
-  INDEX `fk_solicitacao_empresa` (`empresa_id` ASC) VISIBLE,
-  INDEX `fk_solicitacao_impressora` (`impressora_id` ASC) VISIBLE,
-  INDEX `fk_solicitacao_funcionario` (`decidido_por` ASC) VISIBLE,
-  CONSTRAINT `fk_solicitacao_empresa`
-    FOREIGN KEY (`empresa_id`)
-    REFERENCES `imprimindo_inclusao`.`empresa` (`idempresa`),
-  CONSTRAINT `fk_solicitacao_funcionario`
-    FOREIGN KEY (`decidido_por`)
-    REFERENCES `imprimindo_inclusao`.`funcionario` (`idfuncionario`),
-  CONSTRAINT `fk_solicitacao_impressora`
-    FOREIGN KEY (`impressora_id`)
-    REFERENCES `imprimindo_inclusao`.`impressora` (`idimpressora`))
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
+    `idsolicitacao_impressao` INT NOT NULL AUTO_INCREMENT,
+    `empresa_id` INT NOT NULL,
+    `criado_por` INT NOT NULL,
+    `impressora_id` INT NULL DEFAULT NULL,
+    `titulo` VARCHAR(100) NOT NULL,
+    `descricao` TEXT NOT NULL,
+    `arquivo_modelo` VARCHAR(255) NOT NULL,
+    `quantidade` INT NOT NULL DEFAULT '1',
+    `status` ENUM('PENDENTE','EM_ANDAMENTO','RECUSADA','CANCELADA','CONCLUIDA','FALHOU') NOT NULL DEFAULT 'PENDENTE',
+    `justificativa` TEXT NULL DEFAULT NULL,
+    `cancelado_por` INT NULL DEFAULT NULL,
+    `data_criacao` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `data_decisao` DATETIME NULL DEFAULT NULL,
+    PRIMARY KEY (`idsolicitacao_impressao`),
+    INDEX `idx_solicitacao_status` (`status` ASC) VISIBLE,
+    INDEX `fk_solicitacao_empresa` (`empresa_id` ASC) VISIBLE,
+    INDEX `fk_solicitacao_criado_por` (`criado_por` ASC) VISIBLE,
+    INDEX `fk_solicitacao_impressora` (`impressora_id` ASC) VISIBLE,
+    INDEX `fk_solicitacao_cancelado_por` (`cancelado_por` ASC) VISIBLE,
+    CONSTRAINT `fk_solicitacao_empresa`
+    FOREIGN KEY (`empresa_id`) REFERENCES `imprimindo_inclusao`.`empresa` (`idempresa`),
+    CONSTRAINT `fk_solicitacao_criado_por`
+    FOREIGN KEY (`criado_por`) REFERENCES `imprimindo_inclusao`.`funcionario` (`idfuncionario`),
+    CONSTRAINT `fk_solicitacao_impressora`
+    FOREIGN KEY (`impressora_id`) REFERENCES `imprimindo_inclusao`.`impressora` (`idimpressora`),
+    CONSTRAINT `fk_solicitacao_cancelado_por`
+    FOREIGN KEY (`cancelado_por`) REFERENCES `imprimindo_inclusao`.`usuario` (`idusuario`))
+    ENGINE = InnoDB
+    DEFAULT CHARACTER SET = utf8mb4
+    COLLATE = utf8mb4_0900_ai_ci;
 
 
 SET SQL_MODE=@OLD_SQL_MODE;
