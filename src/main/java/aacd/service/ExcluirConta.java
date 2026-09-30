@@ -1,14 +1,32 @@
 package aacd.service;
 
+import aacd.dao.UsuarioDao;
 import aacd.model.Usuario;
+
+import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 
 public class ExcluirConta {
 
-    public void executar(Usuario ator, int usuarioId) {
+    private final UsuarioDao usuarioDao = new UsuarioDao();
+
+    public void executar(Usuario ator, int usuarioId) throws SQLException {
         if (ator == null || !"ADMIN".equals(ator.getPerfil()) || !ator.isAtivo()) {
             throw new IllegalStateException("Apenas o admin pode excluir contas!");
         }
 
-        // espera UsuarioDao
+        Usuario alvo = usuarioDao.buscarPorId(usuarioId);
+        if (alvo == null) {
+            throw new IllegalArgumentException("Usuário não encontrado!");
+        }
+        if ("ADMIN".equals(alvo.getPerfil())) {
+            throw new IllegalStateException("A conta de admin não pode ser excluída!");
+        }
+
+        try {
+            usuarioDao.excluir(usuarioId);
+        } catch (SQLIntegrityConstraintViolationException e) {
+            throw new IllegalStateException("Conta possui solicitações ou doações; desative em vez de excluir.");
+        }
     }
 }
