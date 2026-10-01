@@ -1,5 +1,7 @@
 package aacd.model;
 
+import aacd.util.Identificador;
+
 public class Empresa {
     private int id;
     private int usuarioId;
@@ -42,7 +44,7 @@ public class Empresa {
     }
 
     public void setCnpj(String cnpj) {
-        cnpj = cnpj == null ? null : cnpj.trim().toUpperCase();
+        cnpj = cnpj == null ? null : Identificador.normalizar(cnpj);
 
         if (!isCnpjValido(cnpj)) {
             throw new IllegalArgumentException("CNPJ inválido!");

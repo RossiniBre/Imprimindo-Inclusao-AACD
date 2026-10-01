@@ -20,7 +20,7 @@ public class Usuario {
         this.identificador = identificador.trim().toLowerCase();
 
         if (senhaHash == null || senhaHash.isBlank()){
-            throw new IllegalArgumentException("Senha não pode estar vazio");
+            throw new IllegalArgumentException("Senha não pode estar vazia");
         }
         this.senhaHash = senhaHash;
 

@@ -1,9 +1,12 @@
 package aacd.http;
 
+import aacd.model.Sessao;
+import aacd.service.GerenciadorSessoes;
 import com.sun.net.httpserver.HttpExchange;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 /** Funções auxiliares para responder requisições. */
 public final class Http {
@@ -20,5 +23,39 @@ public final class Http {
 
     public static void json(HttpExchange ex, int status, String json) throws IOException {
         enviar(ex, status, "application/json; charset=utf-8", json.getBytes(StandardCharsets.UTF_8));
+    }
+
+    public static String lerCookie(HttpExchange ex, String nome) {
+        var linhas = ex.getRequestHeaders().get("Cookie");
+        if (linhas == null) return null;
+        for (String linha : linhas) {
+            for (String par : linha.split(";")) {
+                String[] kv = par.trim().split("=", 2);
+                if (kv.length == 2 && kv[0].equals(nome) && !kv[1].isEmpty()) {
+                    return kv[1];
+                }
+            }
+        }
+        return null;
+    }
+
+    public static Optional<Sessao> exigirPerfil(HttpExchange ex, GerenciadorSessoes sessoes, String... perfis)
+            throws IOException {
+        Optional<Sessao> sessao = sessoes.buscar(lerCookie(ex, "SESSAO"));
+
+        if (sessao.isEmpty()) {
+            json(ex, 401, "{\"erro\":\"Não autenticado.\"}");
+            return Optional.empty();
+        }
+
+        String perfilAtual = sessao.get().getPerfil();
+        for (String p : perfis) {
+            if (p.equals(perfilAtual)) {
+                return sessao;
+            }
+        }
+
+        json(ex, 403, "{\"erro\":\"Acesso negado.\"}");
+        return Optional.empty();
     }
 }

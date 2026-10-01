@@ -48,4 +48,7 @@ public class StaticHandler implements HttpHandler {
 
         Http.enviar(ex, 200, TIPOS.getOrDefault(extensao, "application/octet-stream"), Files.readAllBytes(arquivo));
     }
+
+    public static class LogoutHanlder {
+    }
 }

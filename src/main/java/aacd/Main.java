@@ -1,7 +1,9 @@
 package aacd;
 
-import aacd.http.Http;
-import aacd.http.StaticHandler;
+import aacd.dao.UsuarioDao;
+import aacd.http.*;
+import aacd.service.AutenticacaoService;
+import aacd.service.GerenciadorSessoes;
 import com.sun.net.httpserver.HttpServer;
 
 import java.net.InetAddress;
@@ -18,8 +20,16 @@ public class Main {
         HttpServer servidor = HttpServer.create(new InetSocketAddress(InetAddress.getLoopbackAddress(), porta), 0);
         servidor.setExecutor(Executors.newFixedThreadPool(8));
 
+        UsuarioDao usuarioDao = new UsuarioDao();
+        AutenticacaoService autenticacao = new AutenticacaoService(usuarioDao);
+        GerenciadorSessoes sessoes = new GerenciadorSessoes();
+        sessoes.iniciarLimpezaPeriodica(600);
+
         // Rotas da API ficam sob /api (as próximas entram aqui)
         servidor.createContext("/api/health", ex -> Http.json(ex, 200, "{\"status\":\"ok\"}"));
+        servidor.createContext("/api/login", new LoginHandler(autenticacao, sessoes));
+        servidor.createContext("/api/logout", new LogoutHandler(sessoes));
+        servidor.createContext("/api/me", new MeHandler(sessoes));
 
         servidor.createContext("/", new StaticHandler(Path.of("public")));
 

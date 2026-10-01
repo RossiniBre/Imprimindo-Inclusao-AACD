@@ -18,7 +18,7 @@ public class MongoFactory {
         try (InputStream in = MongoFactory.class.getClassLoader()
                 .getResourceAsStream("db.properties")) {
             if (in == null) {
-                throw new IllegalStateException("db.properties não encontrado em src/main/resources");
+                throw new IllegalStateException("db.properties não encontrado");
             }
             props.load(in);
         } catch (IOException e) {
