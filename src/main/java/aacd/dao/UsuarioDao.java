@@ -47,7 +47,7 @@ public class UsuarioDao {
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setString(1, identificador.trim().toLowerCase());
+            ps.setString(1, identificador);
 
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {

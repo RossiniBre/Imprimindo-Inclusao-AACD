@@ -1,5 +1,7 @@
 package aacd.model;
 
+import aacd.util.Identificador;
+
 public class Usuario {
     private int id;
     private String nome;
@@ -17,7 +19,7 @@ public class Usuario {
         if (identificador == null || identificador.isBlank()) {
             throw new IllegalArgumentException("Login não pode estar vazio");
         }
-        this.identificador = identificador.trim().toLowerCase();
+        this.identificador = Identificador.normalizar(identificador);
 
         if (senhaHash == null || senhaHash.isBlank()){
             throw new IllegalArgumentException("Senha não pode estar vazia");

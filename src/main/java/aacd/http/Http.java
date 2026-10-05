@@ -5,7 +5,10 @@ import aacd.service.GerenciadorSessoes;
 import com.sun.net.httpserver.HttpExchange;
 
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 /** Funções auxiliares para responder requisições. */
@@ -57,5 +60,18 @@ public final class Http {
 
         json(ex, 403, "{\"erro\":\"Acesso negado.\"}");
         return Optional.empty();
+    }
+
+    public static Map<String, String> lerFormulario(HttpExchange ex) throws IOException {
+        String corpo = new String(ex.getRequestBody().readNBytes(4096), StandardCharsets.UTF_8);
+        Map<String, String> campos = new HashMap<>();
+        for (String par : corpo.split("&")) {
+            String[] kv = par.split("=", 2);
+            if (kv.length == 2) {
+                campos.put(URLDecoder.decode(kv[0], StandardCharsets.UTF_8),
+                        URLDecoder.decode(kv[1], StandardCharsets.UTF_8));
+            }
+        }
+        return campos;
     }
 }

@@ -3,6 +3,8 @@ package aacd;
 import aacd.dao.UsuarioDao;
 import aacd.http.*;
 import aacd.service.AutenticacaoService;
+import aacd.service.CadastrarEmpresa;
+import aacd.service.CadastrarImpressora;
 import aacd.service.GerenciadorSessoes;
 import com.sun.net.httpserver.HttpServer;
 
@@ -30,6 +32,8 @@ public class Main {
         servidor.createContext("/api/login", new LoginHandler(autenticacao, sessoes));
         servidor.createContext("/api/logout", new LogoutHandler(sessoes));
         servidor.createContext("/api/me", new MeHandler(sessoes));
+        servidor.createContext("/api/empresas", new EmpresaHandler(new CadastrarEmpresa()));
+        servidor.createContext("/api/impressoras", new ImpressoraHandler(sessoes, usuarioDao, new CadastrarImpressora()));
 
         servidor.createContext("/", new StaticHandler(Path.of("public")));
 

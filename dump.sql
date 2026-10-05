@@ -98,11 +98,16 @@ COLLATE = utf8mb4_0900_ai_ci;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `imprimindo_inclusao`.`impressora` (
   `idimpressora` INT NOT NULL AUTO_INCREMENT,
+  `empresa_id` INT NOT NULL,
   `modelo` VARCHAR(100) NOT NULL,
   `disponibilidade` ENUM('OCIOSA', 'EM_USO') NOT NULL DEFAULT 'OCIOSA',
-  `ativo` TINYINT NOT NULL DEFAULT '1',
-  PRIMARY KEY (`idimpressora`))
-ENGINE = InnoDB
+    `ativo` TINYINT NOT NULL DEFAULT '1',
+    PRIMARY KEY (`idimpressora`),
+    INDEX `fk_impressora_empresa` (`empresa_id` ASC) VISIBLE,
+    CONSTRAINT `fk_impressora_empresa`
+    FOREIGN KEY (`empresa_id`)
+    REFERENCES `imprimindo_inclusao`.`empresa` (`idempresa`))
+    ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 

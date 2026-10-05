@@ -64,7 +64,7 @@ public class Empresa {
         if (email == null || email.isBlank()) {
             throw new IllegalArgumentException("Email não pode estar vazio");
         }
-        email = email.trim().toLowerCase();
+        email = email.trim();
 
         if (!email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
             throw new IllegalArgumentException("Email inválido!");
