@@ -18,4 +18,9 @@ public final class Identificador {
         }
         return limpo.toLowerCase();
     }
+
+    public static boolean pareceCnpj(String identificador) {
+        String limpo = identificador.trim();
+        return limpo.matches(CNPJ_FORMATADO) || limpo.matches(CNPJ_PURO);
+    }
 }

@@ -129,6 +129,7 @@ CREATE TABLE IF NOT EXISTS `imprimindo_inclusao`.`solicitacao_impressao` (
     `cancelado_por` INT NULL DEFAULT NULL,
     `data_criacao` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `data_decisao` DATETIME NULL DEFAULT NULL,
+    `data_finalizacao` DATETIME NULL DEFAULT NULL,
     PRIMARY KEY (`idsolicitacao_impressao`),
     INDEX `idx_solicitacao_status` (`status` ASC) VISIBLE,
     INDEX `fk_solicitacao_empresa` (`empresa_id` ASC) VISIBLE,
@@ -140,7 +141,8 @@ CREATE TABLE IF NOT EXISTS `imprimindo_inclusao`.`solicitacao_impressao` (
     CONSTRAINT `fk_solicitacao_criado_por`
     FOREIGN KEY (`criado_por`) REFERENCES `imprimindo_inclusao`.`funcionario` (`idfuncionario`),
     CONSTRAINT `fk_solicitacao_impressora`
-    FOREIGN KEY (`impressora_id`) REFERENCES `imprimindo_inclusao`.`impressora` (`idimpressora`),
+    FOREIGN KEY (`impressora_id`) REFERENCES `imprimindo_inclusao`.`impressora` (`idimpressora`)
+    ON DELETE SET NULL,
     CONSTRAINT `fk_solicitacao_cancelado_por`
     FOREIGN KEY (`cancelado_por`) REFERENCES `imprimindo_inclusao`.`usuario` (`idusuario`))
     ENGINE = InnoDB

@@ -51,4 +51,11 @@ public class Impressora {
     public void setAtivo(boolean ativo){
         this.ativo = ativo;
     }
+
+    public void setModelo(String modelo) {
+        if (modelo == null || modelo.isBlank()) {
+            throw new IllegalArgumentException("Modelo não pode estar vazio");
+        }
+        this.modelo = modelo.trim();
+    }
 }

@@ -68,4 +68,30 @@ public class EmpresaDao {
             }
         }
     }
+
+    public boolean existePorEmailExceto(String email, int usuarioId) throws SQLException {
+        String sql = "SELECT 1 FROM empresa WHERE email = ? AND usuario_id <> ?";
+
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, email);
+            ps.setInt(2, usuarioId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        }
+    }
+
+    public boolean atualizar(Connection conn, Empresa empresa) throws SQLException {
+        String sql = "UPDATE empresa SET email = ?, telefone = ? WHERE usuario_id = ?";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, empresa.getEmail());
+            ps.setString(2, empresa.getTelefone());
+            ps.setInt(3, empresa.getUsuarioId());
+            return ps.executeUpdate() > 0;
+        }
+    }
 }

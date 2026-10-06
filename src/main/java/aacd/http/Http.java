@@ -74,4 +74,14 @@ public final class Http {
         }
         return campos;
     }
+
+    public static int lerId(Map<String, String> campos, String campo, int padrao) {
+        String valor = campos.get(campo);
+        if (valor == null || valor.isBlank()) return padrao;
+        try {
+            return Integer.parseInt(valor.trim());
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Id inválido!");
+        }
+    }
 }

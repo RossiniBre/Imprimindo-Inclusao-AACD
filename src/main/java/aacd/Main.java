@@ -34,6 +34,11 @@ public class Main {
         servidor.createContext("/api/me", new MeHandler(sessoes));
         servidor.createContext("/api/empresas", new EmpresaHandler(new CadastrarEmpresa()));
         servidor.createContext("/api/impressoras", new ImpressoraHandler(sessoes, usuarioDao, new CadastrarImpressora()));
+        servidor.createContext("/api/empresa/editar", new EditarEmpresaHandler(sessoes));
+        servidor.createContext("/api/usuario/nome", new EditarNomeHandler(sessoes));
+        servidor.createContext("/api/usuario/identificador", new EditarIdentificadorHandler(sessoes));
+        servidor.createContext("/api/funcionario/editar", new EditarFuncionarioHandler(sessoes));
+        servidor.createContext("/api/impressora/editar", new EditarImpressoraHandler(sessoes));
 
         servidor.createContext("/", new StaticHandler(Path.of("public")));
 

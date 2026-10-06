@@ -120,4 +120,39 @@ public class UsuarioDao {
             ps.executeUpdate();
         }
     }
+
+    public boolean atualizarNome(Connection conn, int id, String nome) throws SQLException {
+        String sql = "UPDATE usuario SET nome = ? WHERE id = ?";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)){
+            ps.setString(1, nome);
+            ps.setInt(2, id);
+            return ps.executeUpdate() > 0;
+        }
+    }
+
+    public boolean existePorIdentificadorExceto(String identificador, int usuarioId) throws SQLException {
+        String sql = "SELECT 1 FROM usuario WHERE identificador = ? AND id <> ?";
+
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, identificador);
+            ps.setInt(2, usuarioId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        }
+    }
+
+    public boolean atualizarIdentificador(Connection conn, int id, String identificador) throws SQLException {
+        String sql = "UPDATE usuario SET identificador = ? WHERE id = ?";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, identificador);
+            ps.setInt(2, id);
+            return ps.executeUpdate() > 0;
+        }
+    }
 }

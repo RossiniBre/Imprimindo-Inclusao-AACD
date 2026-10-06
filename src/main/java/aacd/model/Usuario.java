@@ -11,15 +11,9 @@ public class Usuario {
     private boolean ativo;
 
     public Usuario(int id, String nome, String identificador, String senhaHash, String perfil, boolean ativo){
-        if (nome == null || nome.isBlank()){
-            throw new IllegalArgumentException("Nome não pode estar vazio");
-        }
-        this.nome = nome.trim();
 
-        if (identificador == null || identificador.isBlank()) {
-            throw new IllegalArgumentException("Login não pode estar vazio");
-        }
-        this.identificador = Identificador.normalizar(identificador);
+        setNome(nome);
+        setIdentificador(identificador);
 
         if (senhaHash == null || senhaHash.isBlank()){
             throw new IllegalArgumentException("Senha não pode estar vazia");
@@ -59,5 +53,30 @@ public class Usuario {
 
     public void setAtivo(boolean ativo){
         this.ativo = ativo;
+    }
+
+    public void setNome(String nome){
+        if (nome == null || nome.isBlank()) {
+            throw new IllegalArgumentException("Nome não pode estar vazio");
+        }
+
+        String valor = nome.trim();
+        if (valor.length() > 45) {
+            throw new IllegalArgumentException("Nome deve ter no máximo 45 caracteres!");
+        }
+
+        this.nome = valor;
+    }
+
+    public void setIdentificador(String identificador) {
+        if (identificador == null || identificador.isBlank()) {
+            throw new IllegalArgumentException("Login não pode estar vazio");
+        }
+        String normalizado = Identificador.normalizar(identificador);
+
+        if (normalizado.length() > 45) {
+            throw new IllegalArgumentException("Login deve ter no máximo 45 caracteres!");
+        }
+        this.identificador = normalizado;
     }
 }
