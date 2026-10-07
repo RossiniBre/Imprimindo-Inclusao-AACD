@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class UsuarioTest {
 
-    private Usuario novo() {
+     private Usuario novo() {
         return new Usuario("Maria", "maria", "hash", "FUNCIONARIO");
     }
 

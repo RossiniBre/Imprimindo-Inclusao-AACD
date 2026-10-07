@@ -9,7 +9,7 @@ class IdentificadorExtraTest {
 
     @Test
     void normalizar_cnpjAlfanumericoFicaMaiusculo() {
-        assertEquals("AB123456000199", Identificador.normalizar("ab.123.456/0001-99"));
+         assertEquals("AB123456000199", Identificador.normalizar("ab.123.456/0001-99"));
     }
 
     @Test

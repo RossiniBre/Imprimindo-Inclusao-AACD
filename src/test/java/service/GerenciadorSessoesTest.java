@@ -12,7 +12,7 @@ class GerenciadorSessoesTest {
 
     @Test
     void criarEBuscar_devolveSessaoComDados() {
-        GerenciadorSessoes g = new GerenciadorSessoes();
+         GerenciadorSessoes g = new GerenciadorSessoes();
         String token = g.criar(7, "EMPRESA");
 
         Optional<Sessao> s = g.buscar(token);
