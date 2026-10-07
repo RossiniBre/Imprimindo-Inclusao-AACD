@@ -29,7 +29,7 @@ O que falta é uma forma simples de **identificar** quem pode ajudar e de **se c
 ## Gestão do projeto
 
 O desenvolvimento segue práticas ágeis, organizado em sprints.
-- [Trello](https://trello.com/b/tQMpSaGn/projeto-pi-2-semestre).
+- [GitHub Projects](https://github.com/users/RossiniBre/projects/2).
 - [Figma](https://www.figma.com/design/IPXu893i7j9ubfl7xq1mSM/Prototipa%25C3%25A7%25C3%25A3o-AACD---Imprimindo-Inclus%25C3%25A3o?node-id=0-1&p=f)
 - [OneDrive](https://mauabr-my.sharepoint.com/my?id=%2Fpersonal%2F26%5F00659%2D3%5Fmaua%5Fbr%2FDocuments%2FAACD%20%2D%20Imprimindo%20Inclus%C3%A3o&viewid=30857fbe%2Dc220%2D465d%2D804e%2D7e216c88a34f)
 
