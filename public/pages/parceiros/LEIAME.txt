@@ -1,0 +1,7 @@
+TELA: Lista de parceiros
+Quem acessa: funcionários da AACD e admin.
+O que faz: mostra as empresas parceiras em cards.
+Ao clicar no card, abre um modal para escolher a impressora e criar a solicitação,
+com filtro de impressoras por material e outras especificações.
+O envio do arquivo 3D faz parte da criação da solicitação.
+Rotas do back: a definir com quem cuida das solicitações.

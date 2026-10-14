@@ -1,0 +1,6 @@
+TELA: Cadastro de empresa parceira
+Quem acessa: qualquer empresa (página pública, sem login).
+O que faz: a empresa se cadastra sozinha, sem aprovação da AACD.
+Campos: nome (razão social), CNPJ, e-mail, telefone e senha.
+Back: POST /api/empresas (201 ok, 409 duplicado, 400 formato inválido).
+Erros aparecem na própria tela.
