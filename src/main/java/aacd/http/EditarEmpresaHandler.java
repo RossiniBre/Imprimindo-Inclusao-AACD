@@ -44,14 +44,14 @@ public class EditarEmpresaHandler implements HttpHandler {
                     campos.get("cep"), campos.get("rua"), campos.get("numero"),
                     campos.get("bairro"), campos.get("cidade"), campos.get("uf"));
 
-            Http.json(ex, 200, "{\"mensagem\":\"Dados atualizados.\"}");
+            Http.json(ex, 200, Json.objeto().campo("mensagem", "Dados atualizados.").build());
 
         } catch (IllegalStateException e) {
-            Http.json(ex, 409, "{\"erro\":\"" + e.getMessage() + "\"}");
+            Http.json(ex, 409, Json.objeto().campo("erro", e.getMessage()).build());
         } catch (IllegalArgumentException e) {
-            Http.json(ex, 400, "{\"erro\":\"" + e.getMessage() + "\"}");
+            Http.json(ex, 400, Json.objeto().campo("erro", e.getMessage()).build());
         } catch (SQLException e) {
-            Http.json(ex, 500, "{\"erro\":\"Erro interno.\"}");
+            Http.json(ex, 500, Json.objeto().campo("erro", "Erro interno.").build());
         }
     }
 }

@@ -1,9 +1,12 @@
 package aacd.dao;
 
+import aacd.config.ConnectionFactory;
 import aacd.model.Disponibilidade;
 import aacd.model.Impressora;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ImpressoraDao {
 
@@ -65,6 +68,30 @@ public class ImpressoraDao {
             ps.setString(1, modelo);
             ps.setInt(2, id);
             ps.executeUpdate();
+        }
+    }
+
+    public List<Impressora> listarPorEmpresa(int empresaId) throws SQLException {
+        String sql = "SELECT idimpressora, empresa_id, modelo, disponibilidade, ativo "
+                + "FROM impressora WHERE empresa_id = ? ORDER BY idimpressora";
+
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, empresaId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                List<Impressora> lista = new ArrayList<>();
+                while (rs.next()) {
+                    lista.add(new Impressora(
+                            rs.getInt("idimpressora"),
+                            rs.getInt("empresa_id"),
+                            rs.getString("modelo"),
+                            Disponibilidade.valueOf(rs.getString("disponibilidade")),
+                            rs.getBoolean("ativo")));
+                }
+                return lista;
+            }
         }
     }
 }

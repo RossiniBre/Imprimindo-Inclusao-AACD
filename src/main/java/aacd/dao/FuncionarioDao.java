@@ -2,12 +2,15 @@ package aacd.dao;
 
 import aacd.config.ConnectionFactory;
 import aacd.model.Funcionario;
+import aacd.model.FuncionarioResumo;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FuncionarioDao {
 
@@ -61,6 +64,30 @@ public class FuncionarioDao {
             ps.setString(2, funcionario.getSetor());
             ps.setInt(3, funcionario.getUsuarioId());
             return ps.executeUpdate() > 0;
+        }
+    }
+
+    public List<FuncionarioResumo> listar() throws SQLException {
+        String sql = "SELECT u.idusuario, u.nome, u.identificador, u.perfil, u.ativo, f.cargo, f.setor "
+                + "FROM funcionario f JOIN usuario u ON u.idusuario = f.usuario_id "
+                + "ORDER BY u.nome";
+
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            List<FuncionarioResumo> lista = new ArrayList<>();
+            while (rs.next()) {
+                lista.add(new FuncionarioResumo(
+                        rs.getInt("idusuario"),
+                        rs.getString("nome"),
+                        rs.getString("identificador"),
+                        rs.getString("perfil"),
+                        rs.getString("cargo"),
+                        rs.getString("setor"),
+                        rs.getBoolean("ativo")));
+            }
+            return lista;
         }
     }
 }
