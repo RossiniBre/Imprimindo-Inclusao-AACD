@@ -1,10 +1,5 @@
 package aacd.model;
 
 public enum StatusSolicitacao {
-    PENDENTE,
-    EM_ANDAMENTO,
-    CONCLUIDA,
-    FALHOU,
-    RECUSADA,
-    CANCELADA
+    PENDENTE, EM_ANDAMENTO, RECUSADA, CANCELADA, CONCLUIDA, FALHOU
 }

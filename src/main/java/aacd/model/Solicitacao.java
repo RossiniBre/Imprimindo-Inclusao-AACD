@@ -1,4 +1,4 @@
-package model;
+package aacd.model;
 
 public class Solicitacao {
     private final int id;
