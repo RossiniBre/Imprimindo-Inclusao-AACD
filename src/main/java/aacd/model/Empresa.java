@@ -8,23 +8,24 @@ public class Empresa {
     private String email;
     private String cnpj;
     private String telefone;
+    private Endereco endereco;
 
-    public Empresa(int id, int usuarioId, String email, String telefone, String cnpj) {
+    public Empresa(int id, int usuarioId, String email, String telefone, String cnpj, Endereco endereco) {
 
         setEmail(email);
         setTelefone(telefone);
         setCnpj(cnpj);
+        setEndereco(endereco);
 
         if (usuarioId <= 0) {
             throw new IllegalArgumentException("Usuário inválido!");
         }
         this.usuarioId = usuarioId;
-
         this.id = id;
     }
 
-    public Empresa(int usuarioId, String email, String telefone, String cnpj){
-        this(0, usuarioId, email, telefone, cnpj);
+    public Empresa(int usuarioId, String email, String telefone, String cnpj, Endereco endereco){
+        this(0, usuarioId, email, telefone, cnpj, endereco);
     }
 
     //getters
@@ -33,6 +34,7 @@ public class Empresa {
     public String getEmail(){ return this.email; }
     public String getTelefone(){ return this.telefone; }
     public String getCnpj(){ return this.cnpj; }
+    public Endereco getEndereco() { return this.endereco; }
 
     //setter
     public void setId(int id){
@@ -70,6 +72,13 @@ public class Empresa {
             throw new IllegalArgumentException("Email inválido!");
         }
         this.email = email;
+    }
+
+    public void setEndereco(Endereco endereco) {
+        if (endereco == null) {
+            throw new IllegalArgumentException("Endereço é obrigatório!");
+        }
+        this.endereco = endereco;
     }
 
     //metodos

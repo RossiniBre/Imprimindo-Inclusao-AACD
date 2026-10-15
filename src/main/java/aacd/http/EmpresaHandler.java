@@ -29,7 +29,9 @@ public class EmpresaHandler implements HttpHandler {
         try {
             cadastro.executar(
                     campos.get("nome"), campos.get("cnpj"), campos.get("senha"),
-                    campos.get("email"), campos.get("telefone"));
+                    campos.get("email"), campos.get("telefone"),
+                    campos.get("cep"), campos.get("rua"), campos.get("numero"),
+                    campos.get("bairro"), campos.get("cidade"), campos.get("uf"));
             Http.json(ex, 201, "{\"mensagem\":\"Empresa cadastrada.\"}");
 
         } catch (IllegalStateException e) {

@@ -4,6 +4,7 @@ import aacd.config.ConnectionFactory;
 import aacd.dao.EmpresaDao;
 import aacd.dao.UsuarioDao;
 import aacd.model.Empresa;
+import aacd.model.Endereco;
 import aacd.model.Usuario;
 
 import java.sql.Connection;
@@ -15,7 +16,9 @@ public class EditarEmpresa {
     private final UsuarioDao usuarioDao = new UsuarioDao();
     private final EmpresaDao empresaDao = new EmpresaDao();
 
-    public void executar(Usuario ator, String nome, String email, String telefone)
+    public void executar(Usuario ator, String nome, String email, String telefone,
+                         String cep, String rua, String numero,
+                         String bairro, String cidade, String uf)
             throws SQLException {
 
         if (ator == null || !"EMPRESA".equals(ator.getPerfil()) || !ator.isAtivo()) {
@@ -32,6 +35,7 @@ public class EditarEmpresa {
         ator.setNome(nome);
         empresa.setEmail(email);
         empresa.setTelefone(telefone);
+        empresa.setEndereco(new Endereco(cep, rua, numero, bairro, cidade, uf));
 
         if (empresaDao.existePorEmailExceto(empresa.getEmail(), usuarioId)) {
             throw new IllegalArgumentException("Email já cadastrado!");

@@ -6,6 +6,8 @@ import aacd.service.EditarFuncionario;
 import aacd.service.EditarImpressora;
 import org.junit.jupiter.api.Test;
 
+import java.sql.SQLException;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class AutorizacaoEdicaoTest {
@@ -14,22 +16,25 @@ class AutorizacaoEdicaoTest {
         return new Usuario(id, "Fulano", "fulano" + id, "hash", perfil, ativo);
     }
 
+    private void editarEmpresa(Usuario ator) throws SQLException {
+        new EditarEmpresa().executar(ator, "N", "a@b.com", "11999999999",
+                "01310100", "Avenida Paulista", "1000",
+                "Bela Vista", "São Paulo", "SP");
+    }
+
     @Test
     void editarEmpresa_recusaAtorNuloOuOutroPerfil() {
-        EditarEmpresa s = new EditarEmpresa();
+        assertThrows(IllegalStateException.class, () -> editarEmpresa(null));
         assertThrows(IllegalStateException.class,
-                () -> s.executar(null, "N", "a@b.com", "11999999999"));
+                () -> editarEmpresa(usuario(1, "FUNCIONARIO", true)));
         assertThrows(IllegalStateException.class,
-                () -> s.executar(usuario(1, "FUNCIONARIO", true), "N", "a@b.com", "11999999999"));
-        assertThrows(IllegalStateException.class,
-                () -> s.executar(usuario(1, "ADMIN", true), "N", "a@b.com", "11999999999"));
+                () -> editarEmpresa(usuario(1, "ADMIN", true)));
     }
 
     @Test
     void editarEmpresa_recusaEmpresaInativa() {
-        EditarEmpresa s = new EditarEmpresa();
         assertThrows(IllegalStateException.class,
-                () -> s.executar(usuario(1, "EMPRESA", false), "N", "a@b.com", "11999999999"));
+                () -> editarEmpresa(usuario(1, "EMPRESA", false)));
     }
 
     @Test

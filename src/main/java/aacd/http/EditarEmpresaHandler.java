@@ -40,7 +40,9 @@ public class EditarEmpresaHandler implements HttpHandler {
             Usuario ator = usuarioDao.buscarPorId(sessao.get().getUsuarioId());
 
             editarEmpresa.executar(ator,
-                    campos.get("nome"), campos.get("email"), campos.get("telefone"));
+                    campos.get("nome"), campos.get("email"), campos.get("telefone"),
+                    campos.get("cep"), campos.get("rua"), campos.get("numero"),
+                    campos.get("bairro"), campos.get("cidade"), campos.get("uf"));
 
             Http.json(ex, 200, "{\"mensagem\":\"Dados atualizados.\"}");
 
