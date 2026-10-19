@@ -50,8 +50,13 @@ public final class Rotas {
                 new SolicitacaoHandler(sessoes, new CriarSolicitacao(conteudoDao, armazenamento)));
         servidor.createContext("/api/solicitacao/ver", new VerSolicitacaoHandler(sessoes));
         servidor.createContext("/api/solicitacao/responder", new ResponderSolicitacaoHandler(sessoes));
+        servidor.createContext("/api/solicitacao/arquivo",
+                new ArquivoSolicitacaoHandler(sessoes, conteudoDao, armazenamento));
 
         // Front-end estático (precisa ser o último: "/" casa com tudo que sobrar)
         servidor.createContext("/", new StaticHandler(Path.of("public")));
+
+        // Doações
+        servidor.createContext("/api/doacoes", new DoacoesHandler(sessoes));
     }
 }

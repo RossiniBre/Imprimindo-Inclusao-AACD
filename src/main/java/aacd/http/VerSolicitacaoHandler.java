@@ -4,7 +4,6 @@ import aacd.dao.SolicitacaoDao;
 import aacd.dao.SolicitacaoEventosDao;
 import aacd.model.Solicitacao;
 import aacd.service.GerenciadorSessoes;
-import com.google.gson.Gson;
 import com.mongodb.MongoException;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -21,7 +20,6 @@ public class VerSolicitacaoHandler implements HttpHandler {
     private final GerenciadorSessoes sessoes;
     private final SolicitacaoDao solicitacaoDao = new SolicitacaoDao();
     private final SolicitacaoEventosDao eventosDao = new SolicitacaoEventosDao();
-    private final Gson gson = new Gson();
 
     public VerSolicitacaoHandler(GerenciadorSessoes sessoes) {
         this.sessoes = sessoes;

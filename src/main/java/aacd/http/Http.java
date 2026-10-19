@@ -64,8 +64,12 @@ public final class Http {
     private static final int FORMULARIO_MAX = 4096;
 
     public static Optional<Map<String, String>> lerFormulario(HttpExchange ex) throws IOException {
-        byte[] bytes = ex.getRequestBody().readNBytes(FORMULARIO_MAX + 1);
-        if (bytes.length > FORMULARIO_MAX) {
+        return lerFormulario(ex, FORMULARIO_MAX);
+    }
+
+    public static Optional<Map<String, String>> lerFormulario(HttpExchange ex, int max) throws IOException {
+        byte[] bytes = ex.getRequestBody().readNBytes(max + 1);
+        if (bytes.length > max) {
             erro(ex, 413, "Corpo da requisição maior que o limite.");
             return Optional.empty();
         }

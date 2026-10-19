@@ -15,12 +15,6 @@
     </properties>
 
     <dependencies>
-        <!-- JSON -->
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.11.0</version>
-        </dependency>
         <!-- MongoDB (não relacional) -->
         <dependency>
             <groupId>org.mongodb</groupId>

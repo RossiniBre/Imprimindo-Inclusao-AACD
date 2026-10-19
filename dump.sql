@@ -71,6 +71,7 @@ CREATE TABLE IF NOT EXISTS `imprimindo_inclusao`.`doacao` (
   `quantidade` INT NOT NULL DEFAULT '1',
   `data_manifestacao` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `visualizada` TINYINT NOT NULL DEFAULT '0',
+  `tipo` ENUM('FILAMENTO', 'IMPRESSORA', 'AMBOS') NOT NULL,
   PRIMARY KEY (`iddoacao`),
   INDEX `fk_doacao_empresa` (`empresa_id` ASC) VISIBLE,
   CONSTRAINT `fk_doacao_empresa`
