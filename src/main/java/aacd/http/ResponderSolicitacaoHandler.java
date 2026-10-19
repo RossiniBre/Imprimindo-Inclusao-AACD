@@ -29,36 +29,42 @@ public class ResponderSolicitacaoHandler implements HttpHandler {
     public void handle(HttpExchange ex) throws IOException {
         if (!"POST".equals(ex.getRequestMethod())) {
             ex.getResponseHeaders().set("Allow", "POST");
-            Http.json(ex, 405, "{\"erro\":\"Método não permitido.\"}");
+            Http.erro(ex, 405, "Método não permitido.");
             return;
         }
 
         Optional<Sessao> sessao = Http.exigirPerfil(ex, sessoes, "EMPRESA");
         if (sessao.isEmpty()) return;
 
-        Map<String, String> campos = Http.lerFormulario(ex);
+        Optional<Map<String, String>> formulario = Http.lerFormulario(ex);
+        if (formulario.isEmpty()) return;
+        Map<String, String> campos = formulario.get();
 
         try {
             Usuario ator = usuarioDao.buscarPorId(sessao.get().getUsuarioId());
+            if (ator == null) {
+                Http.erro(ex, 401, "Não autenticado.");
+                return;
+            }
             int solicitacaoId = Http.lerId(campos, "id", 0);
             String decisao = campos.get("decisao");
 
             if ("ACEITAR".equals(decisao)) {
                 responder.aceitar(ator, solicitacaoId, campos.get("prazo"));
-                Http.json(ex, 200, "{\"mensagem\":\"Solicitação aceita.\"}");
+                Http.json(ex, 200, Json.objeto().campo("mensagem", "Solicitação aceita.").build());
             } else if ("RECUSAR".equals(decisao)) {
                 responder.recusar(ator, solicitacaoId, campos.get("justificativa"));
-                Http.json(ex, 200, "{\"mensagem\":\"Solicitação recusada.\"}");
+                Http.json(ex, 200, Json.objeto().campo("mensagem", "Solicitação recusada.").build());
             } else {
-                Http.json(ex, 400, "{\"erro\":\"Decisão inválida.\"}");
+                Http.erro(ex, 400, "Decisão inválida.");
             }
 
         } catch (IllegalStateException e) {
-            Http.json(ex, 409, "{\"erro\":\"" + e.getMessage() + "\"}");
+            Http.erro(ex, 409, e.getMessage());
         } catch (IllegalArgumentException e) {
-            Http.json(ex, 400, "{\"erro\":\"" + e.getMessage() + "\"}");
+            Http.erro(ex, 400, e.getMessage());
         } catch (SQLException | MongoException e) {
-            Http.json(ex, 500, "{\"erro\":\"Erro interno.\"}");
+            Http.erro(ex, 500, "Erro interno.");
         }
     }
 }

@@ -86,7 +86,11 @@ public class ResponderSolicitacao {
         if (impressora == null) {
             throw new IllegalStateException("Impressora não encontrada!");
         }
-        permissao.validar(ator, impressora);
+        try {
+            permissao.validar(ator, impressora);
+        } catch (IllegalStateException e) {
+            throw new IllegalArgumentException("Solicitação não encontrada!");
+        }
     }
 
     private LocalDate lerPrazo(String texto) {

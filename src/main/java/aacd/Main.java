@@ -1,16 +1,11 @@
 package aacd;
 
-import aacd.config.MongoFactory;
-import aacd.dao.ConteudoSolicitacaoDao;
-import aacd.dao.UsuarioDao;
-import aacd.http.*;
+import aacd.http.Rotas;
 import aacd.service.*;
-import aacd.storage.ArmazenamentoGridFs;
 import com.sun.net.httpserver.HttpServer;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.nio.file.Path;
 import java.util.concurrent.Executors;
 
 public class Main {

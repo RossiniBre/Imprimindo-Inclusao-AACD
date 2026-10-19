@@ -30,7 +30,7 @@ public class ArquivoHandler implements HttpHandler {
     public void handle(HttpExchange ex) throws IOException {
         if (!"POST".equals(ex.getRequestMethod())) {
             ex.getResponseHeaders().set("Allow", "POST");
-            Http.json(ex, 405, "{\"erro\":\"Método não permitido.\"}");
+            Http.erro(ex, 405, "Método não permitido.");
             return;
         }
 
@@ -39,16 +39,22 @@ public class ArquivoHandler implements HttpHandler {
             return;
         }
 
-        String nome = lerNome(ex.getRequestURI().getRawQuery());
+        String nome;
+        try {
+            nome = lerNome(ex.getRequestURI().getRawQuery());
+        } catch (IllegalArgumentException e) {
+            Http.erro(ex, 400, "Nome do arquivo inválido.");
+            return;
+        }
         if (nome == null || nome.isBlank() || nome.length() > 255
                 || nome.contains("/") || nome.contains("\\")) {
-            Http.json(ex, 400, "{\"erro\":\"Nome do arquivo inválido.\"}");
+            Http.erro(ex, 400, "Nome do arquivo inválido.");
             return;
         }
         int ponto = nome.lastIndexOf('.');
         String extensao = ponto < 0 ? "" : nome.substring(ponto + 1).toLowerCase();
         if (!EXTENSOES.contains(extensao)) {
-            Http.json(ex, 400, "{\"erro\":\"Formato inválido. Aceitos: stl, obj, 3mf.\"}");
+            Http.erro(ex, 400, "Formato inválido. Aceitos: stl, obj, 3mf.");
             return;
         }
 
@@ -57,19 +63,19 @@ public class ArquivoHandler implements HttpHandler {
         try {
             bytes = Long.parseLong(tamanho);
         } catch (NumberFormatException e) {
-            Http.json(ex, 411, "{\"erro\":\"Content-Length obrigatório.\"}");
+            Http.erro(ex, 411, "Content-Length obrigatório.");
             return;
         }
         if (bytes <= 0 || bytes > TAMANHO_MAX) {
-            Http.json(ex, 413, "{\"erro\":\"Arquivo vazio ou maior que 50 MB.\"}");
+            Http.erro(ex, 413, "Arquivo vazio ou maior que 50 MB.");
             return;
         }
 
         try {
             String arquivoId = armazenamento.salvar(nome, ex.getRequestBody());
-            Http.json(ex, 201, "{\"arquivoId\":\"" + arquivoId + "\"}");
+            Http.json(ex, 201, Json.objeto().campo("arquivoId", arquivoId).build());
         } catch (ArmazenamentoException e) {
-            Http.json(ex, 500, "{\"erro\":\"Erro interno.\"}");
+            Http.erro(ex, 500, "Erro interno.");
         }
     }
 

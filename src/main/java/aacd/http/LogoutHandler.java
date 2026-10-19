@@ -18,7 +18,7 @@ public class LogoutHandler implements HttpHandler {
     public void handle(HttpExchange ex) throws IOException {
         if (!"POST".equals(ex.getRequestMethod())) {
             ex.getResponseHeaders().set("Allow", "POST");
-            Http.json(ex, 405, "{\"erro\":\"Método não permitido.\"}");
+            Http.erro(ex, 405, "Método não permitido.");
             return;
         }
 
@@ -26,6 +26,6 @@ public class LogoutHandler implements HttpHandler {
 
         ex.getResponseHeaders().add("Set-Cookie",
                 "SESSAO=; Max-Age=0; HttpOnly; Path=/; SameSite=Strict");
-        Http.json(ex, 200, "{\"ok\":true}");
+        Http.json(ex, 200, Json.objeto().campo("ok", true).build());
     }
 }

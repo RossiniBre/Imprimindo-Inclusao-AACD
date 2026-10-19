@@ -24,7 +24,11 @@ public class EditarImpressora {
                 throw new IllegalStateException("Impressora não encontrada!");
             }
 
-            permissao.validar(ator, impressora);
+            try {
+                permissao.validar(ator, impressora);
+            } catch (IllegalStateException e) {
+                throw new IllegalStateException("Impressora não encontrada!");
+            }
 
             impressora.setModelo(modelo);
             impressoraDao.atualizarModelo(conn, impressoraId, impressora.getModelo());

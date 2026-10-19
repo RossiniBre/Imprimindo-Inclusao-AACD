@@ -1,4 +1,4 @@
-package model;
+package aacd.model;
 
 import aacd.model.Endereco;
 import org.junit.jupiter.api.Test;

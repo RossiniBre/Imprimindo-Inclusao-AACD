@@ -1,4 +1,4 @@
-package model;
+package aacd.model;
 
 import aacd.model.Usuario;
 import org.junit.jupiter.api.Test;

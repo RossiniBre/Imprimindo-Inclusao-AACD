@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-/** Funções auxiliares para responder requisições. */
 public final class Http {
 
     private Http() {}
@@ -47,7 +46,7 @@ public final class Http {
         Optional<Sessao> sessao = sessoes.buscar(lerCookie(ex, "SESSAO"));
 
         if (sessao.isEmpty()) {
-            json(ex, 401, "{\"erro\":\"Não autenticado.\"}");
+            erro(ex, 401, "Não autenticado.");
             return Optional.empty();
         }
 
@@ -58,21 +57,36 @@ public final class Http {
             }
         }
 
-        json(ex, 403, "{\"erro\":\"Acesso negado.\"}");
+        erro(ex, 403, "Acesso negado.");
         return Optional.empty();
     }
 
-    public static Map<String, String> lerFormulario(HttpExchange ex) throws IOException {
-        String corpo = new String(ex.getRequestBody().readNBytes(4096), StandardCharsets.UTF_8);
-        Map<String, String> campos = new HashMap<>();
-        for (String par : corpo.split("&")) {
-            String[] kv = par.split("=", 2);
-            if (kv.length == 2) {
-                campos.put(URLDecoder.decode(kv[0], StandardCharsets.UTF_8),
-                        URLDecoder.decode(kv[1], StandardCharsets.UTF_8));
-            }
+    private static final int FORMULARIO_MAX = 4096;
+
+    public static Optional<Map<String, String>> lerFormulario(HttpExchange ex) throws IOException {
+        byte[] bytes = ex.getRequestBody().readNBytes(FORMULARIO_MAX + 1);
+        if (bytes.length > FORMULARIO_MAX) {
+            erro(ex, 413, "Corpo da requisição maior que o limite.");
+            return Optional.empty();
         }
-        return campos;
+
+        String corpo = new String(bytes, StandardCharsets.UTF_8);
+        Map<String, String> campos = new HashMap<>();
+
+        try {
+            for (String par : corpo.split("&")) {
+                String[] kv = par.split("=", 2);
+                if (kv.length == 2) {
+                    campos.put(URLDecoder.decode(kv[0], StandardCharsets.UTF_8),
+                            URLDecoder.decode(kv[1], StandardCharsets.UTF_8));
+                }
+            }
+        } catch (IllegalArgumentException e) {
+            erro(ex, 400, "Formulário malformado.");
+            return Optional.empty();
+        }
+
+        return Optional.of(campos);
     }
 
     public static int lerId(Map<String, String> campos, String campo, int padrao) {
@@ -83,5 +97,28 @@ public final class Http {
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Id inválido!");
         }
+    }
+
+    public static Map<String, String> lerQuery(HttpExchange ex) {
+        Map<String, String> campos = new HashMap<>();
+        String query = ex.getRequestURI().getRawQuery();
+        if (query == null || query.isBlank()) return campos;
+
+        try {
+            for (String par : query.split("&")) {
+                String[] kv = par.split("=", 2);
+                if (kv.length == 2) {
+                    campos.put(URLDecoder.decode(kv[0], StandardCharsets.UTF_8),
+                            URLDecoder.decode(kv[1], StandardCharsets.UTF_8));
+                }
+            }
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Parâmetros inválidos.");
+        }
+        return campos;
+    }
+
+    public static void erro(HttpExchange ex, int status, String mensagem) throws IOException {
+        json(ex, status, Json.objeto().campo("erro", mensagem != null ? mensagem : "Erro.").build());
     }
 }

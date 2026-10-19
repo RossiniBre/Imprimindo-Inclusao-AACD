@@ -1,4 +1,4 @@
-package service;
+package aacd.service;
 
 import aacd.model.Usuario;
 import aacd.service.EditarEmpresa;

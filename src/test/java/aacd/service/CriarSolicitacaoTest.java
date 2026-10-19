@@ -1,4 +1,4 @@
-package service;
+package aacd.service;
 
 import aacd.dao.ConteudoSolicitacaoDao;
 import aacd.dao.FuncionarioDao;

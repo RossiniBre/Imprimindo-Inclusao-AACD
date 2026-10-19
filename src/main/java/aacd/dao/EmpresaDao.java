@@ -2,6 +2,7 @@ package aacd.dao;
 
 import aacd.config.ConnectionFactory;
 import aacd.model.Empresa;
+import aacd.model.EmpresaResumo;
 import aacd.model.Endereco;
 
 import java.sql.Connection;
@@ -9,6 +10,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 public class EmpresaDao {
 
@@ -118,6 +121,49 @@ public class EmpresaDao {
             ps.setString(8, endereco.getUf());
             ps.setInt(9, empresa.getUsuarioId());
             return ps.executeUpdate() > 0;
+        }
+    }
+
+    public List<EmpresaResumo> listarAtivas() throws SQLException {
+        String sql = "SELECT e.idempresa, u.nome, e.email, e.telefone, "
+                + "e.cep, e.rua, e.numero, e.bairro, e.cidade, e.uf "
+                + "FROM empresa e JOIN usuario u ON u.idusuario = e.usuario_id "
+                + "WHERE u.ativo = TRUE ORDER BY u.nome";
+
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            List<EmpresaResumo> lista = new ArrayList<>();
+            while (rs.next()) {
+                Endereco endereco = new Endereco(
+                        rs.getString("cep"),
+                        rs.getString("rua"),
+                        rs.getString("numero"),
+                        rs.getString("bairro"),
+                        rs.getString("cidade"),
+                        rs.getString("uf"));
+
+                lista.add(new EmpresaResumo(
+                        rs.getInt("idempresa"),
+                        rs.getString("nome"),
+                        rs.getString("email"),
+                        rs.getString("telefone"),
+                        endereco));
+            }
+            return lista;
+        }
+    }
+
+    public boolean existeAtiva(int idEmpresa) throws SQLException {
+        String sql = "SELECT 1 FROM empresa e JOIN usuario u ON u.idusuario = e.usuario_id "
+                + "WHERE e.idempresa = ? AND u.ativo = TRUE";
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, idEmpresa);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
         }
     }
 }

@@ -41,7 +41,7 @@ public class FuncionarioHandler implements HttpHandler {
             cadastrar(ex);
         } else {
             ex.getResponseHeaders().set("Allow", "GET, POST");
-            Http.json(ex, 405, Json.objeto().campo("erro", "Método não permitido.").build());
+            Http.erro(ex, 405, "Método não permitido.");
         }
     }
 
@@ -67,7 +67,7 @@ public class FuncionarioHandler implements HttpHandler {
             Http.json(ex, 200, Json.lista(itens));
 
         } catch (SQLException e) {
-            Http.json(ex, 500, Json.objeto().campo("erro", "Erro interno.").build());
+            Http.erro(ex, 500, "Erro interno.");
         }
     }
 
@@ -77,12 +77,16 @@ public class FuncionarioHandler implements HttpHandler {
             return;
         }
 
-        Map<String, String> campos = Http.lerFormulario(ex);
+        Optional<Map<String, String>> formulario = Http.lerFormulario(ex);
+        if (formulario.isEmpty()) {
+            return;
+        }
+        Map<String, String> campos = formulario.get();
 
         try {
             Usuario ator = usuarioDao.buscarPorId(sessao.get().getUsuarioId());
             if (ator == null) {
-                Http.json(ex, 401, Json.objeto().campo("erro", "Não autenticado.").build());
+                Http.erro(ex, 401, "Não autenticado.");
                 return;
             }
 
@@ -93,11 +97,11 @@ public class FuncionarioHandler implements HttpHandler {
             Http.json(ex, 201, Json.objeto().campo("mensagem", "Funcionário cadastrado.").build());
 
         } catch (IllegalStateException e) {
-            Http.json(ex, 409, Json.objeto().campo("erro", e.getMessage()).build());
+            Http.erro(ex, 409, e.getMessage());
         } catch (IllegalArgumentException e) {
-            Http.json(ex, 400, Json.objeto().campo("erro", e.getMessage()).build());
+            Http.erro(ex, 400, e.getMessage());
         } catch (SQLException e) {
-            Http.json(ex, 500, Json.objeto().campo("erro", "Erro interno.").build());
+            Http.erro(ex, 500, "Erro interno.");
         }
     }
 }

@@ -9,7 +9,6 @@ import com.sun.net.httpserver.HttpHandler;
 import org.apache.commons.fileupload.FileItemIterator;
 import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.FileUpload;
-import org.apache.commons.fileupload.FileUploadBase;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.RequestContext;
 import org.apache.commons.fileupload.util.Streams;
@@ -39,7 +38,7 @@ public class SolicitacaoHandler implements HttpHandler {
     public void handle(HttpExchange ex) throws IOException {
         if (!"POST".equals(ex.getRequestMethod())) {
             ex.getResponseHeaders().set("Allow", "POST");
-            Http.json(ex, 405, "{\"erro\":\"Método não permitido.\"}");
+            Http.erro(ex, 405, "Método não permitido.");
             return;
         }
 
@@ -57,7 +56,7 @@ public class SolicitacaoHandler implements HttpHandler {
 
         String tipo = ex.getRequestHeaders().getFirst("Content-Type");
         if (tipo == null || !tipo.toLowerCase().startsWith("multipart/")) {
-            Http.json(ex, 400, "{\"erro\":\"Envie o formulário como multipart/form-data.\"}");
+            Http.erro(ex, 400, "Envie o formulário como multipart/form-data.");
             return;
         }
 
@@ -65,11 +64,11 @@ public class SolicitacaoHandler implements HttpHandler {
         try {
             tamanho = Long.parseLong(ex.getRequestHeaders().getFirst("Content-Length"));
         } catch (NumberFormatException e) {
-            Http.json(ex, 411, "{\"erro\":\"Content-Length obrigatório.\"}");
+            Http.erro(ex, 411, "Content-Length obrigatório.");
             return;
         }
         if (tamanho > TAMANHO_REQUISICAO_MAX) {
-            Http.json(ex, 413, "{\"erro\":\"Requisição maior que o limite.\"}");
+            Http.erro(ex, 413, "Requisição maior que o limite.");
             return;
         }
 
@@ -88,7 +87,7 @@ public class SolicitacaoHandler implements HttpHandler {
 
                 if (!"arquivo".equals(item.getFieldName()) || item.getName() == null
                         || item.getName().isBlank()) {
-                    Http.json(ex, 400, "{\"erro\":\"Arquivo não enviado.\"}");
+                    Http.erro(ex, 400, "Arquivo não enviado.");
                     return;
                 }
 
@@ -98,7 +97,7 @@ public class SolicitacaoHandler implements HttpHandler {
                     quantidade = Integer.parseInt(campos.getOrDefault("quantidade", "").trim());
                     impressoraId = Integer.parseInt(campos.getOrDefault("impressoraId", "").trim());
                 } catch (NumberFormatException e) {
-                    Http.json(ex, 400, "{\"erro\":\"Quantidade e impressora devem ser números.\"}");
+                    Http.erro(ex, 400, "Quantidade e impressora devem ser números.");
                     return;
                 }
 
@@ -108,21 +107,21 @@ public class SolicitacaoHandler implements HttpHandler {
                         campos.get("titulo"), campos.get("descricao"),
                         quantidade, item.getName(), limitado);
 
-                Http.json(ex, 201, "{\"id\":" + id + "}");
+                Http.json(ex, 201, Json.objeto().campo("id", id).build());
                 return;
             }
-            Http.json(ex, 400, "{\"erro\":\"Arquivo não enviado.\"}");
+            Http.erro(ex, 400, "Arquivo não enviado.");
 
         } catch (IllegalArgumentException e) {
-            Http.json(ex, 400, "{\"erro\":\"" + e.getMessage() + "\"}");
+            Http.erro(ex, 400, e.getMessage());
         } catch (ArmazenamentoException e) {
             if (limitado != null && limitado.excedeu()) {
-                Http.json(ex, 413, "{\"erro\":\"Arquivo maior que 50 MB.\"}");
+                Http.erro(ex, 413, "Arquivo maior que 50 MB.");
             } else {
-                Http.json(ex, 500, "{\"erro\":\"Erro interno.\"}");
+                Http.erro(ex, 500, "Erro interno.");
             }
         } catch (FileUploadException | SQLException e) {
-            Http.json(ex, 500, "{\"erro\":\"Erro interno.\"}");
+            Http.erro(ex, 500, "Erro interno.");
         }
     }
 

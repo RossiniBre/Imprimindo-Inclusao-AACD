@@ -44,7 +44,7 @@ public class ImpressoraHandler implements HttpHandler {
             cadastrar(ex);
         } else {
             ex.getResponseHeaders().set("Allow", "GET, POST");
-            Http.json(ex, 405, Json.objeto().campo("erro", "Método não permitido.").build());
+            Http.erro(ex, 405, "Método não permitido.");
         }
     }
 
@@ -54,24 +54,28 @@ public class ImpressoraHandler implements HttpHandler {
             return;
         }
 
-        Map<String, String> campos = Http.lerFormulario(ex);
+        Optional<Map<String, String>> formulario = Http.lerFormulario(ex);
+        if (formulario.isEmpty()) {
+            return;
+        }
+        Map<String, String> campos = formulario.get();
 
         try {
             Usuario ator = usuarioDao.buscarPorId(sessao.get().getUsuarioId());
             if (ator == null) {
-                Http.json(ex, 401, "{\"erro\":\"Não autenticado.\"}");
+                Http.erro(ex, 401, "Não autenticado.");
                 return;
             }
 
             int id = cadastro.executar(ator, campos.get("modelo"));
-            Http.json(ex, 201, "{\"id\":" + id + "}");
+            Http.json(ex, 201, Json.objeto().campo("id", id).build());
 
         } catch (IllegalStateException e) {
-            Http.json(ex, 403, "{\"erro\":\"" + e.getMessage() + "\"}");
+            Http.erro(ex, 403, e.getMessage());
         } catch (IllegalArgumentException e) {
-            Http.json(ex, 400, "{\"erro\":\"" + e.getMessage() + "\"}");
+            Http.erro(ex, 400, e.getMessage());
         } catch (SQLException e) {
-            Http.json(ex, 500, "{\"erro\":\"Erro interno.\"}");
+            Http.erro(ex, 500, "Erro interno.");
         }
     }
 
@@ -84,23 +88,27 @@ public class ImpressoraHandler implements HttpHandler {
         try {
             Empresa empresa = empresaDao.buscarPorUsuarioId(sessao.get().getUsuarioId());
             if (empresa == null) {
-                Http.json(ex, 404, Json.objeto().campo("erro", "Empresa não encontrada.").build());
+                Http.erro(ex, 404, "Empresa não encontrada.");
                 return;
             }
 
             List<String> itens = new ArrayList<>();
             for (Impressora i : impressoraDao.listarPorEmpresa(empresa.getId())) {
-                itens.add(Json.objeto()
-                        .campo("id", i.getId())
-                        .campo("modelo", i.getModelo())
-                        .campo("disponibilidade", i.getDisponibilidade().name())
-                        .campo("ativo", i.isAtivo())
-                        .build());
+                itens.add(paraJson(i));
             }
             Http.json(ex, 200, Json.lista(itens));
 
         } catch (SQLException e) {
-            Http.json(ex, 500, Json.objeto().campo("erro", "Erro interno.").build());
+            Http.erro(ex, 500, "Erro interno.");
         }
+    }
+
+    public static String paraJson(Impressora i) {
+        return Json.objeto()
+                .campo("id", i.getId())
+                .campo("modelo", i.getModelo())
+                .campo("disponibilidade", i.getDisponibilidade().name())
+                .campo("ativo", i.isAtivo())
+                .build();
     }
 }

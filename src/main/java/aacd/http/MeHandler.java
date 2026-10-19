@@ -20,17 +20,17 @@ public class MeHandler implements HttpHandler {
     public void handle(HttpExchange ex) throws IOException {
         if (!"GET".equals(ex.getRequestMethod())) {
             ex.getResponseHeaders().set("Allow", "GET");
-            Http.json(ex, 405, "{\"erro\":\"Método não permitido.\"}");
+            Http.erro(ex, 405, "Método não permitido.");
             return;
         }
 
         Optional<Sessao> sessao = sessoes.buscar(Http.lerCookie(ex, "SESSAO"));
 
         if (sessao.isEmpty()) {
-            Http.json(ex, 401, "{\"erro\":\"Não autenticado.\"}");
+            Http.erro(ex, 401, "Não autenticado.");
             return;
         }
 
-        Http.json(ex, 200, "{\"perfil\":\"" + sessao.get().getPerfil() + "\"}");
+        Http.json(ex, 200, Json.objeto().campo("perfil", sessao.get().getPerfil()).build());
     }
 }

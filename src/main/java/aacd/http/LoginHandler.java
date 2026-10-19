@@ -23,18 +23,23 @@ public class LoginHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange ex) throws IOException {
         if (!"POST".equals(ex.getRequestMethod())) {
-            Http.json(ex, 405, "{\"erro\":\"Método não permitido.\"}");
+            ex.getResponseHeaders().set("Allow", "POST");
+            Http.erro(ex, 405, "Método não permitido.");
             return;
         }
 
-        Map<String, String> campos = Http.lerFormulario(ex);
+        Optional<Map<String, String>> formulario = Http.lerFormulario(ex);
+        if (formulario.isEmpty()) {
+            return;
+        }
+        Map<String, String> campos = formulario.get();
 
         try {
             Optional<Usuario> resultado =
                     autenticacao.autenticar(campos.get("identificador"), campos.get("senha"));
 
             if (resultado.isEmpty()) {
-                Http.json(ex, 401, "{\"erro\":\"Identificador ou senha inválidos.\"}");
+                Http.erro(ex, 401, "Identificador ou senha inválidos.");
                 return;
             }
 
@@ -42,11 +47,10 @@ public class LoginHandler implements HttpHandler {
             String token = sessoes.criar(usuario.getId(), usuario.getPerfil());
             ex.getResponseHeaders().add("Set-Cookie",
                     "SESSAO=" + token + "; HttpOnly; Path=/; SameSite=Strict");
-            Http.json(ex, 200, "{\"perfil\":\"" + usuario.getPerfil() + "\"}");
+            Http.json(ex, 200, Json.objeto().campo("perfil", usuario.getPerfil()).build());
 
         } catch (SQLException e) {
-            Http.json(ex, 500, "{\"erro\":\"Erro interno.\"}");
+            Http.erro(ex, 500, "Erro interno.");
         }
     }
-
 }

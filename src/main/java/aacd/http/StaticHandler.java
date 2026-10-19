@@ -5,6 +5,7 @@ import com.sun.net.httpserver.HttpHandler;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.util.Map;
 
@@ -30,15 +31,26 @@ public class StaticHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange ex) throws IOException {
+        if (!"GET".equals(ex.getRequestMethod())) {
+            ex.getResponseHeaders().set("Allow", "GET");
+            Http.erro(ex, 405, "Método não permitido.");
+            return;
+        }
+
         String caminho = ex.getRequestURI().getPath();
         if (caminho.equals("/")) {
             caminho = "/index.html";
         }
 
-        // normalize + startsWith impede acessar arquivos fora da pasta public (ex.: /../pom.xml)
-        Path arquivo = raiz.resolve(caminho.substring(1)).normalize();
+        Path arquivo;
+        try {
+            arquivo = raiz.resolve(caminho.substring(1)).normalize();
+        } catch (InvalidPathException e) {
+            Http.erro(ex, 404, "Não encontrado.");
+            return;
+        }
         if (!arquivo.startsWith(raiz) || !Files.isRegularFile(arquivo)) {
-            Http.json(ex, 404, "{\"erro\":\"não encontrado\"}");
+            Http.erro(ex, 404, "Não encontrado.");
             return;
         }
 
@@ -46,7 +58,8 @@ public class StaticHandler implements HttpHandler {
         int ponto = nome.lastIndexOf('.');
         String extensao = ponto >= 0 ? nome.substring(ponto + 1).toLowerCase() : "";
 
-        Http.enviar(ex, 200, TIPOS.getOrDefault(extensao, "application/octet-stream"), Files.readAllBytes(arquivo));
+        Http.enviar(ex, 200, TIPOS.getOrDefault(extensao, "application/octet-stream"),
+                Files.readAllBytes(arquivo));
     }
 
     public static class LogoutHanlder {

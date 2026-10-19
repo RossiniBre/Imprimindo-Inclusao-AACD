@@ -7,6 +7,7 @@ import com.sun.net.httpserver.HttpHandler;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Map;
+import java.util.Optional;
 
 public class EmpresaHandler implements HttpHandler {
 
@@ -20,11 +21,15 @@ public class EmpresaHandler implements HttpHandler {
     public void handle(HttpExchange ex) throws IOException {
         if (!"POST".equals(ex.getRequestMethod())) {
             ex.getResponseHeaders().set("Allow", "POST");
-            Http.json(ex, 405, "{\"erro\":\"Método não permitido.\"}");
+            Http.erro(ex, 405, "Método não permitido.");
             return;
         }
 
-        Map<String, String> campos = Http.lerFormulario(ex);
+        Optional<Map<String, String>> formulario = Http.lerFormulario(ex);
+        if (formulario.isEmpty()) {
+            return;
+        }
+        Map<String, String> campos = formulario.get();
 
         try {
             cadastro.executar(
@@ -32,14 +37,14 @@ public class EmpresaHandler implements HttpHandler {
                     campos.get("email"), campos.get("telefone"),
                     campos.get("cep"), campos.get("rua"), campos.get("numero"),
                     campos.get("bairro"), campos.get("cidade"), campos.get("uf"));
-            Http.json(ex, 201, "{\"mensagem\":\"Empresa cadastrada.\"}");
+            Http.json(ex, 201, Json.objeto().campo("mensagem", "Empresa cadastrada.").build());
 
         } catch (IllegalStateException e) {
-            Http.json(ex, 409, "{\"erro\":\"" + e.getMessage() + "\"}");
+            Http.erro(ex, 409, e.getMessage());
         } catch (IllegalArgumentException e) {
-            Http.json(ex, 400, "{\"erro\":\"" + e.getMessage() + "\"}");
+            Http.erro(ex, 400, e.getMessage());
         } catch (SQLException e) {
-            Http.json(ex, 500, "{\"erro\":\"Erro interno.\"}");
+            Http.erro(ex, 500, "Erro interno.");
         }
     }
 }

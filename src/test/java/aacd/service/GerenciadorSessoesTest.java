@@ -1,4 +1,4 @@
-package service;
+package aacd.service;
 
 import aacd.model.Sessao;
 import aacd.service.GerenciadorSessoes;

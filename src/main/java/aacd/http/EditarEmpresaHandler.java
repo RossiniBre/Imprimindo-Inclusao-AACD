@@ -27,17 +27,23 @@ public class EditarEmpresaHandler implements HttpHandler {
     public void handle(HttpExchange ex) throws IOException {
         if (!"POST".equals(ex.getRequestMethod())) {
             ex.getResponseHeaders().set("Allow", "POST");
-            Http.json(ex, 405, "{\"erro\":\"Método não permitido.\"}");
+            Http.erro(ex, 405, "Método não permitido.");
             return;
         }
 
         Optional<Sessao> sessao = Http.exigirPerfil(ex, sessoes, "EMPRESA");
         if (sessao.isEmpty()) return;
 
-        Map<String, String> campos = Http.lerFormulario(ex);
+        Optional<Map<String, String>> formulario = Http.lerFormulario(ex);
+        if (formulario.isEmpty()) return;
+        Map<String, String> campos = formulario.get();
 
         try {
             Usuario ator = usuarioDao.buscarPorId(sessao.get().getUsuarioId());
+            if (ator == null) {
+                Http.erro(ex, 401, "Não autenticado.");
+                return;
+            }
 
             editarEmpresa.executar(ator,
                     campos.get("nome"), campos.get("email"), campos.get("telefone"),
@@ -47,11 +53,11 @@ public class EditarEmpresaHandler implements HttpHandler {
             Http.json(ex, 200, Json.objeto().campo("mensagem", "Dados atualizados.").build());
 
         } catch (IllegalStateException e) {
-            Http.json(ex, 409, Json.objeto().campo("erro", e.getMessage()).build());
+            Http.erro(ex, 409, e.getMessage());
         } catch (IllegalArgumentException e) {
-            Http.json(ex, 400, Json.objeto().campo("erro", e.getMessage()).build());
+            Http.erro(ex, 400, e.getMessage());
         } catch (SQLException e) {
-            Http.json(ex, 500, Json.objeto().campo("erro", "Erro interno.").build());
+            Http.erro(ex, 500, "Erro interno.");
         }
     }
 }

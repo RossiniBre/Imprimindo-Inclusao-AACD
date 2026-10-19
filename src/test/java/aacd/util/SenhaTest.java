@@ -1,4 +1,4 @@
-package util;
+package aacd.util;
 
 import aacd.util.Senha;
 import org.junit.jupiter.api.Test;

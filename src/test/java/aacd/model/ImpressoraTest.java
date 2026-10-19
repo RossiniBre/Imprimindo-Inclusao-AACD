@@ -1,4 +1,4 @@
-package model;
+package aacd.model;
 
 import aacd.model.Disponibilidade;
 import aacd.model.Impressora;

@@ -28,7 +28,7 @@ public class EmpresaPerfilHandler implements HttpHandler {
     public void handle(HttpExchange ex) throws IOException {
         if (!"GET".equals(ex.getRequestMethod())) {
             ex.getResponseHeaders().set("Allow", "GET");
-            Http.json(ex, 405, Json.objeto().campo("erro", "Método não permitido.").build());
+            Http.erro(ex, 405, "Método não permitido.");
             return;
         }
 
@@ -41,7 +41,7 @@ public class EmpresaPerfilHandler implements HttpHandler {
             Empresa empresa = empresaDao.buscarPorUsuarioId(usuarioId);
 
             if (usuario == null || empresa == null) {
-                Http.json(ex, 404, Json.objeto().campo("erro", "Empresa não encontrada.").build());
+                Http.erro(ex, 404, "Empresa não encontrada.");
                 return;
             }
 
@@ -66,7 +66,7 @@ public class EmpresaPerfilHandler implements HttpHandler {
             Http.json(ex, 200, json);
 
         } catch (SQLException e) {
-            Http.json(ex, 500, Json.objeto().campo("erro", "Erro interno.").build());
+            Http.erro(ex, 500, "Erro interno.");
         }
     }
 }
