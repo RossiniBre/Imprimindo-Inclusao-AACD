@@ -7,15 +7,35 @@ import aacd.model.Empresa;
 import aacd.model.Impressora;
 import aacd.model.Usuario;
 
+import aacd.dao.ImpressoraMateriaisDao;
+import aacd.model.Material;
+import java.util.Set;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 
 public class CadastrarImpressora {
 
-    private final EmpresaDao empresaDao = new EmpresaDao();
-    private final ImpressoraDao impressoraDao = new ImpressoraDao();
+    private final EmpresaDao empresaDao;
+    private final ImpressoraDao impressoraDao;
+    private final ImpressoraMateriaisDao materiaisDao;
+    private final ExcluirConta.FornecedorConexao conexoes;
 
-    public int executar(Usuario ator, String modelo) throws SQLException {
+    public CadastrarImpressora() {
+        this(new EmpresaDao(), new ImpressoraDao(), new ImpressoraMateriaisDao(),
+                ConnectionFactory::getConnection);
+    }
+
+    public CadastrarImpressora(EmpresaDao empresaDao, ImpressoraDao impressoraDao,
+                               ImpressoraMateriaisDao materiaisDao,
+                               ExcluirConta.FornecedorConexao conexoes) {
+        this.empresaDao = empresaDao;
+        this.impressoraDao = impressoraDao;
+        this.materiaisDao = materiaisDao;
+        this.conexoes = conexoes;
+    }
+
+    public int executar(Usuario ator, String modelo, Set<Material> materiais) throws SQLException {
         if (ator == null || !"EMPRESA".equals(ator.getPerfil()) || !ator.isAtivo()) {
             throw new IllegalStateException("Apenas empresas podem cadastrar impressoras!");
         }
@@ -26,9 +46,28 @@ public class CadastrarImpressora {
         }
 
         Impressora impressora = new Impressora(empresa.getId(), modelo);
+        impressora.setMateriais(materiais);   // recusa nulo e vazio antes de tocar no banco
 
-        try (Connection conn = ConnectionFactory.getConnection()) {
-            return impressoraDao.inserir(conn, impressora);
+        int id;
+        try (Connection conn = conexoes.abrir()) {
+            id = impressoraDao.inserir(conn, impressora);
+        }
+
+        try {
+            materiaisDao.salvar(id, impressora.getMateriais());
+        } catch (RuntimeException e) {
+            desfazer(id);
+            throw e;
+        }
+        return id;
+    }
+
+    private void desfazer(int impressoraId) {
+        try (Connection conn = conexoes.abrir()) {
+            impressoraDao.apagar(conn, impressoraId);
+        } catch (SQLException e) {
+            System.err.println("Impressora " + impressoraId
+                    + " ficou sem materiais e não foi desfeita: " + e.getMessage());
         }
     }
 }

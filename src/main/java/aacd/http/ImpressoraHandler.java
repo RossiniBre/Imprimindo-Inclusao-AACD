@@ -19,6 +19,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import aacd.model.Material;
+import com.mongodb.MongoException;
+import java.util.EnumSet;
+import java.util.Locale;
+import java.util.Set;
+
 public class ImpressoraHandler implements HttpHandler {
 
     private final GerenciadorSessoes sessoes;
@@ -67,7 +73,8 @@ public class ImpressoraHandler implements HttpHandler {
                 return;
             }
 
-            int id = cadastro.executar(ator, campos.get("modelo"));
+            int id = cadastro.executar(ator, campos.get("modelo"),
+                    lerMateriais(campos.get("materiais")));
             Http.json(ex, 201, Json.objeto().campo("id", id).build());
 
         } catch (IllegalStateException e) {
@@ -75,6 +82,9 @@ public class ImpressoraHandler implements HttpHandler {
         } catch (IllegalArgumentException e) {
             Http.erro(ex, 400, e.getMessage());
         } catch (SQLException e) {
+            Http.erro(ex, 500, "Erro interno.");
+        } catch (MongoException e) {
+            e.printStackTrace();
             Http.erro(ex, 500, "Erro interno.");
         }
     }
@@ -101,6 +111,23 @@ public class ImpressoraHandler implements HttpHandler {
         } catch (SQLException e) {
             Http.erro(ex, 500, "Erro interno.");
         }
+    }
+
+    private static Set<Material> lerMateriais(String texto) {
+        Set<Material> resultado = EnumSet.noneOf(Material.class);
+        if (texto == null || texto.isBlank()) {
+            return resultado;
+        }
+        for (String parte : texto.split(",")) {
+            String nome = parte.trim();
+            if (nome.isEmpty()) continue;
+            try {
+                resultado.add(Material.valueOf(nome.toUpperCase(Locale.ROOT)));
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("Material inválido: " + nome);
+            }
+        }
+        return resultado;
     }
 
     public static String paraJson(Impressora i) {

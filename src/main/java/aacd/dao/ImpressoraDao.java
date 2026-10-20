@@ -94,4 +94,13 @@ public class ImpressoraDao {
             }
         }
     }
+
+    public void apagar(Connection conn, int id) throws SQLException {
+        String sql = "DELETE FROM impressora WHERE idimpressora = ?";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ps.executeUpdate();
+        }
+    }
 }

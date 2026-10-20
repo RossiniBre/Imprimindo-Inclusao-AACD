@@ -1,11 +1,16 @@
 package aacd.model;
 
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.Set;
+
 public class Impressora {
     private int id;
     private int empresaId;
     private String modelo;
     private Disponibilidade disponibilidade;
     private boolean ativo;
+    private final Set<Material> materiais = EnumSet.noneOf(Material.class);
 
     public Impressora(int id, int empresaId, String modelo, Disponibilidade disponibilidade, boolean ativo) {
         this.id = id;
@@ -38,6 +43,7 @@ public class Impressora {
     public String getModelo(){ return this.modelo; }
     public Disponibilidade getDisponibilidade(){ return this.disponibilidade; }
     public boolean isAtivo(){ return this.ativo; }
+    public Set<Material> getMateriais() { return Collections.unmodifiableSet(materiais); }
 
     //setters
     public void setId(int id){
@@ -57,5 +63,13 @@ public class Impressora {
             throw new IllegalArgumentException("Modelo não pode estar vazio");
         }
         this.modelo = modelo.trim();
+    }
+
+    public void setMateriais(Set<Material> novos) {
+        if (novos == null || novos.isEmpty()) {
+            throw new IllegalArgumentException("Informe ao menos um material");
+        }
+        materiais.clear();
+        materiais.addAll(novos);
     }
 }

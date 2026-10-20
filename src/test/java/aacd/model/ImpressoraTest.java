@@ -4,6 +4,8 @@ import aacd.model.Disponibilidade;
 import aacd.model.Impressora;
 import org.junit.jupiter.api.Test;
 
+import java.util.Set;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class ImpressoraTest {
@@ -54,5 +56,32 @@ class ImpressoraTest {
         Impressora i = new Impressora(1, "Ender 3");
         i.setAtivo(false);
         assertFalse(i.isAtivo());
+    }
+
+    @Test
+    void materiais_comecamVazios() {
+        Impressora i = new Impressora(1, "Ender 3");
+        assertTrue(i.getMateriais().isEmpty());
+    }
+
+    @Test
+    void setMateriais_guardaOConjunto() {
+        Impressora i = new Impressora(1, "Ender 3");
+        i.setMateriais(Set.of(Material.PLA, Material.ABS));
+        assertEquals(Set.of(Material.PLA, Material.ABS), i.getMateriais());
+    }
+
+    @Test
+    void setMateriais_recusaVazioENulo() {
+        Impressora i = new Impressora(1, "Ender 3");
+        assertThrows(IllegalArgumentException.class, () -> i.setMateriais(Set.of()));
+        assertThrows(IllegalArgumentException.class, () -> i.setMateriais(null));
+    }
+
+    @Test
+    void getMateriais_naoPermiteAlterarPorFora() {
+        Impressora i = new Impressora(1, "Ender 3");
+        i.setMateriais(Set.of(Material.PLA));
+        assertThrows(UnsupportedOperationException.class, () -> i.getMateriais().add(Material.ABS));
     }
 }
