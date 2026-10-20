@@ -88,14 +88,19 @@ public class UsuarioDao {
         }
     }
 
-    public void atualizarAtivo(int id, boolean ativo) throws SQLException {
-        String sql = "UPDATE usuario SET ativo = ? WHERE idusuario = ?";
-
-        try (Connection conn = ConnectionFactory.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+    public void atualizarSituacao(Connection conn, int id, boolean ativo, boolean bloqueadaPelaAacd) throws SQLException {
+        String sql = "UPDATE usuario SET ativo = ?, bloqueada_pela_aacd = ? WHERE idusuario = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setBoolean(1, ativo);
-            ps.setInt(2, id);
+            ps.setBoolean(2, bloqueadaPelaAacd);
+            ps.setInt(3, id);
             ps.executeUpdate();
+        }
+    }
+
+    public void atualizarSituacao(int id, boolean ativo, boolean bloqueadaPelaAacd) throws SQLException {
+        try (Connection conn = ConnectionFactory.getConnection()) {
+            atualizarSituacao(conn, id, ativo, bloqueadaPelaAacd);
         }
     }
 
@@ -122,7 +127,7 @@ public class UsuarioDao {
     }
 
     public boolean atualizarNome(Connection conn, int id, String nome) throws SQLException {
-        String sql = "UPDATE usuario SET nome = ? WHERE id = ?";
+        String sql = "UPDATE usuario SET nome = ? WHERE idusuario = ?";
 
         try (PreparedStatement ps = conn.prepareStatement(sql)){
             ps.setString(1, nome);
@@ -132,7 +137,7 @@ public class UsuarioDao {
     }
 
     public boolean existePorIdentificadorExceto(String identificador, int usuarioId) throws SQLException {
-        String sql = "SELECT 1 FROM usuario WHERE identificador = ? AND id <> ?";
+        String sql = "SELECT 1 FROM usuario WHERE identificador = ? AND idusuario <> ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -147,7 +152,7 @@ public class UsuarioDao {
     }
 
     public boolean atualizarIdentificador(Connection conn, int id, String identificador) throws SQLException {
-        String sql = "UPDATE usuario SET identificador = ? WHERE id = ?";
+        String sql = "UPDATE usuario SET identificador = ? WHERE idusuario = ?";
 
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, identificador);

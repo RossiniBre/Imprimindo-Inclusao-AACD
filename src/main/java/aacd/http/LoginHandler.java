@@ -2,6 +2,7 @@ package aacd.http;
 
 import aacd.model.Usuario;
 import aacd.service.AutenticacaoService;
+import aacd.service.ContaBloqueadaException;
 import aacd.service.GerenciadorSessoes;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -51,6 +52,8 @@ public class LoginHandler implements HttpHandler {
 
         } catch (SQLException e) {
             Http.erro(ex, 500, "Erro interno.");
+        } catch (ContaBloqueadaException e) {
+            Http.erro(ex, 403, e.getMessage());
         }
     }
 }

@@ -94,7 +94,7 @@ public Solicitacao buscarPorId(int id) throws SQLException {
     public SolicitacaoImpressao buscarPorId(Connection conn, int id) throws SQLException {
         String sql = "SELECT idsolicitacao_impressao, empresa_id, criado_por, impressora_id, "
                 + "titulo, mongo_id, status, justificativa, cancelado_por, "
-                + "data_criacao, data_decisao, data_finalizacao "
+                + "data_criacao, data_decisao, data_finalizacao, criado_por_nome "
                 + "FROM solicitacao_impressao WHERE idsolicitacao_impressao = ?";
 
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -115,7 +115,8 @@ public Solicitacao buscarPorId(int id) throws SQLException {
                         rs.getObject("cancelado_por", Integer.class),
                         rs.getTimestamp("data_criacao"),
                         rs.getTimestamp("data_decisao"),
-                        rs.getTimestamp("data_finalizacao"));
+                        rs.getTimestamp("data_finalizacao"),
+                        rs.getString("criado_por_nome"));
             }
         }
     }

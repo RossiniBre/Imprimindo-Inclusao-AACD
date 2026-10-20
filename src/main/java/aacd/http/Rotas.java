@@ -1,7 +1,10 @@
 package aacd.http;
 
+import aacd.config.ConnectionFactory;
 import aacd.config.MongoFactory;
 import aacd.dao.ConteudoSolicitacaoDao;
+import aacd.dao.ExclusaoContaDao;
+import aacd.dao.SolicitacaoEventosDao;
 import aacd.dao.UsuarioDao;
 import aacd.service.*;
 import aacd.storage.ArmazenamentoGridFs;
@@ -18,6 +21,13 @@ public final class Rotas {
         AutenticacaoService autenticacao = new AutenticacaoService(usuarioDao);
         ArmazenamentoGridFs armazenamento = new ArmazenamentoGridFs(MongoFactory.getDatabase());
         ConteudoSolicitacaoDao conteudoDao = new ConteudoSolicitacaoDao(MongoFactory.getDatabase());
+        ExclusaoContaDao exclusaoDao = new ExclusaoContaDao();
+        ExcluirConta.FornecedorConexao conexoes = ConnectionFactory::getConnection;
+
+        AlterarEstadoConta alterarEstado = new AlterarEstadoConta(usuarioDao, exclusaoDao, sessoes, conexoes);
+        ExcluirConta excluirConta = new ExcluirConta(usuarioDao, exclusaoDao, conteudoDao,
+                new SolicitacaoEventosDao(), armazenamento, sessoes, conexoes);
+        ContaHandler contaHandler = new ContaHandler(sessoes, usuarioDao, alterarEstado, excluirConta);
 
         // Infra e sessão
         servidor.createContext("/api/health", ex -> Http.json(ex, 200, Json.objeto().campo("status", "ok").build()));
@@ -58,5 +68,10 @@ public final class Rotas {
 
         // Doações
         servidor.createContext("/api/doacoes", new DoacoesHandler(sessoes));
+
+        // Desativação/Exclusão de contas
+        servidor.createContext("/api/conta/desativar", contaHandler);
+        servidor.createContext("/api/conta/reativar", contaHandler);
+        servidor.createContext("/api/conta/excluir", contaHandler);
     }
 }

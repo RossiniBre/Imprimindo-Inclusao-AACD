@@ -6,7 +6,8 @@ public class SolicitacaoImpressao {
     private int solicitacaoId;
     private int empresaId;
     private Integer impressoraId;
-    private int criadoPor;
+    private Integer criadoPor;
+    private String criadoPorNome;
     private String titulo;
     private String mongoId;
     private StatusSolicitacao status;
@@ -29,15 +30,17 @@ public class SolicitacaoImpressao {
     }
 
     // reconstrução
-    public SolicitacaoImpressao(int solicitacaoId, int empresaId, int criadoPor,
+    public SolicitacaoImpressao(int solicitacaoId, int empresaId, Integer criadoPor,
                                 Integer impressoraId, String titulo, String mongoId,
                                 StatusSolicitacao status, String justificativa,
                                 Integer canceladoPor, Date dataCriacao,
-                                Date dataDecisao, Date dataFinalizacao)
+                                Date dataDecisao, Date dataFinalizacao,
+                                String criadoPorNome)
     {
         this.solicitacaoId = validarId(solicitacaoId, "solicitação");
         this.empresaId = validarId(empresaId, "empresa");
-        this.criadoPor = validarId(criadoPor, "solicitante");
+        this.criadoPor = (criadoPor == null) ? null : validarId(criadoPor, "solicitante");
+        this.criadoPorNome = criadoPorNome;
         this.impressoraId = (impressoraId == null) ? null : validarId(impressoraId, "impressora");
         setTitulo(titulo);
         this.mongoId = validarMongoId(mongoId);
@@ -71,7 +74,8 @@ public class SolicitacaoImpressao {
     //getters
     public int getSolicitacaoId(){ return this.solicitacaoId; }
     public int getEmpresaId(){ return this.empresaId; }
-    public int getCriadoPor(){ return this.criadoPor; }
+    public Integer getCriadoPor(){ return this.criadoPor; }
+    public String getCriadoPorNome(){ return this.criadoPorNome; }
     public Integer getImpressoraId(){ return this.impressoraId; }
     public String getMongoId(){ return this.mongoId; }
     public StatusSolicitacao getStatus(){ return this.status; }

@@ -40,6 +40,10 @@ public class SolicitacaoEventosDao {
                 new UpdateOptions().upsert(true));
     }
 
+    public void apagar(int solicitacaoId) {
+        colecao().deleteOne(Filters.eq("_id", solicitacaoId));
+    }
+
     public Document buscar(int solicitacaoId) {
         return colecao().find(Filters.eq("_id", solicitacaoId)).first();
     }

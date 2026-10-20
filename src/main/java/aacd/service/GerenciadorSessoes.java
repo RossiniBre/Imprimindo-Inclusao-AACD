@@ -60,4 +60,8 @@ public class GerenciadorSessoes {
             }
         }, intervaloSegundos, intervaloSegundos, TimeUnit.SECONDS);
     }
+
+    public void destruirDoUsuario(int usuarioId) {
+        sessoes.values().removeIf(s -> s.getUsuarioId() == usuarioId);
+    }
 }

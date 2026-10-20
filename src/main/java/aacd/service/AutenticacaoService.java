@@ -28,7 +28,11 @@ public class AutenticacaoService {
         }
 
         if (!usuario.isAtivo()) {
-            usuarioDao.atualizarAtivo(usuario.getId(), true);
+            if (usuario.isBloqueadaPelaAacd()) {
+                throw new ContaBloqueadaException("Conta desativada pela AACD.");
+            }
+            usuarioDao.atualizarSituacao(usuario.getId(), true, false); // empresa se reativa
+            usuario.setAtivo(true);
         }
         return Optional.of(usuario);
     }

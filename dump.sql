@@ -27,6 +27,7 @@ CREATE TABLE IF NOT EXISTS `imprimindo_inclusao`.`usuario` (
   `senha_hash` VARCHAR(255) NOT NULL,
   `perfil` ENUM('ADMIN', 'EMPRESA', 'FUNCIONARIO') NOT NULL,
   `ativo` TINYINT NOT NULL DEFAULT '1',
+  `bloqueada_pela_aacd` TINYINT NOT NULL DEFAULT '0',
   PRIMARY KEY (`idusuario`),
   UNIQUE INDEX `identificador_UNIQUE` (`identificador` ASC) VISIBLE)
 ENGINE = InnoDB
@@ -66,7 +67,6 @@ COLLATE = utf8mb4_0900_ai_ci;
 CREATE TABLE IF NOT EXISTS `imprimindo_inclusao`.`doacao` (
   `iddoacao` INT NOT NULL AUTO_INCREMENT,
   `empresa_id` INT NOT NULL,
-  `tipo` ENUM('FILAMENTO', 'IMPRESSORA') NOT NULL,
   `descricao` TEXT NOT NULL,
   `quantidade` INT NOT NULL DEFAULT '1',
   `data_manifestacao` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -125,7 +125,8 @@ COLLATE = utf8mb4_0900_ai_ci;
 CREATE TABLE IF NOT EXISTS `imprimindo_inclusao`.`solicitacao_impressao` (
     `idsolicitacao_impressao` INT NOT NULL AUTO_INCREMENT,
     `empresa_id` INT NOT NULL,
-    `criado_por` INT NOT NULL,
+    `criado_por` INT NULL DEFAULT NULL,
+    `criado_por_nome` VARCHAR(100) NULL DEFAULT NULL,
     `impressora_id` INT NULL DEFAULT NULL,
     `titulo` VARCHAR(100) NOT NULL,
     `mongo_id` CHAR(24) NOT NULL,
@@ -145,7 +146,8 @@ CREATE TABLE IF NOT EXISTS `imprimindo_inclusao`.`solicitacao_impressao` (
     CONSTRAINT `fk_solicitacao_empresa`
     FOREIGN KEY (`empresa_id`) REFERENCES `imprimindo_inclusao`.`empresa` (`idempresa`),
     CONSTRAINT `fk_solicitacao_criado_por`
-    FOREIGN KEY (`criado_por`) REFERENCES `imprimindo_inclusao`.`funcionario` (`idfuncionario`),
+    FOREIGN KEY (`criado_por`) REFERENCES `imprimindo_inclusao`.`funcionario` (`idfuncionario`)
+    ON DELETE SET NULL,
     CONSTRAINT `fk_solicitacao_impressora`
     FOREIGN KEY (`impressora_id`) REFERENCES `imprimindo_inclusao`.`impressora` (`idimpressora`)
     ON DELETE SET NULL,

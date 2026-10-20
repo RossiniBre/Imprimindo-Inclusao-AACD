@@ -9,6 +9,7 @@ public class Usuario {
     private String senhaHash;
     private String perfil;
     private boolean ativo;
+    private boolean bloqueadaPelaAacd;
 
     public Usuario(int id, String nome, String identificador, String senhaHash, String perfil, boolean ativo){
 
@@ -41,6 +42,7 @@ public class Usuario {
     public String getSenhaHash(){ return this.senhaHash; }
     public String getPerfil(){ return this.perfil; }
     public boolean isAtivo(){ return this.ativo; }
+    public boolean isBloqueadaPelaAacd(){ return this.bloqueadaPelaAacd; }
 
     //setter
     public void setId(int id){
@@ -79,4 +81,6 @@ public class Usuario {
         }
         this.identificador = normalizado;
     }
+
+    public void setBloqueadaPelaAacd(boolean b){ this.bloqueadaPelaAacd = b; }
 }
