@@ -157,6 +157,26 @@ CREATE TABLE IF NOT EXISTS `imprimindo_inclusao`.`solicitacao_impressao` (
     DEFAULT CHARACTER SET = utf8mb4
     COLLATE = utf8mb4_0900_ai_ci;
 
+-- -----------------------------------------------------
+-- Table `imprimindo_inclusao`.`historico_solicitacao`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `imprimindo_inclusao`.`historico_solicitacao` (
+    `idhistorico` INT NOT NULL AUTO_INCREMENT,
+    `solicitacao_id` INT NOT NULL,
+    `status_anterior` ENUM('PENDENTE','EM_ANDAMENTO','RECUSADA','CANCELADA','CONCLUIDA','FALHOU') NULL,
+    `status_novo` ENUM('PENDENTE','EM_ANDAMENTO','RECUSADA','CANCELADA','CONCLUIDA','FALHOU') NOT NULL,
+    `usuario_id` INT NULL DEFAULT NULL,          -- NULL = sistema
+    `justificativa` TEXT NULL DEFAULT NULL,
+    `data_evento` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`idhistorico`),
+    INDEX `idx_historico_solicitacao` (`solicitacao_id`, `data_evento`),
+    CONSTRAINT `fk_historico_solicitacao`
+    FOREIGN KEY (`solicitacao_id`) REFERENCES `imprimindo_inclusao`.`solicitacao_impressao` (`idsolicitacao_impressao`)
+    ON DELETE CASCADE,
+    CONSTRAINT `fk_historico_usuario`
+    FOREIGN KEY (`usuario_id`) REFERENCES `imprimindo_inclusao`.`usuario` (`idusuario`)
+    ON DELETE SET NULL)
+    ENGINE = InnoDB DEFAULT CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;

@@ -62,6 +62,9 @@ public final class Rotas {
         servidor.createContext("/api/solicitacao/responder", new ResponderSolicitacaoHandler(sessoes));
         servidor.createContext("/api/solicitacao/arquivo",
                 new ArquivoSolicitacaoHandler(sessoes, conteudoDao, armazenamento));
+        servidor.createContext("/api/solicitacao/cancelar", new CancelarSolicitacaoHandler(sessoes));
+        servidor.createContext("/api/solicitacao/excluir",
+                new ExcluirSolicitacaoHandler(sessoes, new ExcluirSolicitacao(conteudoDao, armazenamento)));
 
         // Front-end estático (precisa ser o último: "/" casa com tudo que sobrar)
         servidor.createContext("/", new StaticHandler(Path.of("public")));

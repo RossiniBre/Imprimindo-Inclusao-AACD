@@ -3,9 +3,12 @@ package aacd.dao;
 import aacd.config.ConnectionFactory;
 import aacd.model.Solicitacao;
 import aacd.model.SolicitacaoImpressao;
+import aacd.model.SolicitacaoParaExcluir;
 import aacd.model.StatusSolicitacao;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SolicitacaoDao {
 
@@ -118,6 +121,81 @@ public Solicitacao buscarPorId(int id) throws SQLException {
                         rs.getTimestamp("data_finalizacao"),
                         rs.getString("criado_por_nome"));
             }
+        }
+    }
+
+    public boolean cancelar(Connection conn, int id, StatusSolicitacao statusEsperado,
+                            String justificativa, int canceladoPor) throws SQLException {
+        String sql = "UPDATE solicitacao_impressao "
+                + "SET status = 'CANCELADA', justificativa = ?, cancelado_por = ?, "
+                + "data_finalizacao = NOW() "
+                + "WHERE idsolicitacao_impressao = ? AND status = ?";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            if (justificativa == null) ps.setNull(1, Types.VARCHAR);
+            else ps.setString(1, justificativa);
+            ps.setInt(2, canceladoPor);
+            ps.setInt(3, id);
+            ps.setString(4, statusEsperado.name());
+            return ps.executeUpdate() > 0;
+        }
+    }
+
+    public List<Integer> listarPendentesExpiradas(Connection conn, int dias) throws SQLException {
+        String sql = "SELECT idsolicitacao_impressao FROM solicitacao_impressao "
+                + "WHERE status = 'PENDENTE' AND data_criacao < NOW() - INTERVAL ? DAY";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, dias);
+            try (ResultSet rs = ps.executeQuery()) {
+                List<Integer> ids = new ArrayList<>();
+                while (rs.next()) ids.add(rs.getInt(1));
+                return ids;
+            }
+        }
+    }
+
+    public boolean cancelarPorExpiracao(Connection conn, int id, String motivo) throws SQLException {
+        String sql = "UPDATE solicitacao_impressao "
+                + "SET status = 'CANCELADA', justificativa = ?, cancelado_por = NULL, "
+                + "data_finalizacao = NOW() "
+                + "WHERE idsolicitacao_impressao = ? AND status = 'PENDENTE'";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, motivo);
+            ps.setInt(2, id);
+            return ps.executeUpdate() > 0;
+        }
+    }
+
+    public List<SolicitacaoParaExcluir> listarFinalizadasExpiradas(Connection conn, int dias)
+            throws SQLException {
+        String sql = "SELECT idsolicitacao_impressao, mongo_id FROM solicitacao_impressao "
+                + "WHERE (status = 'RECUSADA' AND data_decisao < NOW() - INTERVAL ? DAY) "
+                + "OR (status IN ('CANCELADA','CONCLUIDA','FALHOU') "
+                + "AND data_finalizacao < NOW() - INTERVAL ? DAY)";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, dias);
+            ps.setInt(2, dias);
+            try (ResultSet rs = ps.executeQuery()) {
+                List<SolicitacaoParaExcluir> lista = new ArrayList<>();
+                while (rs.next()) {
+                    lista.add(new SolicitacaoParaExcluir(rs.getInt(1), rs.getString(2)));
+                }
+                return lista;
+            }
+        }
+    }
+
+    public boolean excluir(Connection conn, int id) throws SQLException {
+        String sql = "DELETE FROM solicitacao_impressao "
+                + "WHERE idsolicitacao_impressao = ? "
+                + "AND status IN ('RECUSADA','CANCELADA','CONCLUIDA','FALHOU')";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            return ps.executeUpdate() > 0;
         }
     }
 }
