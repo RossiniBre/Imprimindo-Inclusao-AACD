@@ -58,10 +58,9 @@ public class StaticHandler implements HttpHandler {
         int ponto = nome.lastIndexOf('.');
         String extensao = ponto >= 0 ? nome.substring(ponto + 1).toLowerCase() : "";
 
+        ex.getResponseHeaders().set("Cache-Control", "no-cache");
+
         Http.enviar(ex, 200, TIPOS.getOrDefault(extensao, "application/octet-stream"),
                 Files.readAllBytes(arquivo));
-    }
-
-    public static class LogoutHanlder {
     }
 }

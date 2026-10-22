@@ -55,6 +55,12 @@ public class ResponderSolicitacaoHandler implements HttpHandler {
             } else if ("RECUSAR".equals(decisao)) {
                 responder.recusar(ator, solicitacaoId, campos.get("justificativa"));
                 Http.json(ex, 200, Json.objeto().campo("mensagem", "Solicitação recusada.").build());
+            } else if ("CONCLUIR".equals(decisao)) {
+                responder.concluir(ator, solicitacaoId);
+                Http.json(ex, 200, Json.objeto().campo("mensagem", "Solicitação concluída.").build());
+            } else if ("FALHAR".equals(decisao)) {
+                responder.falhar(ator, solicitacaoId, campos.get("justificativa"));
+                Http.json(ex, 200, Json.objeto().campo("mensagem", "Solicitação marcada como falha.").build());
             } else {
                 Http.erro(ex, 400, "Decisão inválida.");
             }
@@ -65,6 +71,8 @@ public class ResponderSolicitacaoHandler implements HttpHandler {
             Http.erro(ex, 400, e.getMessage());
         } catch (SQLException | MongoException e) {
             Http.erro(ex, 500, "Erro interno.");
+        } catch (SecurityException e) {
+            Http.erro(ex, 403, e.getMessage());
         }
     }
 }

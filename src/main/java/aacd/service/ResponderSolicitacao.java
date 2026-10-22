@@ -18,10 +18,23 @@ public class ResponderSolicitacao {
 
     private static final int MAX_JUSTIFICATIVA = 500;
 
-    private final SolicitacaoDao solicitacaoDao = new SolicitacaoDao();
-    private final SolicitacaoEventosDao eventosDao = new SolicitacaoEventosDao();
-    private final ImpressoraDao impressoraDao = new ImpressoraDao();
-    private final PermissaoImpressora permissao = new PermissaoImpressora();
+    private final SolicitacaoDao solicitacaoDao;
+    private final SolicitacaoEventosDao eventosDao;
+    private final ImpressoraDao impressoraDao;
+    private final PermissaoImpressora permissao;
+
+    public ResponderSolicitacao() {
+        this(new SolicitacaoDao(), new SolicitacaoEventosDao(),
+                new ImpressoraDao(), new PermissaoImpressora());
+    }
+
+    ResponderSolicitacao(SolicitacaoDao solicitacaoDao, SolicitacaoEventosDao eventosDao,
+                         ImpressoraDao impressoraDao, PermissaoImpressora permissao) {
+        this.solicitacaoDao = solicitacaoDao;
+        this.eventosDao = eventosDao;
+        this.impressoraDao = impressoraDao;
+        this.permissao = permissao;
+    }
 
     public void aceitar(Usuario ator, int solicitacaoId, String prazoTexto) throws SQLException {
         validarAtor(ator);
@@ -119,5 +132,45 @@ public class ResponderSolicitacao {
                     "Justificativa deve ter no máximo " + MAX_JUSTIFICATIVA + " caracteres!");
         }
         return valor;
+    }
+
+    public void concluir(Usuario ator, int solicitacaoId) throws SQLException {
+        validarAtor(ator);
+        finalizar(ator, solicitacaoId, StatusSolicitacao.CONCLUIDA, "Concluída pela empresa");
+    }
+
+    public void falhar(Usuario ator, int solicitacaoId, String motivo) throws SQLException {
+        validarAtor(ator);
+        String observacao = (motivo == null || motivo.isBlank())
+                ? "Falhou" : lerJustificativa(motivo);
+        finalizar(ator, solicitacaoId, StatusSolicitacao.FALHOU, observacao);
+    }
+
+    private void finalizar(Usuario ator, int solicitacaoId, StatusSolicitacao novoStatus,
+                           String observacao) throws SQLException {
+        try (Connection conn = ConnectionFactory.getConnection()) {
+            conn.setAutoCommit(false);
+            try {
+                Solicitacao solicitacao = solicitacaoDao.buscarSolicitacaoPorId(conn, solicitacaoId);
+                if (solicitacao == null) {
+                    throw new IllegalArgumentException("Solicitação não encontrada!");
+                }
+                validarDono(conn, ator, solicitacao);
+
+                if (solicitacao.getStatus() != StatusSolicitacao.EM_ANDAMENTO) {
+                    throw new IllegalStateException("Esta solicitação não está em andamento!");
+                }
+                if (!solicitacaoDao.finalizar(conn, solicitacaoId, novoStatus)) {
+                    throw new IllegalStateException("Esta solicitação não está em andamento!");
+                }
+
+                eventosDao.registrarEvento(solicitacaoId, StatusSolicitacao.EM_ANDAMENTO,
+                        novoStatus, ator.getId(), observacao, null);
+                conn.commit();
+            } catch (SQLException | RuntimeException e) {
+                conn.rollback();
+                throw e;
+            }
+        }
     }
 }

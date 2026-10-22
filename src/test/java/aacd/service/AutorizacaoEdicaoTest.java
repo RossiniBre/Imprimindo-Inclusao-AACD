@@ -58,8 +58,8 @@ class AutorizacaoEdicaoTest {
     @Test
     void editarImpressora_recusaAtorNuloOuInativo() {
         EditarImpressora s = new EditarImpressora();
-        assertThrows(IllegalStateException.class, () -> s.executar(null, 1, "Ender 3"));
+        assertThrows(IllegalStateException.class, () -> s.executar(null, 1, "Ender 3", null));
         assertThrows(IllegalStateException.class,
-                () -> s.executar(usuario(1, "EMPRESA", false), 1, "Ender 3"));
+                () -> s.executar(usuario(1, "EMPRESA", false), 1, "Ender 3", null));
     }
 }

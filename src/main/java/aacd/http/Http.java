@@ -1,5 +1,6 @@
 package aacd.http;
 
+import aacd.model.Material;
 import aacd.model.Sessao;
 import aacd.service.GerenciadorSessoes;
 import com.sun.net.httpserver.HttpExchange;
@@ -7,9 +8,7 @@ import com.sun.net.httpserver.HttpExchange;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public final class Http {
 
@@ -124,5 +123,19 @@ public final class Http {
 
     public static void erro(HttpExchange ex, int status, String mensagem) throws IOException {
         json(ex, status, Json.objeto().campo("erro", mensagem != null ? mensagem : "Erro.").build());
+    }
+
+    public static Set<Material> lerMateriais(String texto) {
+        Set<Material> resultado = EnumSet.noneOf(Material.class);
+        if (texto == null || texto.isBlank()) return resultado;
+
+        for (String parte : texto.split(",")) {
+            try {
+                resultado.add(Material.valueOf(parte.trim().toUpperCase()));
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("Material inválido: " + parte.trim());
+            }
+        }
+        return resultado;
     }
 }

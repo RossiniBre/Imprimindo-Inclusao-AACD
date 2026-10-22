@@ -2,6 +2,7 @@ package aacd.http;
 
 import aacd.dao.EmpresaDao;
 import aacd.dao.ImpressoraDao;
+import aacd.dao.ImpressoraMateriaisDao;
 import aacd.dao.UsuarioDao;
 import aacd.model.Empresa;
 import aacd.model.Impressora;
@@ -32,6 +33,7 @@ public class ImpressoraHandler implements HttpHandler {
     private final CadastrarImpressora cadastro;
     private final EmpresaDao empresaDao = new EmpresaDao();
     private final ImpressoraDao impressoraDao = new ImpressoraDao();
+    private final ImpressoraMateriaisDao materiaisDao = new ImpressoraMateriaisDao();
 
     public ImpressoraHandler(GerenciadorSessoes sessoes, UsuarioDao usuarioDao,
                              CadastrarImpressora cadastro) {
@@ -102,13 +104,17 @@ public class ImpressoraHandler implements HttpHandler {
                 return;
             }
 
+            List<Impressora> impressoras = impressoraDao.listarPorEmpresa(empresa.getId());
+            List<Integer> ids = impressoras.stream().map(Impressora::getId).toList();
+            Map<Integer, Set<Material>> materiais = materiaisDao.buscarVarias(ids);
+
             List<String> itens = new ArrayList<>();
-            for (Impressora i : impressoraDao.listarPorEmpresa(empresa.getId())) {
-                itens.add(paraJson(i));
+            for (Impressora i : impressoras) {
+                itens.add(paraJson(i, materiais.getOrDefault(i.getId(), Set.of())));
             }
             Http.json(ex, 200, Json.lista(itens));
 
-        } catch (SQLException e) {
+        } catch (SQLException | MongoException e) {
             Http.erro(ex, 500, "Erro interno.");
         }
     }
@@ -130,12 +136,23 @@ public class ImpressoraHandler implements HttpHandler {
         return resultado;
     }
 
-    public static String paraJson(Impressora i) {
-        return Json.objeto()
+    public static String paraJson(Impressora i, Set<Material> materiais) {
+        List<String> itensMateriais = new ArrayList<>();
+        for (Material m : materiais) {
+            itensMateriais.add(Json.objeto()
+                    .campo("codigo", m.name())
+                    .campo("rotulo", m.getRotulo())
+                    .build());
+        }
+
+        String base = Json.objeto()
                 .campo("id", i.getId())
                 .campo("modelo", i.getModelo())
                 .campo("disponibilidade", i.getDisponibilidade().name())
                 .campo("ativo", i.isAtivo())
                 .build();
+
+        return base.substring(0, base.lastIndexOf('}'))
+                + ",\"materiais\":" + Json.lista(itensMateriais) + "}";
     }
 }

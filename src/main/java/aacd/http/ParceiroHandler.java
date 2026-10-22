@@ -2,19 +2,15 @@ package aacd.http;
 
 import aacd.dao.EmpresaDao;
 import aacd.dao.ImpressoraDao;
-import aacd.model.EmpresaResumo;
-import aacd.model.Endereco;
-import aacd.model.Impressora;
-import aacd.model.Sessao;
+import aacd.dao.ImpressoraMateriaisDao;
+import aacd.model.*;
 import aacd.service.GerenciadorSessoes;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class ParceiroHandler implements HttpHandler {
 
@@ -23,6 +19,7 @@ public class ParceiroHandler implements HttpHandler {
     private final GerenciadorSessoes sessoes;
     private final EmpresaDao empresaDao = new EmpresaDao();
     private final ImpressoraDao impressoraDao = new ImpressoraDao();
+    private final ImpressoraMateriaisDao materiaisDao = new ImpressoraMateriaisDao();
 
     public ParceiroHandler(GerenciadorSessoes sessoes) {
         this.sessoes = sessoes;
@@ -86,11 +83,19 @@ public class ParceiroHandler implements HttpHandler {
             return;
         }
 
-        List<String> itens = new ArrayList<>();
+        List<Impressora> ativas = new ArrayList<>();
         for (Impressora i : impressoraDao.listarPorEmpresa(idEmpresa)) {
             if (i.isAtivo()) {
-                itens.add(ImpressoraHandler.paraJson(i));
+                ativas.add(i);
             }
+        }
+
+        List<Integer> ids = ativas.stream().map(Impressora::getId).toList();
+        Map<Integer, Set<Material>> materiais = materiaisDao.buscarVarias(ids);
+
+        List<String> itens = new ArrayList<>();
+        for (Impressora i : ativas) {
+            itens.add(ImpressoraHandler.paraJson(i, materiais.getOrDefault(i.getId(), Set.of())));
         }
         Http.json(ex, 200, Json.lista(itens));
     }

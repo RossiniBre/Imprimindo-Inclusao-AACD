@@ -7,11 +7,7 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.ReplaceOptions;
 import org.bson.Document;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class ImpressoraMateriaisDao {
 
@@ -28,20 +24,8 @@ public class ImpressoraMateriaisDao {
     }
 
     public Set<Material> buscar(int impressoraId) {
-        Set<Material> resultado = EnumSet.noneOf(Material.class);
         Document doc = colecao().find(Filters.eq("_id", impressoraId)).first();
-        if (doc == null) return resultado;
-
-        List<String> nomes = doc.getList("materiais", String.class);
-        if (nomes == null) return resultado;
-
-        for (String nome : nomes) {
-            try {
-                resultado.add(Material.valueOf(nome));
-            } catch (IllegalArgumentException ignorado) {
-            }
-        }
-        return resultado;
+        return doc == null ? EnumSet.noneOf(Material.class) : converter(doc);
     }
 
     public List<Integer> idsPorMaterial(Material material) {
@@ -60,5 +44,30 @@ public class ImpressoraMateriaisDao {
         if (!impressoraIds.isEmpty()) {
             colecao().deleteMany(Filters.in("_id", impressoraIds));
         }
+    }
+
+    private Set<Material> converter(Document doc) {
+        Set<Material> resultado = EnumSet.noneOf(Material.class);
+        List<String> nomes = doc.getList("materiais", String.class);
+        if (nomes == null) return resultado;
+
+        for (String nome : nomes) {
+            try {
+                resultado.add(Material.valueOf(nome));
+            } catch (IllegalArgumentException ignorado) {
+                // material que não existe mais no enum
+            }
+        }
+        return resultado;
+    }
+
+    public Map<Integer, Set<Material>> buscarVarias(Collection<Integer> impressoraIds) {
+        Map<Integer, Set<Material>> resultado = new HashMap<>();
+        if (impressoraIds.isEmpty()) return resultado;
+
+        for (Document doc : colecao().find(Filters.in("_id", impressoraIds))) {
+            resultado.put(doc.getInteger("_id"), converter(doc));
+        }
+        return resultado;
     }
 }

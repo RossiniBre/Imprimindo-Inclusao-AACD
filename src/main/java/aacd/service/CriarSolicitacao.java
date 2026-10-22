@@ -5,10 +5,7 @@ import aacd.dao.ConteudoSolicitacaoDao;
 import aacd.dao.FuncionarioDao;
 import aacd.dao.ImpressoraDao;
 import aacd.dao.SolicitacaoDao;
-import aacd.model.ConteudoSolicitacao;
-import aacd.model.Funcionario;
-import aacd.model.Impressora;
-import aacd.model.SolicitacaoImpressao;
+import aacd.model.*;
 import aacd.storage.ArmazenamentoArquivo;
 import aacd.storage.ArmazenamentoException;
 
@@ -58,6 +55,27 @@ public class CriarSolicitacao {
         if (funcionario == null) {
             throw new IllegalArgumentException("Apenas funcionários podem criar solicitações");
         }
+        return gravar(funcionario.getId(), null, impressoraId, titulo, descricao,
+                quantidade, nomeArquivo, arquivo);
+    }
+
+    public int criarComoAdmin(Usuario admin, int impressoraId, String titulo, String descricao,
+                              int quantidade, String nomeArquivo, InputStream arquivo)
+            throws SQLException, ArmazenamentoException {
+
+        new ConteudoSolicitacao(titulo, descricao, quantidade, "validacao", nomeArquivo);
+
+        if (admin == null || !"ADMIN".equals(admin.getPerfil()) || !admin.isAtivo()) {
+            throw new IllegalArgumentException("Apenas administradores podem criar solicitações como admin");
+        }
+        return gravar(null, admin.getIdentificador(), impressoraId, titulo, descricao,
+                quantidade, nomeArquivo, arquivo);
+    }
+
+    private int gravar(Integer funcionarioId, String nomeCriador, int impressoraId,
+                       String titulo, String descricao, int quantidade,
+                       String nomeArquivo, InputStream arquivo)
+            throws SQLException, ArmazenamentoException {
 
         try (Connection conn = conexoes.abrir()) {
             Impressora impressora = impressoraDao.buscarPorId(conn, impressoraId);
@@ -73,9 +91,11 @@ public class CriarSolicitacao {
                 mongoId = conteudoDao.inserir(conteudo);
 
                 conn.setAutoCommit(false);
-                SolicitacaoImpressao solicitacao = new SolicitacaoImpressao(
-                        impressora.getEmpresaId(), funcionario.getId(), impressoraId,
-                        titulo, mongoId);
+                SolicitacaoImpressao solicitacao = (funcionarioId != null)
+                        ? new SolicitacaoImpressao(impressora.getEmpresaId(), funcionarioId,
+                        impressoraId, titulo, mongoId)
+                        : new SolicitacaoImpressao(impressora.getEmpresaId(), impressoraId,
+                        titulo, mongoId, nomeCriador);
                 int id = solicitacaoDao.inserir(conn, solicitacao);
                 conn.commit();
                 return id;

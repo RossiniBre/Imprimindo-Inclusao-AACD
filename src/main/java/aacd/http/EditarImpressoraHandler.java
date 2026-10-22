@@ -1,10 +1,12 @@
 package aacd.http;
 
 import aacd.dao.UsuarioDao;
+import aacd.model.Material;
 import aacd.model.Sessao;
 import aacd.model.Usuario;
 import aacd.service.EditarImpressora;
 import aacd.service.GerenciadorSessoes;
+import com.mongodb.MongoException;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
@@ -12,6 +14,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 public class EditarImpressoraHandler implements HttpHandler {
 
@@ -45,15 +48,19 @@ public class EditarImpressoraHandler implements HttpHandler {
                 return;
             }
             int impressoraId = Http.lerId(campos, "id", 0);
+            
+            Set<Material> materiais = campos.containsKey("materiais")
+                    ? Http.lerMateriais(campos.get("materiais"))
+                    : null;
 
-            editarImpressora.executar(ator, impressoraId, campos.get("modelo"));
+            editarImpressora.executar(ator, impressoraId, campos.get("modelo"), materiais);
             Http.json(ex, 200, Json.objeto().campo("mensagem", "Impressora atualizada.").build());
 
         } catch (IllegalStateException e) {
             Http.erro(ex, 409, e.getMessage());
         } catch (IllegalArgumentException e) {
             Http.erro(ex, 400, e.getMessage());
-        } catch (SQLException e) {
+        } catch (SQLException | MongoException e) {
             Http.erro(ex, 500, "Erro interno.");
         }
     }

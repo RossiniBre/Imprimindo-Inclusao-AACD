@@ -1,6 +1,11 @@
 package aacd.http;
 
+import aacd.dao.EmpresaDao;
+import aacd.dao.SolicitacaoDao;
+import aacd.dao.UsuarioDao;
+import aacd.model.Empresa;
 import aacd.model.Sessao;
+import aacd.model.Usuario;
 import aacd.service.CriarSolicitacao;
 import aacd.service.GerenciadorSessoes;
 import aacd.storage.ArmazenamentoException;
@@ -17,9 +22,7 @@ import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class SolicitacaoHandler implements HttpHandler {
 
@@ -28,6 +31,9 @@ public class SolicitacaoHandler implements HttpHandler {
 
     private final GerenciadorSessoes sessoes;
     private final CriarSolicitacao criarSolicitacao;
+    private final EmpresaDao empresaDao = new EmpresaDao();
+    private final SolicitacaoDao solicitacaoDao = new SolicitacaoDao();
+    private final UsuarioDao usuarioDao = new UsuarioDao();
 
     public SolicitacaoHandler(GerenciadorSessoes sessoes, CriarSolicitacao criarSolicitacao) {
         this.sessoes = sessoes;
@@ -36,13 +42,19 @@ public class SolicitacaoHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange ex) throws IOException {
-        if (!"POST".equals(ex.getRequestMethod())) {
-            ex.getResponseHeaders().set("Allow", "POST");
+        String metodo = ex.getRequestMethod();
+
+        if ("GET".equals(metodo)) {
+            listar(ex);
+            return;
+        }
+        if (!"POST".equals(metodo)) {
+            ex.getResponseHeaders().set("Allow", "GET, POST");
             Http.erro(ex, 405, "Método não permitido.");
             return;
         }
 
-        Optional<Sessao> sessao = Http.exigirPerfil(ex, sessoes, "FUNCIONARIO");
+        Optional<Sessao> sessao = Http.exigirPerfil(ex, sessoes, "FUNCIONARIO", "ADMIN");
         if (sessao.isEmpty()) {
             return;
         }
@@ -101,11 +113,23 @@ public class SolicitacaoHandler implements HttpHandler {
                     return;
                 }
 
+                Usuario ator = usuarioDao.buscarPorId(sessao.get().getUsuarioId());
+                if (ator == null) {
+                    Http.erro(ex, 401, "Não autenticado.");
+                    return;
+                }
+
                 limitado = new Limitado(item.openStream(), TAMANHO_ARQUIVO_MAX);
-                int id = criarSolicitacao.criar(
-                        sessao.get().getUsuarioId(), impressoraId,
-                        campos.get("titulo"), campos.get("descricao"),
-                        quantidade, item.getName(), limitado);
+                int id;
+                if ("ADMIN".equals(ator.getPerfil())) {
+                    id = criarSolicitacao.criarComoAdmin(ator, impressoraId,
+                            campos.get("titulo"), campos.get("descricao"),
+                            quantidade, item.getName(), limitado);
+                } else {
+                    id = criarSolicitacao.criar(ator.getId(), impressoraId,
+                            campos.get("titulo"), campos.get("descricao"),
+                            quantidade, item.getName(), limitado);
+                }
 
                 Http.json(ex, 201, Json.objeto().campo("id", id).build());
                 return;
@@ -121,6 +145,51 @@ public class SolicitacaoHandler implements HttpHandler {
                 Http.erro(ex, 500, "Erro interno.");
             }
         } catch (FileUploadException | SQLException e) {
+            Http.erro(ex, 500, "Erro interno.");
+        }
+    }
+
+    private void listar(HttpExchange ex) throws IOException {
+        Optional<Sessao> sessao = Http.exigirPerfil(ex, sessoes, "FUNCIONARIO", "ADMIN", "EMPRESA");
+        if (sessao.isEmpty()) {
+            return;
+        }
+
+        try {
+            Usuario ator = usuarioDao.buscarPorId(sessao.get().getUsuarioId());
+            if (ator == null) {
+                Http.erro(ex, 401, "Não autenticado.");
+                return;
+            }
+
+            Integer empresaId = null;
+            if ("EMPRESA".equals(ator.getPerfil())) {
+                Empresa empresa = empresaDao.buscarPorUsuarioId(ator.getId());
+                if (empresa == null) {
+                    Http.erro(ex, 404, "Empresa não encontrada.");
+                    return;
+                }
+                empresaId = empresa.getId();
+            }
+
+            List<String> itens = new ArrayList<>();
+            for (SolicitacaoDao.ItemLista s : solicitacaoDao.listar(empresaId)) {
+                itens.add(Json.objeto()
+                        .campo("id", s.id())
+                        .campo("titulo", s.titulo())
+                        .campo("status", s.status())
+                        .campo("empresa", s.empresa())
+                        .campo("criadoPor", s.criadoPor())
+                        .campo("impressora", s.impressora())
+                        .campo("criadoEm", s.criadoEm())
+                        .campo("decididoEm", s.decididoEm())
+                        .campo("finalizadoEm", s.finalizadoEm())
+                        .campo("justificativa", s.justificativa())
+                        .build());
+            }
+            Http.json(ex, 200, Json.lista(itens));
+
+        } catch (SQLException e) {
             Http.erro(ex, 500, "Erro interno.");
         }
     }

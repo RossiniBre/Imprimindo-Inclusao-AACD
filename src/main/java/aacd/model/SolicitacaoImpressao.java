@@ -29,6 +29,19 @@ public class SolicitacaoImpressao {
         this.status = StatusSolicitacao.PENDENTE;
     }
 
+    // criação por admin
+    public SolicitacaoImpressao(int empresaId, int impressoraId, String titulo,
+                                String mongoId, String criadoPorNome)
+    {
+        this.empresaId = validarId(empresaId, "empresa");
+        this.criadoPor = null;
+        this.criadoPorNome = criadoPorNome;
+        this.impressoraId = validarId(impressoraId, "impressora");
+        setTitulo(titulo);
+        this.mongoId = validarMongoId(mongoId);
+        this.status = StatusSolicitacao.PENDENTE;
+    }
+
     // reconstrução
     public SolicitacaoImpressao(int solicitacaoId, int empresaId, Integer criadoPor,
                                 Integer impressoraId, String titulo, String mongoId,
