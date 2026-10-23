@@ -2,10 +2,7 @@ package aacd.http;
 
 import aacd.config.ConnectionFactory;
 import aacd.config.MongoFactory;
-import aacd.dao.ConteudoSolicitacaoDao;
-import aacd.dao.ExclusaoContaDao;
-import aacd.dao.SolicitacaoEventosDao;
-import aacd.dao.UsuarioDao;
+import aacd.dao.*;
 import aacd.service.*;
 import aacd.storage.ArmazenamentoGridFs;
 import com.sun.net.httpserver.HttpServer;
@@ -26,7 +23,8 @@ public final class Rotas {
 
         AlterarEstadoConta alterarEstado = new AlterarEstadoConta(usuarioDao, exclusaoDao, sessoes, conexoes);
         ExcluirConta excluirConta = new ExcluirConta(usuarioDao, exclusaoDao, conteudoDao,
-                new SolicitacaoEventosDao(), armazenamento, sessoes, conexoes);
+                new SolicitacaoEventosDao(), armazenamento, sessoes, conexoes,
+                new ImpressoraMateriaisDao());
         ContaHandler contaHandler = new ContaHandler(sessoes, usuarioDao, alterarEstado, excluirConta);
 
         // Infra e sessão
@@ -44,6 +42,7 @@ public final class Rotas {
         servidor.createContext("/api/impressoras",
                 new ImpressoraHandler(sessoes, usuarioDao, new CadastrarImpressora()));
         servidor.createContext("/api/impressora/editar", new EditarImpressoraHandler(sessoes));
+        servidor.createContext("/api/impressoras/painel", new ImpressoraPainelHandler(sessoes));
 
         // Usuários e funcionários
         servidor.createContext("/api/usuario/nome", new EditarNomeHandler(sessoes));

@@ -1,10 +1,7 @@
 package aacd.service;
 
-import aacd.dao.ConteudoSolicitacaoDao;
-import aacd.dao.ExclusaoContaDao;
+import aacd.dao.*;
 import aacd.dao.ExclusaoContaDao.SolicitacaoApagada;
-import aacd.dao.SolicitacaoEventosDao;
-import aacd.dao.UsuarioDao;
 import aacd.model.Usuario;
 import aacd.storage.ArmazenamentoArquivo;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,7 +43,7 @@ class ExcluirContaTest {
         when(conexoes.abrir()).thenReturn(conn);
 
         servico = new ExcluirConta(usuarioDao, exclusaoDao, conteudoDao,
-                eventosDao, armazenamento, sessoes, conexoes);
+                eventosDao, armazenamento, sessoes, conexoes, new ImpressoraMateriaisDao());
     }
 
     private Usuario usuario(int id, String perfil, String nome) {

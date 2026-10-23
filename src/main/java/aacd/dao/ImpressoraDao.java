@@ -6,6 +6,8 @@ import aacd.model.Impressora;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class ImpressoraDao {
@@ -102,5 +104,61 @@ public class ImpressoraDao {
             ps.setInt(1, id);
             ps.executeUpdate();
         }
+    }
+
+    public record ItemPainel(int id, int empresaId, String empresa, String modelo,
+                             Disponibilidade disponibilidade, boolean ativo) {}
+
+    public List<ItemPainel> listarPainel(Integer empresaId, Disponibilidade disponibilidade,
+                                         Collection<Integer> ids) throws SQLException {
+        if (ids != null && ids.isEmpty()) {
+            return List.of();
+        }
+
+        StringBuilder sql = new StringBuilder("""
+            SELECT i.idimpressora, i.empresa_id, ue.nome AS empresa_nome,
+                   i.modelo, i.disponibilidade, i.ativo
+            FROM impressora i
+            JOIN empresa e ON e.idempresa = i.empresa_id
+            JOIN usuario ue ON ue.idusuario = e.usuario_id
+            WHERE 1 = 1
+            """);
+        List<Object> params = new ArrayList<>();
+
+        if (empresaId != null) {
+            sql.append("AND i.empresa_id = ? ");
+            params.add(empresaId);
+        }
+        if (disponibilidade != null) {
+            sql.append("AND i.disponibilidade = ? ");
+            params.add(disponibilidade.name());
+        }
+        if (ids != null) {
+            sql.append("AND i.idimpressora IN (")
+                    .append(String.join(",", Collections.nCopies(ids.size(), "?")))
+                    .append(") ");
+            params.addAll(ids);
+        }
+        sql.append("ORDER BY ue.nome, i.modelo, i.idimpressora");
+
+        List<ItemPainel> lista = new ArrayList<>();
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+            for (int i = 0; i < params.size(); i++) {
+                ps.setObject(i + 1, params.get(i));
+            }
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    lista.add(new ItemPainel(
+                            rs.getInt("idimpressora"),
+                            rs.getInt("empresa_id"),
+                            rs.getString("empresa_nome"),
+                            rs.getString("modelo"),
+                            Disponibilidade.valueOf(rs.getString("disponibilidade")),
+                            rs.getBoolean("ativo")));
+                }
+            }
+        }
+        return lista;
     }
 }

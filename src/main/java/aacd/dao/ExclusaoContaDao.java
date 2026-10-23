@@ -101,4 +101,18 @@ public class ExclusaoContaDao {
             }
         }
     }
+
+    public List<Integer> listarImpressoraIdsDaEmpresa(Connection conn, int empresaId) throws SQLException {
+        String sql = "SELECT idimpressora FROM impressora WHERE empresa_id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, empresaId);
+            try (ResultSet rs = ps.executeQuery()) {
+                List<Integer> ids = new ArrayList<>();
+                while (rs.next()) {
+                    ids.add(rs.getInt(1));
+                }
+                return ids;
+            }
+        }
+    }
 }
