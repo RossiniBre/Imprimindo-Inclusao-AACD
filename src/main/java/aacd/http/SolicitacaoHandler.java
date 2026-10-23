@@ -185,6 +185,7 @@ public class SolicitacaoHandler implements HttpHandler {
                         .campo("decididoEm", s.decididoEm())
                         .campo("finalizadoEm", s.finalizadoEm())
                         .campo("justificativa", s.justificativa())
+                        .campo("expiraEm", s.expiraEm())
                         .build());
             }
             Http.json(ex, 200, Json.lista(itens));

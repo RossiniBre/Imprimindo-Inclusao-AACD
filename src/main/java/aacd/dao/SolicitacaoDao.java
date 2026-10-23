@@ -5,6 +5,7 @@ import aacd.model.Solicitacao;
 import aacd.model.SolicitacaoImpressao;
 import aacd.model.SolicitacaoParaExcluir;
 import aacd.model.StatusSolicitacao;
+import aacd.util.PrazosSolicitacao;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -202,7 +203,8 @@ public class SolicitacaoDao {
 
     public record ItemLista(int id, String titulo, String status, String empresa,
                             String criadoPor, String impressora, String criadoEm,
-                            String decididoEm, String finalizadoEm, String justificativa) {}
+                            String decididoEm, String finalizadoEm, String justificativa,
+                            String expiraEm) {}
 
     public List<ItemLista> listar(Integer empresaId) throws SQLException {
         String sql = """
@@ -227,17 +229,24 @@ public class SolicitacaoDao {
             if (empresaId != null) ps.setInt(1, empresaId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
+                    String status = rs.getString("status");
+                    Timestamp criacao = rs.getTimestamp("data_criacao");
+                    String expiraEm = null;
+                    if (StatusSolicitacao.PENDENTE.name().equals(status) && criacao != null) {
+                        expiraEm = PrazosSolicitacao.expiracaoPendente(criacao.toLocalDateTime()).toString();
+                    }
                     lista.add(new ItemLista(
                             rs.getInt("id"),
                             rs.getString("titulo"),
-                            rs.getString("status"),
+                            status,
                             rs.getString("empresa_nome"),
                             rs.getString("criado_por_nome"),
                             rs.getString("impressora_modelo"),
                             data(rs, "data_criacao"),
                             data(rs, "data_decisao"),
                             data(rs, "data_finalizacao"),
-                            rs.getString("justificativa")));
+                            rs.getString("justificativa"),
+                            expiraEm));
                 }
             }
         }

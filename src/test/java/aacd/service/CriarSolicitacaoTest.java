@@ -4,10 +4,7 @@ import aacd.dao.ConteudoSolicitacaoDao;
 import aacd.dao.FuncionarioDao;
 import aacd.dao.ImpressoraDao;
 import aacd.dao.SolicitacaoDao;
-import aacd.model.ConteudoSolicitacao;
-import aacd.model.Funcionario;
-import aacd.model.Impressora;
-import aacd.model.SolicitacaoImpressao;
+import aacd.model.*;
 import aacd.service.CriarSolicitacao;
 import aacd.storage.ArmazenamentoArquivo;
 import aacd.storage.ArmazenamentoException;
@@ -235,6 +232,139 @@ class CriarSolicitacaoTest {
         assertThrows(SQLException.class,
                 () -> criar(USUARIO_ID, IMPRESSORA_ID, "Titulo", 1, NOME));
 
+        verify(conn).close();
+    }
+
+    private static final String ADMIN_IDENTIFICADOR = "admin.master";
+
+    private Usuario usuario(String perfil, boolean ativo) {
+        Usuario u = mock(Usuario.class);
+        when(u.getPerfil()).thenReturn(perfil);
+        when(u.isAtivo()).thenReturn(ativo);
+        when(u.getIdentificador()).thenReturn(ADMIN_IDENTIFICADOR);
+        return u;
+    }
+
+    private int criarComoAdmin(Usuario admin, int impressoraId, String titulo, int quantidade, String nome)
+            throws Exception {
+        return service.criarComoAdmin(admin, impressoraId, titulo, "Descricao", quantidade, nome, arquivo());
+    }
+
+    // ---------- criarComoAdmin: caminho feliz ----------
+
+    @Test
+    void adminCriaSolicitacaoNaOrdemCerta() throws Exception {
+        int id = criarComoAdmin(usuario("ADMIN", true), IMPRESSORA_ID, "Titulo", 2, NOME);
+
+        assertEquals(42, id);
+        InOrder ordem = inOrder(armazenamento, conteudoDao, solicitacaoDao, conn);
+        ordem.verify(armazenamento).salvar(eq(NOME), any());
+        ordem.verify(conteudoDao).inserir(any());
+        ordem.verify(solicitacaoDao).inserir(eq(conn), any());
+        ordem.verify(conn).commit();
+        verify(conn, never()).rollback();
+        verify(conn).close();
+    }
+
+    @Test
+    void adminGravaCriadoPorNuloEIdentificadorDoAdmin() throws Exception {
+        criarComoAdmin(usuario("ADMIN", true), IMPRESSORA_ID, "Titulo", 2, NOME);
+
+        ArgumentCaptor<SolicitacaoImpressao> sol = ArgumentCaptor.forClass(SolicitacaoImpressao.class);
+        verify(solicitacaoDao).inserir(eq(conn), sol.capture());
+        assertNull(sol.getValue().getCriadoPor());
+        assertEquals(ADMIN_IDENTIFICADOR, sol.getValue().getCriadoPorNome());
+        assertEquals(EMPRESA_ID, sol.getValue().getEmpresaId());
+        assertEquals(IMPRESSORA_ID, sol.getValue().getImpressoraId());
+        assertEquals(MONGO_ID, sol.getValue().getMongoId());
+    }
+
+    @Test
+    void adminNaoPrecisaSerFuncionario() throws Exception {
+        criarComoAdmin(usuario("ADMIN", true), IMPRESSORA_ID, "Titulo", 1, NOME);
+
+        verifyNoInteractions(funcionarioDao);
+    }
+
+    // ---------- criarComoAdmin: recusas ----------
+
+    @Test
+    void adminNuloEhRecusado() throws Exception {
+        assertThrows(IllegalArgumentException.class,
+                () -> criarComoAdmin(null, IMPRESSORA_ID, "Titulo", 1, NOME));
+        assertNadaGravado();
+    }
+
+    @Test
+    void perfilEmpresaNaoCriaComoAdmin() throws Exception {
+        assertThrows(IllegalArgumentException.class,
+                () -> criarComoAdmin(usuario("EMPRESA", true), IMPRESSORA_ID, "Titulo", 1, NOME));
+        assertNadaGravado();
+    }
+
+    @Test
+    void perfilFuncionarioNaoCriaComoAdmin() throws Exception {
+        assertThrows(IllegalArgumentException.class,
+                () -> criarComoAdmin(usuario("FUNCIONARIO", true), IMPRESSORA_ID, "Titulo", 1, NOME));
+        assertNadaGravado();
+    }
+
+    @Test
+    void adminInativoEhRecusado() throws Exception {
+        assertThrows(IllegalArgumentException.class,
+                () -> criarComoAdmin(usuario("ADMIN", false), IMPRESSORA_ID, "Titulo", 1, NOME));
+        assertNadaGravado();
+    }
+
+    @Test
+    void adminComTituloVazioEhRecusadoAntesDeQualquerAcesso() throws Exception {
+        assertThrows(IllegalArgumentException.class,
+                () -> criarComoAdmin(usuario("ADMIN", true), IMPRESSORA_ID, " ", 1, NOME));
+        verifyNoInteractions(funcionarioDao, impressoraDao);
+        assertNadaGravado();
+    }
+
+    @Test
+    void adminComExtensaoInvalidaEhRecusado() throws Exception {
+        assertThrows(IllegalArgumentException.class,
+                () -> criarComoAdmin(usuario("ADMIN", true), IMPRESSORA_ID, "Titulo", 1, "peca.exe"));
+        verifyNoInteractions(funcionarioDao, impressoraDao);
+        assertNadaGravado();
+    }
+
+    @Test
+    void adminComImpressoraInexistenteEhRecusado() throws Exception {
+        when(impressoraDao.buscarPorId(conn, 999)).thenReturn(null);
+
+        assertThrows(IllegalArgumentException.class,
+                () -> criarComoAdmin(usuario("ADMIN", true), 999, "Titulo", 1, NOME));
+        assertNadaGravado();
+    }
+
+    @Test
+    void adminComImpressoraInativaEhRecusado() throws Exception {
+        when(impressora.isAtivo()).thenReturn(false);
+
+        assertThrows(IllegalArgumentException.class,
+                () -> criarComoAdmin(usuario("ADMIN", true), IMPRESSORA_ID, "Titulo", 1, NOME));
+        assertNadaGravado();
+    }
+
+    // ---------- criarComoAdmin: falha na gravação ----------
+
+    @Test
+    void adminComFalhaNoMysqlFazRollbackEApagaDocumentoEArquivo() throws Exception {
+        SQLException erro = new SQLException("fk");
+        when(solicitacaoDao.inserir(eq(conn), any())).thenThrow(erro);
+
+        SQLException lancada = assertThrows(SQLException.class,
+                () -> criarComoAdmin(usuario("ADMIN", true), IMPRESSORA_ID, "Titulo", 1, NOME));
+
+        assertSame(erro, lancada);
+        verify(conn).rollback();
+        verify(conn, never()).commit();
+        verify(conteudoDao).apagar(MONGO_ID);
+        verify(armazenamento).apagar(ARQUIVO_ID);
         verify(conn).close();
     }
 }
