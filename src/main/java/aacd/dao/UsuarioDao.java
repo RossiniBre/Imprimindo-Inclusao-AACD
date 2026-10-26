@@ -160,4 +160,51 @@ public class UsuarioDao {
             return ps.executeUpdate() > 0;
         }
     }
+
+    public Usuario buscarPorEmail(String email) throws SQLException {
+        String sql = "SELECT u.idusuario, u.nome, u.identificador, u.senha_hash, u.perfil, u.ativo "
+                + "FROM usuario u "
+                + "LEFT JOIN funcionario f ON f.usuario_id = u.idusuario "
+                + "LEFT JOIN empresa e ON e.usuario_id = u.idusuario "
+                + "WHERE f.email = ? OR e.email = ?";
+
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, email);
+            ps.setString(2, email);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return new Usuario(
+                            rs.getInt("idusuario"),
+                            rs.getString("nome"),
+                            rs.getString("identificador"),
+                            rs.getString("senha_hash"),
+                            rs.getString("perfil"),
+                            rs.getBoolean("ativo"));
+                }
+                return null;
+            }
+        }
+    }
+
+    public boolean existePorEmailExceto(String email, int usuarioId) throws SQLException {
+        String sql = "SELECT 1 FROM funcionario WHERE email = ? AND usuario_id <> ? "
+                + "UNION ALL "
+                + "SELECT 1 FROM empresa WHERE email = ? AND usuario_id <> ?";
+
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, email);
+            ps.setInt(2, usuarioId);
+            ps.setString(3, email);
+            ps.setInt(4, usuarioId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        }
+    }
 }

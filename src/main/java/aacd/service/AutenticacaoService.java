@@ -2,6 +2,8 @@ package aacd.service;
 
 import aacd.dao.UsuarioDao;
 import aacd.model.Usuario;
+import aacd.util.EmailValidador;
+import aacd.util.Identificador;
 import aacd.util.Senha;
 
 import java.sql.SQLException;
@@ -22,7 +24,11 @@ public class AutenticacaoService {
             return Optional.empty();
         }
 
-        Usuario usuario = usuarioDao.buscarPorIdentificador(normalizar(identificador));
+        String entrada = identificador.trim();
+        Usuario usuario = entrada.contains("@")
+                ? usuarioDao.buscarPorEmail(EmailValidador.normalizar(entrada))
+                : usuarioDao.buscarPorIdentificador(Identificador.normalizar(entrada));
+
         if (usuario == null || !Senha.confere(senha, usuario.getSenhaHash())) {
             return Optional.empty();
         }

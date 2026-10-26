@@ -6,6 +6,7 @@ import aacd.dao.UsuarioDao;
 import aacd.model.Empresa;
 import aacd.model.Endereco;
 import aacd.model.Usuario;
+import aacd.util.EmailValidador;
 import aacd.util.Senha;
 
 import java.sql.Connection;
@@ -24,21 +25,27 @@ public class CadastrarEmpresa {
             throw new IllegalArgumentException("Senha não pode estar vazia");
         }
 
+        String erroEmail = EmailValidador.validar(email);
+        if (erroEmail != null) {
+            throw new IllegalArgumentException(erroEmail);
+        }
+        String emailNormalizado = EmailValidador.normalizar(email);
+
         Usuario novo = new Usuario(nome, cnpj, Senha.gerarHash(senha), "EMPRESA");
         Endereco endereco = new Endereco(cep, rua, numero, bairro, cidade, uf);
 
         if (usuarioDao.buscarPorIdentificador(novo.getIdentificador()) != null) {
             throw new IllegalStateException("CNPJ já cadastrado!");
         }
-        if (email != null && empresaDao.existePorEmail(email.trim())) {
+        if (usuarioDao.existePorEmailExceto(emailNormalizado, 0)) {
             throw new IllegalStateException("Email já em uso!");
         }
-        
+
         try (Connection conn = ConnectionFactory.getConnection()) {
             conn.setAutoCommit(false);
             try {
                 int usuarioId = usuarioDao.inserir(conn, novo);
-                empresaDao.inserir(conn, new Empresa(usuarioId, email, telefone, cnpj, endereco));
+                empresaDao.inserir(conn, new Empresa(usuarioId, emailNormalizado, telefone, cnpj, endereco));
                 conn.commit();
             } catch (SQLException | RuntimeException e) {
                 conn.rollback();

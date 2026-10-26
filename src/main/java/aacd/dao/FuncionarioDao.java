@@ -15,12 +15,13 @@ import java.util.List;
 public class FuncionarioDao {
 
     public int inserir(Connection conn, Funcionario funcionario) throws SQLException {
-        String sql = "INSERT INTO funcionario (usuario_id, cargo, setor) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO funcionario (usuario_id, email, cargo, setor) VALUES (?, ?, ?, ?)";
 
         try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, funcionario.getUsuarioId());
-            ps.setString(2, funcionario.getCargo());
-            ps.setString(3, funcionario.getSetor());
+            ps.setString(2, funcionario.getEmail());
+            ps.setString(3, funcionario.getCargo());
+            ps.setString(4, funcionario.getSetor());
             ps.executeUpdate();
 
             try (ResultSet rs = ps.getGeneratedKeys()) {
@@ -35,7 +36,7 @@ public class FuncionarioDao {
     }
 
     public Funcionario buscarPorUsuarioId(int usuarioId) throws SQLException {
-        String sql = "SELECT idfuncionario, usuario_id, cargo, setor "
+        String sql = "SELECT idfuncionario, usuario_id, email, cargo, setor "
                 + "FROM funcionario WHERE usuario_id = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -48,6 +49,7 @@ public class FuncionarioDao {
                     return new Funcionario(
                             rs.getInt("idfuncionario"),
                             rs.getInt("usuario_id"),
+                            rs.getString("email"),
                             rs.getString("cargo"),
                             rs.getString("setor"));
                 }
@@ -57,18 +59,20 @@ public class FuncionarioDao {
     }
 
     public boolean atualizar(Connection conn, Funcionario funcionario) throws SQLException {
-        String sql = "UPDATE funcionario SET cargo = ?, setor = ? WHERE usuario_id = ?";
+        String sql = "UPDATE funcionario SET email = ?, cargo = ?, setor = ? WHERE usuario_id = ?";
 
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, funcionario.getCargo());
-            ps.setString(2, funcionario.getSetor());
-            ps.setInt(3, funcionario.getUsuarioId());
+            ps.setString(1, funcionario.getEmail());
+            ps.setString(2, funcionario.getCargo());
+            ps.setString(3, funcionario.getSetor());
+            ps.setInt(4, funcionario.getUsuarioId());
             return ps.executeUpdate() > 0;
         }
     }
 
     public List<FuncionarioResumo> listar() throws SQLException {
-        String sql = "SELECT u.idusuario, u.nome, u.identificador, u.perfil, u.ativo, f.cargo, f.setor "
+        String sql = "SELECT u.idusuario, u.nome, u.identificador, u.perfil, u.ativo, "
+                + "f.email, f.cargo, f.setor "
                 + "FROM funcionario f JOIN usuario u ON u.idusuario = f.usuario_id "
                 + "ORDER BY u.nome";
 
@@ -82,6 +86,7 @@ public class FuncionarioDao {
                         rs.getInt("idusuario"),
                         rs.getString("nome"),
                         rs.getString("identificador"),
+                        rs.getString("email"),
                         rs.getString("perfil"),
                         rs.getString("cargo"),
                         rs.getString("setor"),

@@ -40,7 +40,7 @@ public class LoginHandler implements HttpHandler {
                     autenticacao.autenticar(campos.get("identificador"), campos.get("senha"));
 
             if (resultado.isEmpty()) {
-                Http.erro(ex, 401, "Identificador ou senha inválidos.");
+                Http.erro(ex, 401, "Login ou senha inválidos.");
                 return;
             }
 

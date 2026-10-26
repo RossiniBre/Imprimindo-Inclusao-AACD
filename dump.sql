@@ -88,10 +88,12 @@ COLLATE = utf8mb4_0900_ai_ci;
 CREATE TABLE IF NOT EXISTS `imprimindo_inclusao`.`funcionario` (
   `idfuncionario` INT NOT NULL AUTO_INCREMENT,
   `usuario_id` INT NOT NULL,
+  `email` VARCHAR(100) NOT NULL,
   `cargo` VARCHAR(45) NULL DEFAULT NULL,
   `setor` VARCHAR(45) NULL DEFAULT NULL,
   PRIMARY KEY (`idfuncionario`),
   UNIQUE INDEX `usuario_id_UNIQUE` (`usuario_id` ASC) VISIBLE,
+  UNIQUE INDEX `email_UNIQUE` (`email` ASC) VISIBLE,
   CONSTRAINT `fk_funcionario_usuario`
     FOREIGN KEY (`usuario_id`)
     REFERENCES `imprimindo_inclusao`.`usuario` (`idusuario`))

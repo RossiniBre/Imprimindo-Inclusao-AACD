@@ -6,6 +6,7 @@ import aacd.dao.UsuarioDao;
 import aacd.model.Empresa;
 import aacd.model.Endereco;
 import aacd.model.Usuario;
+import aacd.util.EmailValidador;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -32,12 +33,18 @@ public class EditarEmpresa {
             throw new IllegalArgumentException("Empresa não encontrada!");
         }
 
+        String erroEmail = EmailValidador.validar(email);
+        if (erroEmail != null) {
+            throw new IllegalArgumentException(erroEmail);
+        }
+        String emailNormalizado = EmailValidador.normalizar(email);
+
         ator.setNome(nome);
-        empresa.setEmail(email);
+        empresa.setEmail(emailNormalizado);
         empresa.setTelefone(telefone);
         empresa.setEndereco(new Endereco(cep, rua, numero, bairro, cidade, uf));
 
-        if (empresaDao.existePorEmailExceto(empresa.getEmail(), usuarioId)) {
+        if (usuarioDao.existePorEmailExceto(emailNormalizado, usuarioId)) {
             throw new IllegalArgumentException("Email já cadastrado!");
         }
 

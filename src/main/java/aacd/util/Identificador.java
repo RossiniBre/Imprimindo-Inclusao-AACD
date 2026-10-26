@@ -23,4 +23,8 @@ public final class Identificador {
         String limpo = identificador.trim();
         return limpo.matches(CNPJ_FORMATADO) || limpo.matches(CNPJ_PURO);
     }
+
+    public static boolean contemArroba(String identificador) {
+        return identificador != null && identificador.contains("@");
+    }
 }

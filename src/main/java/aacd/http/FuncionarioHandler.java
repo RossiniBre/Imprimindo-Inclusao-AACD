@@ -58,6 +58,7 @@ public class FuncionarioHandler implements HttpHandler {
                         .campo("id", f.usuarioId())
                         .campo("nome", f.nome())
                         .campo("identificador", f.identificador())
+                        .campo("email", f.email())
                         .campo("perfil", f.perfil())
                         .campo("cargo", f.cargo())
                         .campo("setor", f.setor())
@@ -91,8 +92,8 @@ public class FuncionarioHandler implements HttpHandler {
             }
 
             cadastro.executar(ator,
-                    campos.get("nome"), campos.get("identificador"), campos.get("senha"),
-                    campos.get("cargo"), campos.get("setor"));
+                    campos.get("nome"), campos.get("identificador"), campos.get("email"),
+                    campos.get("senha"), campos.get("cargo"), campos.get("setor"));
 
             Http.json(ex, 201, Json.objeto().campo("mensagem", "Funcionário cadastrado.").build());
 

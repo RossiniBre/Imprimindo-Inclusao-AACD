@@ -1,5 +1,6 @@
 package aacd.model;
 
+import aacd.util.EmailValidador;
 import aacd.util.Identificador;
 
 public class Empresa {
@@ -63,15 +64,11 @@ public class Empresa {
     }
 
     public void setEmail(String email) {
-        if (email == null || email.isBlank()) {
-            throw new IllegalArgumentException("Email não pode estar vazio");
+        String erro = EmailValidador.validar(email);
+        if (erro != null) {
+            throw new IllegalArgumentException(erro);
         }
-        email = email.trim();
-
-        if (!email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
-            throw new IllegalArgumentException("Email inválido!");
-        }
-        this.email = email;
+        this.email = EmailValidador.normalizar(email);
     }
 
     public void setEndereco(Endereco endereco) {
