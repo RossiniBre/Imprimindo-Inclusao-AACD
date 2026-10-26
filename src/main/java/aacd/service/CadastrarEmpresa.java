@@ -25,7 +25,7 @@ public class CadastrarEmpresa {
             throw new IllegalArgumentException("Senha não pode estar vazia");
         }
 
-        String erroEmail = EmailValidador.validar(email);
+        String erroEmail = EmailValidador.validarLivre(email);
         if (erroEmail != null) {
             throw new IllegalArgumentException(erroEmail);
         }

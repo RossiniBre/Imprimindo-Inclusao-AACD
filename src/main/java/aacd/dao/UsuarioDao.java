@@ -207,4 +207,14 @@ public class UsuarioDao {
             }
         }
     }
+
+    public boolean atualizarSenha(Connection conn, int id, String senhaHash) throws SQLException {
+        String sql = "UPDATE usuario SET senha_hash = ? WHERE idusuario = ?";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, senhaHash);
+            ps.setInt(2, id);
+            return ps.executeUpdate() > 0;
+        }
+    }
 }

@@ -26,10 +26,15 @@ public final class Rotas {
                 new SolicitacaoEventosDao(), armazenamento, sessoes, conexoes,
                 new ImpressoraMateriaisDao());
         ContaHandler contaHandler = new ContaHandler(sessoes, usuarioDao, alterarEstado, excluirConta);
+        EnviadorEmail enviador = new EnviadorEmailJakarta();
+        RedefinicaoSenhaService redefinicao =
+                new RedefinicaoSenhaService(new EnviadorEmailJakarta(), sessoes);
 
         // Infra e sessão
         servidor.createContext("/api/health", ex -> Http.json(ex, 200, Json.objeto().campo("status", "ok").build()));
         servidor.createContext("/api/login", new LoginHandler(autenticacao, sessoes));
+        servidor.createContext("/api/esqueci-senha", new EsqueciSenhaHandler(redefinicao));
+        servidor.createContext("/api/redefinir-senha", new RedefinirSenhaHandler(redefinicao));
         servidor.createContext("/api/logout", new LogoutHandler(sessoes));
         servidor.createContext("/api/me", new MeHandler(sessoes));
 

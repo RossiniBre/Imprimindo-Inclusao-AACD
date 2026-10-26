@@ -180,6 +180,25 @@ CREATE TABLE IF NOT EXISTS `imprimindo_inclusao`.`historico_solicitacao` (
     ON DELETE SET NULL)
     ENGINE = InnoDB DEFAULT CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
 
+-- -----------------------------------------------------
+-- Table `redefinicao_senha`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `redefinicao_senha` (
+    `usuario_id` INT NOT NULL,
+    `codigo_hash` VARCHAR(255) NOT NULL,
+    `expira_em` DATETIME NOT NULL,
+    `criado_em` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `tentativas` INT NOT NULL DEFAULT 0,
+    `usado` TINYINT NOT NULL DEFAULT 0,
+    PRIMARY KEY (`usuario_id`),
+    CONSTRAINT `fk_redefinicao_usuario`
+    FOREIGN KEY (`usuario_id`)
+    REFERENCES `usuario` (`idusuario`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION)
+    ENGINE = InnoDB
+    DEFAULT CHARACTER SET = utf8mb4;
+
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;

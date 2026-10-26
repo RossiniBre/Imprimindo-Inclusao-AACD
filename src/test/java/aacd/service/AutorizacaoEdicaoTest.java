@@ -1,14 +1,13 @@
 package aacd.service;
 
 import aacd.model.Usuario;
-import aacd.service.EditarEmpresa;
-import aacd.service.EditarFuncionario;
-import aacd.service.EditarImpressora;
 import org.junit.jupiter.api.Test;
 
 import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class AutorizacaoEdicaoTest {
 
@@ -41,18 +40,18 @@ class AutorizacaoEdicaoTest {
     void editarFuncionario_recusaFuncionarioEditandoOutro() {
         EditarFuncionario s = new EditarFuncionario();
         assertThrows(IllegalStateException.class,
-                () -> s.executar(usuario(1, "FUNCIONARIO", true), 2, "Analista", "TI"));
+                () -> s.executar(usuario(1, "FUNCIONARIO", true), 2, "ana@teste.com", "Analista", "TI"));
     }
 
     @Test
     void editarFuncionario_recusaEmpresaEInativo() {
         EditarFuncionario s = new EditarFuncionario();
         assertThrows(IllegalStateException.class,
-                () -> s.executar(usuario(1, "EMPRESA", true), 1, "Analista", "TI"));
+                () -> s.executar(usuario(1, "EMPRESA", true), 1, "ana@teste.com", "Analista", "TI"));
         assertThrows(IllegalStateException.class,
-                () -> s.executar(usuario(1, "FUNCIONARIO", false), 1, "Analista", "TI"));
+                () -> s.executar(usuario(1, "FUNCIONARIO", false), 1, "ana@teste.com", "Analista", "TI"));
         assertThrows(IllegalStateException.class,
-                () -> s.executar(null, 1, "Analista", "TI"));
+                () -> s.executar(null, 1, "ana@teste.com", "Analista", "TI"));
     }
 
     @Test

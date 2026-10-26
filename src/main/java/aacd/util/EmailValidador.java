@@ -17,12 +17,20 @@ public final class EmailValidador {
     }
 
     public static String validar(String email) {
+        return validar(email, TRECHO_PERMITIDO);
+    }
+
+    public static String validarLivre(String email) {
+        return validar(email, "");
+    }
+
+    private static String validar(String email, String trecho) {
         String e = normalizar(email);
         if (e == null || e.isEmpty()) return "E-mail é obrigatório.";
         if (e.length() > TAMANHO_MAX) return "E-mail deve ter no máximo " + TAMANHO_MAX + " caracteres.";
         if (!FORMATO.matcher(e).matches()) return "E-mail inválido.";
-        if (!TRECHO_PERMITIDO.isEmpty() && !e.contains(TRECHO_PERMITIDO.toLowerCase()))
-            return "O e-mail deve conter " + TRECHO_PERMITIDO + ".";
+        if (!trecho.isEmpty() && !e.endsWith(trecho.toLowerCase()))
+            return "O e-mail deve conter " + trecho + ".";
         return null;
     }
 }

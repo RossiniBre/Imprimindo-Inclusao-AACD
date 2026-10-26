@@ -64,7 +64,7 @@ public class Empresa {
     }
 
     public void setEmail(String email) {
-        String erro = EmailValidador.validar(email);
+        String erro = EmailValidador.validarLivre(email);
         if (erro != null) {
             throw new IllegalArgumentException(erro);
         }
