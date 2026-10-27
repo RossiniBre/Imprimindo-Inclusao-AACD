@@ -21,6 +21,7 @@ jobs:
 
       - name: Criar db.properties de teste
         run: |
+          mkdir -p src/main/resources
           cat > src/main/resources/db.properties <<'EOF'
           db.url=jdbc:mysql://localhost:3306/teste
           db.user=teste
