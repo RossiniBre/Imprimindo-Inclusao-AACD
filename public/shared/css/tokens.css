@@ -1,1 +1,17 @@
-/* cores do moodboard como variáveis */
+/* Tokens de design: paleta do moodboard.
+   Fontes e espaçamentos entram aqui depois. */
+
+:root {
+  /* Marca */
+  --cor-cabecalho: #C8102E;
+  --cor-botao-principal: #EFB000;
+  --cor-sucesso: #2E9E5B;
+
+  /* Superfícies */
+  --cor-fundo: #FAF8F5;
+  --cor-superficie: #FFFFFF;
+
+  /* Texto e bordas */
+  --cor-texto: #2B2B2B;
+  --cor-borda: #CAC9C6;
+}

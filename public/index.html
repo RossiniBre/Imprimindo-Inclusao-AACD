@@ -1,11 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pagina Inicial</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Imprimindo Inclusão</title>
+  <link rel="stylesheet" href="/shared/css/tokens.css">
+  <link rel="stylesheet" href="/shared/css/base.css">
 </head>
 <body>
-    <!-- só redireciona (login ou painel, conforme a sessão) -->
+  <a href="#conteudo" class="pular">Pular para o conteúdo</a>
+  <header>
+    <nav aria-label="Principal"><!-- links: <a href="#/login">... --></nav>
+  </header>
+  <main id="conteudo" tabindex="-1"></main>
+  <script type="module" src="/shared/js/main.js"></script>
 </body>
 </html>
