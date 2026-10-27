@@ -1,0 +1,5 @@
+TELA: Minha conta
+Quem acessa: empresas e funcionários logados.
+O que faz: editar os próprios dados, sair (logout) e excluir a conta.
+O admin da AACD não pode excluir a própria conta.
+Back: POST /api/logout e GET /api/me já existem. Edição e exclusão: a definir.
