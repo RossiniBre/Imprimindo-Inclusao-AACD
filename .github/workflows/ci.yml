@@ -19,6 +19,16 @@ jobs:
           java-version: '21'
           cache: maven
 
+      - name: Criar db.properties de teste
+        run: |
+          cat > src/main/resources/db.properties <<'EOF'
+          db.url=jdbc:mysql://localhost:3306/teste
+          db.user=teste
+          db.password=teste
+          mongo.uri=mongodb://localhost:27017
+          mongo.database=teste
+          EOF
+
       - name: Compilar e rodar os testes
         run: mvn -B verify
 
