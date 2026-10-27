@@ -12,7 +12,7 @@ async function requisitar(metodo, url, formulario) {
   const resposta = await fetch(url, opcoes);
 
   let corpo = null;
-  try { corpo = await resposta.json(); } catch (e) { /* resposta sem JSON */ }
+  try { corpo = await resposta.json(); } catch { /* resposta sem JSON */ }
 
   return { ok: resposta.ok, status: resposta.status, corpo };
 }
