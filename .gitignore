@@ -62,3 +62,4 @@ bin/
 *.coverage
 
 src/main/resources/db.properties
+src/main/resources/mail.properties
