@@ -13,13 +13,17 @@ import java.util.List;
 public class ImpressoraDao {
 
     public int inserir(Connection conn, Impressora impressora) throws SQLException {
-        String sql = "INSERT INTO impressora(empresa_id, modelo, disponibilidade, ativo) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO impressora(empresa_id, modelo, disponibilidade, ativo, "
+                + "comprimento_mm, largura_mm, altura_mm) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, impressora.getEmpresaId());
             ps.setString(2, impressora.getModelo());
             ps.setString(3, impressora.getDisponibilidade().name());
             ps.setBoolean(4, impressora.isAtivo());
+            ps.setInt(5, impressora.getComprimentoMm());
+            ps.setInt(6, impressora.getLarguraMm());
+            ps.setInt(7, impressora.getAlturaMm());
             ps.executeUpdate();
 
             try (ResultSet rs = ps.getGeneratedKeys()) {
@@ -34,7 +38,8 @@ public class ImpressoraDao {
     }
 
     public Impressora buscarPorId(Connection conn, int id) throws SQLException {
-        String sql = "SELECT idimpressora, empresa_id, modelo, disponibilidade, ativo "
+        String sql = "SELECT idimpressora, empresa_id, modelo, disponibilidade, ativo, "
+                + "comprimento_mm, largura_mm, altura_mm "
                 + "FROM impressora WHERE idimpressora = ?";
 
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -48,7 +53,10 @@ public class ImpressoraDao {
                         rs.getInt("empresa_id"),
                         rs.getString("modelo"),
                         Disponibilidade.valueOf(rs.getString("disponibilidade")),
-                        rs.getBoolean("ativo"));
+                        rs.getBoolean("ativo"),
+                        rs.getInt("comprimento_mm"),
+                        rs.getInt("largura_mm"),
+                        rs.getInt("altura_mm"));
             }
         }
     }
@@ -74,7 +82,8 @@ public class ImpressoraDao {
     }
 
     public List<Impressora> listarPorEmpresa(int empresaId) throws SQLException {
-        String sql = "SELECT idimpressora, empresa_id, modelo, disponibilidade, ativo "
+        String sql = "SELECT idimpressora, empresa_id, modelo, disponibilidade, ativo, "
+                + "comprimento_mm, largura_mm, altura_mm "
                 + "FROM impressora WHERE empresa_id = ? ORDER BY idimpressora";
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -90,7 +99,10 @@ public class ImpressoraDao {
                             rs.getInt("empresa_id"),
                             rs.getString("modelo"),
                             Disponibilidade.valueOf(rs.getString("disponibilidade")),
-                            rs.getBoolean("ativo")));
+                            rs.getBoolean("ativo"),
+                            rs.getInt("comprimento_mm"),
+                            rs.getInt("largura_mm"),
+                            rs.getInt("altura_mm")));
                 }
                 return lista;
             }

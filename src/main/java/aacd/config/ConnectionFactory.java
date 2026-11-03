@@ -9,26 +9,34 @@ import java.util.Properties;
 
 public class ConnectionFactory {
 
-    private static final Properties PROPS = carregar();
+    private static Properties props;
+
+    private static synchronized Properties props() {
+        if (props == null) {
+            props = carregar();
+        }
+        return props;
+    }
 
     private static Properties carregar() {
-        Properties props = new Properties();
+        Properties p = new Properties();
         try (InputStream in = ConnectionFactory.class.getClassLoader()
                 .getResourceAsStream("db.properties")) {
             if (in == null) {
                 throw new IllegalStateException("db.properties não encontrado");
             }
-            props.load(in);
+            p.load(in);
         } catch (IOException e) {
             throw new IllegalStateException("Erro ao ler db.properties", e);
         }
-        return props;
+        return p;
     }
 
     public static Connection getConnection() throws SQLException {
+        Properties p = props();
         return DriverManager.getConnection(
-                PROPS.getProperty("db.url"),
-                PROPS.getProperty("db.user"),
-                PROPS.getProperty("db.password"));
+                p.getProperty("db.url"),
+                p.getProperty("db.user"),
+                p.getProperty("db.password"));
     }
 }

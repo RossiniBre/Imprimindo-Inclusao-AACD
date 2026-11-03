@@ -35,8 +35,8 @@ public class DoacaoDao {
     }
 
     public List<DoacaoResumo> listar() throws SQLException {
-        String sql = "SELECT d.iddoacao, d.tipo, d.descricao, d.quantidade, d.data_manifestacao, d.visualizada, "
-                + "e.idempresa, u.nome, e.email, e.telefone "
+        String sql = "SELECT d.iddoacao, d.tipo, d.descricao, d.quantidade, d.data_manifestacao, "
+                + "e.idempresa, u.nome, u.ativo, e.email, e.telefone "
                 + "FROM doacao d "
                 + "JOIN empresa e ON e.idempresa = d.empresa_id "
                 + "JOIN usuario u ON u.idusuario = e.usuario_id "
@@ -55,13 +55,24 @@ public class DoacaoDao {
                         rs.getString("descricao"),
                         rs.getInt("quantidade"),
                         data == null ? null : data.toInstant(),
-                        rs.getBoolean("visualizada"),
                         rs.getInt("idempresa"),
                         rs.getString("nome"),
+                        rs.getBoolean("ativo"),
                         rs.getString("email"),
                         rs.getString("telefone")));
             }
             return lista;
+        }
+    }
+
+    public boolean excluir(int id) throws SQLException {
+        String sql = "DELETE FROM doacao WHERE iddoacao = ?";
+
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, id);
+            return ps.executeUpdate() > 0;
         }
     }
 }

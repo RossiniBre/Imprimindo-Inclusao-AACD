@@ -75,6 +75,7 @@ public final class Rotas {
 
         // Doações
         servidor.createContext("/api/doacoes", new DoacoesHandler(sessoes));
+        servidor.createContext("/api/doacoes/excluir", new DoacaoExcluirHandler(sessoes));
 
         // Desativação/Exclusão de contas
         servidor.createContext("/api/conta/desativar", contaHandler);
