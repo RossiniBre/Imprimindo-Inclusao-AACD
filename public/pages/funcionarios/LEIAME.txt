@@ -1,6 +1,17 @@
 TELA: Funcionários da AACD
 Quem acessa: somente o admin.
-O que faz: lista os funcionários da AACD, com opção de excluir ou desativar.
-Também cadastra novos funcionários (nome de exibição, cargo, setor, identificador e senha).
+O que faz: lista os funcionários da AACD com busca (nome, e-mail ou login) e filtros
+Todos / Ativos / Inativos, e permite desativar ou reativar cada um.
+Também cadastra novos funcionários pelo modal "Adicionar funcionário"
+(nome, login, e-mail institucional @aacd.com, senha, cargo e setor opcionais).
 Funcionários comuns não cadastram ninguém, só fazem login.
-Rotas do back: a definir (cadastro e desativação do admin já existem no back).
+Contas ADMIN não podem ser desativadas/reativadas (regra do back): o botão não aparece.
+
+Rotas do back usadas (via shared/js/api.js):
+  GET  /api/funcionarios        -> lista
+  POST /api/funcionarios        -> cadastro (201; 400 dados inválidos; 409 login/e-mail em uso)
+  POST /api/conta/desativar     -> { id }
+  POST /api/conta/reativar      -> { id }
+Sem sessão (401) a tela redireciona para #/login?perfil=aacd.
+
+Pendente: botão "Editar" (modal "Editar funcionário" do Figma; back: POST /api/funcionario/editar).

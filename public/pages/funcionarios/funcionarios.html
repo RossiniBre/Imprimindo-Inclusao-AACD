@@ -1,0 +1,128 @@
+<section class="funcionarios">
+
+  <div class="funcionarios__cabecalho">
+    <div>
+      <h1>Funcionários</h1>
+      <p class="funcionarios__descricao">Gerencie quem pode enviar pedidos de impressão em nome da AACD.</p>
+    </div>
+    <button type="button" class="funcionarios__principal" id="botao-adicionar">+ Adicionar funcionário</button>
+  </div>
+
+  <div class="funcionarios__ferramentas">
+    <div class="funcionarios__busca">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="11" cy="11" r="7"/>
+        <line x1="21" y1="21" x2="16.5" y2="16.5"/>
+      </svg>
+      <input type="search" id="campo-busca" placeholder="Buscar por nome ou e-mail" aria-label="Buscar por nome ou e-mail">
+    </div>
+
+    <div class="funcionarios__filtros" role="group" aria-label="Filtrar por status">
+      <button type="button" class="funcionarios__filtro ativo" data-filtro="todos">Todos (<span id="total-todos">0</span>)</button>
+      <button type="button" class="funcionarios__filtro" data-filtro="ativo">Ativos (<span id="total-ativos">0</span>)</button>
+      <button type="button" class="funcionarios__filtro" data-filtro="inativo">Inativos (<span id="total-inativos">0</span>)</button>
+    </div>
+  </div>
+
+  <p class="funcionarios__aviso-geral" id="aviso-geral" role="alert" hidden></p>
+
+  <div class="funcionarios__cartao">
+    <table class="funcionarios__tabela">
+      <thead>
+        <tr>
+          <th>Funcionário</th>
+          <th>Login</th>
+          <th>Função</th>
+          <th>Cargo</th>
+          <th>Setor</th>
+          <th>Status</th>
+          <th class="coluna-acoes">Ações</th>
+        </tr>
+      </thead>
+      <tbody id="corpo-tabela">
+        <!-- Linhas geradas pelo funcionarios.js -->
+      </tbody>
+    </table>
+
+    <p class="funcionarios__vazio" id="tabela-vazia" hidden>Nenhum funcionário encontrado.</p>
+    <p class="funcionarios__vazio" id="tabela-carregando">Carregando funcionários...</p>
+  </div>
+
+  <div class="funcionarios__rodape">
+    <span id="contador-mostrando"></span>
+    <span>Só administradores veem esta página. Desativar não apaga os pedidos já enviados.</span>
+  </div>
+
+  <!-- Modal: Adicionar funcionário -->
+  <div class="modal-fundo" id="modal-adicionar" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-titulo">
+
+      <div class="modal__cabecalho">
+        <div>
+          <h2 id="modal-titulo">Adicionar funcionário</h2>
+          <p class="modal__subtitulo">Informe os dados corretos</p>
+        </div>
+        <button type="button" class="modal__fechar" id="botao-fechar-modal" aria-label="Fechar">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="6" y1="6" x2="18" y2="18"/>
+            <line x1="18" y1="6" x2="6" y2="18"/>
+          </svg>
+        </button>
+      </div>
+
+      <form id="form-adicionar" novalidate>
+        <div class="modal__campo">
+          <label for="novo-nome">Nome completo</label>
+          <input type="text" id="novo-nome" name="nome" placeholder="Camila Duarte" maxlength="45" autocomplete="off">
+          <p class="modal__erro" id="erro-nome" aria-live="polite"></p>
+        </div>
+
+        <div class="modal__linha">
+          <div class="modal__campo">
+            <label for="novo-login">Login</label>
+            <input type="text" id="novo-login" name="identificador" placeholder="camila.duarte" maxlength="45" autocomplete="off">
+            <p class="modal__erro" id="erro-login" aria-live="polite"></p>
+          </div>
+          <div class="modal__campo">
+            <label for="novo-email">E-mail institucional</label>
+            <input type="email" id="novo-email" name="email" placeholder="camila.duarte@aacd.com" maxlength="100" autocomplete="off">
+            <p class="modal__erro" id="erro-email" aria-live="polite"></p>
+          </div>
+        </div>
+
+        <div class="modal__campo">
+          <label for="nova-senha">Senha</label>
+          <input type="password" id="nova-senha" name="senha" placeholder="Mín. de 8 caracteres" autocomplete="new-password">
+          <p class="modal__erro" id="erro-senha" aria-live="polite"></p>
+        </div>
+
+        <div class="modal__linha">
+          <div class="modal__campo">
+            <label for="novo-cargo">Cargo (opcional)</label>
+            <input type="text" id="novo-cargo" name="cargo" placeholder="Fisioterapeuta" maxlength="45" autocomplete="off">
+            <p class="modal__erro" aria-hidden="true"></p>
+          </div>
+          <div class="modal__campo">
+            <label for="novo-setor">Setor (opcional)</label>
+            <input type="text" id="novo-setor" name="setor" placeholder="Ortopedia" maxlength="45" autocomplete="off">
+            <p class="modal__erro" aria-hidden="true"></p>
+          </div>
+        </div>
+
+        <p class="modal__aviso">
+          O funcionário já pode entrar com o <strong>login</strong> (ou o e-mail) e a senha informados.
+          Funcionários criam e acompanham pedidos; só o admin gerencia esta lista.
+        </p>
+
+        <p class="modal__erro-geral" id="erro-modal" role="alert" hidden></p>
+
+        <div class="modal__rodape">
+          <button type="button" class="modal__secundario" id="botao-cancelar-modal">Cancelar</button>
+          <button type="submit" class="funcionarios__principal" id="botao-cadastrar">Cadastrar funcionário</button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+</section>
