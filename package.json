@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
      "scripts": {
+     "dev": "node scripts/servidor.js",
      "lint": "eslint public tests",
      "test": "vitest run"
    },
