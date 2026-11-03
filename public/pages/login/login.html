@@ -1,0 +1,68 @@
+<section class="login">
+  <aside class="login__painel">
+    <span class="login__circulo login__circulo--topo" aria-hidden="true"></span>
+    <span class="login__circulo login__circulo--meio" aria-hidden="true"></span>
+    <span class="login__circulo login__circulo--baixo" aria-hidden="true"></span>
+
+    <img class="login__logo" src="/shared/img/logo-aacd.png" alt="AACD">
+
+    <div class="login__texto">
+      <h1 id="login-painel-titulo">Sua impressora 3D pode mudar a vida de alguém.</h1>
+      <p id="login-painel-descricao">Conecte sua empresa à AACD e ajude a produzir próteses e órteses para quem mais precisa.</p>
+      <p class="login__nota" id="login-painel-nota" hidden></p>
+    </div>
+
+    <p class="login__rodape" id="login-painel-rodape">Portal de empresas parceiras</p>
+  </aside>
+
+  <div class="login__area">
+    <div class="login__caixa">
+      <h2>Bem-vindo de volta</h2>
+      <p class="login__descricao" id="login-subtitulo">Entre para gerenciar as impressoras da sua empresa.</p>
+
+      <form id="form-login" novalidate>
+        <div class="login__campo">
+          <label for="login-identificador">E-mail corporativo</label>
+          <input type="text" id="login-identificador" name="identificador"
+                 placeholder="empresa@exemplo.com.br" autocomplete="username">
+          <p class="login__erro" id="erro-identificador" aria-live="polite"></p>
+        </div>
+
+        <div class="login__campo">
+          <label for="login-senha">Senha</label>
+          <div class="login__senha">
+            <input type="password" id="login-senha" name="senha"
+                   placeholder="Digite sua senha" autocomplete="current-password">
+            <button type="button" class="login__olho" id="botao-olho" aria-label="Mostrar senha" aria-pressed="false">
+              <svg class="login__olho-aberto" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+              <svg class="login__olho-fechado" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" hidden>
+                <path d="M17.94 17.94A10.5 10.5 0 0 1 12 19c-6.5 0-10-7-10-7a18.6 18.6 0 0 1 5.06-5.94"/>
+                <path d="M9.9 4.24A9.9 9.9 0 0 1 12 4c6.5 0 10 7 10 7a18.5 18.5 0 0 1-2.16 3.19"/>
+                <path d="M14.12 14.12a3 3 0 1 1-4.24-4.24"/>
+                <line x1="2" y1="2" x2="22" y2="22"/>
+              </svg>
+            </button>
+          </div>
+          <p class="login__erro" id="erro-senha" aria-live="polite"></p>
+
+          <a class="login__esqueci" id="link-esqueci" href="#/esqueci-senha">Esqueci minha senha</a>
+        </div>
+
+        <p class="login__erro-geral" id="erro-geral" role="alert" hidden></p>
+
+        <button type="submit" class="login__entrar" id="botao-entrar">Entrar</button>
+      </form>
+
+      <div id="login-cadastro">
+        <hr class="login__divisor">
+        <p class="login__cadastro">
+          Ainda não tem conta?
+          <a href="#/cadastro-empresa">Cadastre sua empresa</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>

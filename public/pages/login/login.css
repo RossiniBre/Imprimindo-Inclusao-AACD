@@ -1,0 +1,265 @@
+/* Tela de login (empresa parceira e funcionário da AACD).
+   Dividida ao meio: painel vermelho à esquerda, formulário à direita. */
+
+/* Nesta tela o cabeçalho vermelho do casco some e o <main> perde o respiro:
+   o painel vermelho e o formulário ocupam a janela inteira. */
+body:has(main > .login) header {
+  display: none;
+}
+
+main:has(> .login) {
+  padding: 0;
+}
+
+.login [hidden] {
+  display: none !important;
+}
+
+.login {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 100vh;
+}
+
+/* ---------- Painel vermelho ---------- */
+
+.login__painel {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 2.75rem 1.875rem 1.5rem;
+  background: var(--cor-cabecalho);
+  color: var(--cor-superficie);
+}
+
+.login__circulo {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.login__circulo--topo  { width: 18.75rem; height: 18.75rem; top: -9.375rem; right: -6.875rem; }
+.login__circulo--meio  { width: 5.25rem;  height: 5.25rem;  top: 70%;       right: 3.25rem; }
+.login__circulo--baixo { width: 12.5rem;  height: 12.5rem;  bottom: -3.125rem; left: -3.75rem; }
+
+.login__logo {
+  position: relative;
+  width: 6.875rem;
+  height: 6.875rem;
+  padding: 1rem;
+  border-radius: 50%;
+  background: var(--cor-superficie);
+  object-fit: contain;
+}
+
+.login__texto {
+  position: relative;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.login__texto h1 {
+  margin-bottom: 1.25rem;
+  font-size: 1.75rem;
+  line-height: 1.25;
+}
+
+.login__texto p {
+  max-width: 17rem;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.login__nota {
+  margin-top: 0.875rem;
+  font-size: 0.6875rem;
+  font-style: italic;
+  opacity: 0.9;
+}
+
+.login__rodape {
+  position: relative;
+  font-size: 0.75rem;
+}
+
+/* ---------- Formulário ---------- */
+
+.login__area {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem 1.5rem;
+}
+
+.login__caixa {
+  width: 100%;
+  max-width: 27.5rem;
+}
+
+.login__caixa h2 {
+  margin-bottom: 0.375rem;
+  font-size: 2rem;
+}
+
+.login__descricao {
+  margin-bottom: 2.25rem;
+  font-size: 0.9375rem;
+  color: var(--cor-texto-suave);
+}
+
+.login__campo {
+  margin-bottom: 1.125rem;
+}
+
+.login__campo label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.login__campo input {
+  width: 100%;
+  height: 3.125rem;
+  padding: 0 1rem;
+  border: 1px solid var(--cor-borda);
+  border-radius: 0.375rem;
+  font-size: 0.9375rem;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.login__campo input::placeholder {
+  color: var(--cor-placeholder);
+}
+
+.login__campo input:focus {
+  border-color: var(--cor-botao-principal);
+  box-shadow: 0 0 0 3px var(--cor-destaque-claro);
+}
+
+.login__campo input.com-erro {
+  border-color: var(--cor-erro);
+}
+
+/* Senha com o botão do olho dentro do campo */
+
+.login__senha {
+  position: relative;
+}
+
+.login__senha input {
+  padding-right: 3rem;
+}
+
+.login__olho {
+  position: absolute;
+  top: 50%;
+  right: 0.375rem;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.375rem;
+  height: 2.375rem;
+  padding: 0;
+  border: none;
+  border-radius: 0.375rem;
+  background: transparent;
+  color: var(--cor-texto-suave);
+}
+
+.login__olho:hover {
+  background: var(--cor-neutra-claro);
+  color: var(--cor-texto);
+}
+
+.login__erro {
+  min-height: 1.125rem;
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  color: var(--cor-erro);
+}
+
+.login__erro-geral {
+  margin-bottom: 1rem;
+  padding: 0.75rem 0.875rem;
+  border-left: 4px solid var(--cor-erro);
+  border-radius: 0.375rem;
+  background: var(--cor-erro-claro);
+  font-size: 0.875rem;
+  color: var(--cor-erro);
+}
+
+.login__esqueci {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-align: right;
+  color: var(--cor-cabecalho);
+  text-decoration: none;
+}
+
+.login__esqueci:hover {
+  text-decoration: underline;
+}
+
+.login__entrar {
+  width: 100%;
+  height: 3.5rem;
+  margin-top: 0.625rem;
+  border-radius: 0.375rem;
+  font-size: 1rem;
+  font-weight: 700;
+  transition: background 0.2s;
+}
+
+.login__entrar:hover:not(:disabled) {
+  background: var(--cor-botao-principal-hover);
+}
+
+.login__divisor {
+  margin: 2.25rem 0 1.5rem;
+  border: none;
+  border-top: 1px solid var(--cor-borda);
+}
+
+.login__cadastro {
+  font-size: 0.875rem;
+  text-align: center;
+  color: var(--cor-texto-suave);
+}
+
+.login__cadastro a {
+  font-weight: 700;
+  color: var(--cor-cabecalho);
+  text-decoration: none;
+}
+
+.login__cadastro a:hover {
+  text-decoration: underline;
+}
+
+/* ---------- Responsivo ---------- */
+
+@media (max-width: 48rem) {
+  .login {
+    grid-template-columns: 1fr;
+  }
+
+  .login__painel {
+    gap: 1.25rem;
+    padding: 1.5rem 1rem;
+  }
+
+  .login__texto h1 {
+    font-size: 1.375rem;
+  }
+
+  .login__rodape,
+  .login__circulo--meio {
+    display: none;
+  }
+}
