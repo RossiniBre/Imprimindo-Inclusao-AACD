@@ -21,6 +21,13 @@ export const api = {
   login:   (identificador, senha) => requisitar('POST', '/api/login', { identificador, senha }),
   logout:  () => requisitar('POST', '/api/logout'),
   eu:      () => requisitar('GET', '/api/me'),
+  esqueciSenha: (email) => requisitar('POST', '/api/esqueci-senha', { email }),
   cadastrarEmpresa:  (dados) => requisitar('POST', '/api/empresas', dados),
   cadastrarImpressora: (dados) => requisitar('POST', '/api/impressoras', dados),
+
+  // Funcionários (só o admin)
+  funcionarios: () => requisitar('GET', '/api/funcionarios'),
+  cadastrarFuncionario: (dados) => requisitar('POST', '/api/funcionarios', dados),
+  desativarConta: (id) => requisitar('POST', '/api/conta/desativar', { id }),
+  reativarConta:  (id) => requisitar('POST', '/api/conta/reativar', { id }),
 };
