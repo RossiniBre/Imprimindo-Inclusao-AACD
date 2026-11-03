@@ -1,0 +1,51 @@
+<section class="esqueci">
+  <aside class="esqueci__painel">
+    <span class="esqueci__circulo esqueci__circulo--topo" aria-hidden="true"></span>
+    <span class="esqueci__circulo esqueci__circulo--meio" aria-hidden="true"></span>
+    <span class="esqueci__circulo esqueci__circulo--baixo" aria-hidden="true"></span>
+
+    <img class="esqueci__logo" src="/shared/img/logo-aacd.png" alt="AACD">
+
+    <div class="esqueci__texto">
+      <h1 id="esqueci-painel-titulo">Sua impressora 3D pode mudar a vida de alguém.</h1>
+      <p id="esqueci-painel-descricao">Conecte sua empresa à AACD e ajude a produzir próteses e órteses para quem mais precisa.</p>
+    </div>
+
+    <p class="esqueci__rodape" id="esqueci-painel-rodape">Portal de empresas parceiras</p>
+  </aside>
+
+  <div class="esqueci__area">
+    <div class="esqueci__caixa">
+      <div class="esqueci__cadeado" aria-hidden="true">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="4" y="10" width="16" height="11" rx="2"/>
+          <path d="M8 10V7a4 4 0 0 1 8 0v3"/>
+          <circle cx="12" cy="15.5" r="1"/>
+        </svg>
+      </div>
+
+      <h2>Esqueceu sua senha?</h2>
+      <p class="esqueci__descricao">
+        Sem problemas. Informe o e-mail cadastrado e enviaremos um código para você criar uma nova senha.
+      </p>
+
+      <form id="form-esqueci" novalidate>
+        <label for="esqueci-email">E-mail cadastrado</label>
+        <input type="email" id="esqueci-email" name="email"
+               placeholder="empresa@exemplo.com.br" autocomplete="email">
+        <p class="esqueci__erro" id="erro-email" aria-live="polite"></p>
+
+        <p class="esqueci__erro-geral" id="erro-geral" role="alert" hidden></p>
+
+        <button type="submit" class="esqueci__enviar" id="botao-enviar">Enviar código de recuperação</button>
+      </form>
+
+      <div class="esqueci__sucesso" id="mensagem-sucesso" role="status" hidden>
+        <strong>Pronto!</strong>
+        <p id="texto-sucesso"></p>
+      </div>
+
+      <a class="esqueci__voltar" id="link-voltar" href="#/login">← Voltar para o login</a>
+    </div>
+  </div>
+</section>
