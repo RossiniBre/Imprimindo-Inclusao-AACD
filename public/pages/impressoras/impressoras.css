@@ -1,0 +1,118 @@
+:root {
+    --vermelho: #C8102E;
+    --vermelho-circulo: #CC213D;
+    --laranja: #EFB000;
+    --laranja-escuro: #D69E00;
+    --bg: #FAF8F5;
+    --texto: #2B2B2B;
+    --verde: #2E9E5B; 
+    --cinza: #CAC9C6;
+}
+
+/* menu de cima */
+.menu { 
+    height: 80px; 
+    background-color: var(--vermelho); 
+}
+.menu a { 
+    color: #fff; 
+    text-decoration: none; 
+}
+.menu a:hover { 
+    color: rgb(197, 197, 197);
+}
+
+.logo-menu { 
+    width: 52px; 
+    height: 52px; 
+}
+
+/* conteúdo de rolagem */
+main { 
+    scroll-behavior: smooth; 
+}
+.conteudo { 
+    padding: 20px 16px; 
+}
+
+/* bolinha colorida dos títulos das seções */
+.ponto-amarelo { 
+    width: 14px; 
+    height: 14px;
+    background-color: var(--laranja);
+}
+.ponto-verde {
+    width: 14px; 
+    height: 14px;
+    background-color: var(--verde);
+}
+
+.warning {
+    color: black;
+}
+
+/* botões */
+#btn-adicionar { 
+    padding: 8px 30px; 
+    font-size: 18px;
+    color: var(--texto);
+}
+#btn-adicionar:hover { 
+    background-color: var(--laranja);
+}
+
+.btn-sm { 
+    padding: 8px 20px; 
+    font-size: 14px; 
+    border-width: 1px; 
+    border-radius: 6px; 
+}
+
+/* borda card imprimindo */
+.card-imp {
+    border-color: var(--laranja);
+}
+
+/* botões dos cards */
+.btn-outline-warning { 
+    color: black; 
+}
+.btn-outline-warning:hover { 
+    color: black; 
+    border-color: var(--laranja);
+    background-color: var(--laranja);
+}
+
+.btn-outline-secondary { 
+    color: black;  
+}
+.btn-outline-secondary:hover { 
+    color: black; 
+    border-color: var(--cinza);
+    background-color: var(--cinza);
+}
+
+.btn-outline-danger { 
+    color: black; 
+}
+.btn-outline-danger:hover { 
+    color: white; 
+    border-color: var(--vermelho); 
+    background-color: var(--vermelho);
+}
+
+.btn-outline-success {
+    color: black;
+}
+
+.info {
+    padding: 1rem;
+    padding-block-start: .5rem;
+    padding-block-end: .5rem;
+}
+
+/* telas grandes (o modelo é 1920px) */
+@media (min-width: 992px) {
+    .menu nav { font-size: 32px; }
+    .conteudo { padding: 52px 100px 30px; }
+}

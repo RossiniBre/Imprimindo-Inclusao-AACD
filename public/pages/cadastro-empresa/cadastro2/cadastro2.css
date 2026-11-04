@@ -1,0 +1,122 @@
+:root {
+    --vermelho: #C8102E;
+    --vermelho-circulo: #CC213D;
+    --laranja: #EFB000;
+    --laranja-escuro: #D69E00;
+    --bg: #FAF8F5;
+    --texto: #2B2B2B;
+}
+
+body {
+    font-family: "Inter", system-ui, sans-serif;
+    background-color: var(--bg);
+    color: var(--texto);
+}
+
+/* painel vermelho */
+.side { background-color: var(--vermelho); padding: 4.8rem 3rem; }
+
+.circle { background-color: var(--vermelho-circulo); }
+.circle-1 { width: 370px; height: 370px; top: -100px;    right: -155px; }
+.circle-2 { width: 140px; height: 140px; bottom: 170px;  right: 90px;  }
+.circle-3 { width: 420px; height: 420px; bottom: -130px; left: -100px;  }
+
+#logo { 
+    width: 74px; 
+    height: 74px;
+}
+#img-aacd {
+    width: 50px;
+    height: 50px;
+}
+
+#titulo-lateral { 
+    font-size: clamp(3.3rem, 2.6vw, 1.7rem); 
+}
+#subT-lateral { 
+    max-width: 30.5rem; 
+    font-size: 1.2rem; 
+    line-height: 1.6; 
+}
+.conteudo-lateral small { 
+    font-size: 1rem;
+    bottom: -20px;
+}
+
+/* formulario */
+#form-junto { 
+    max-width: 750px; 
+}
+#subT-Form { 
+    font-size: 1.2rem; 
+}
+
+.label-form { 
+    display: block; 
+    font-size: 1rem; 
+    font-weight: 700; 
+    margin-bottom: .2rem; 
+}
+
+.input-form {
+    font-size: 1.05rem;
+    padding: .45rem .7rem;
+    border-color: #E3E0DA;
+    border-radius: 6px;
+}
+.input-form::placeholder { 
+    color: #A9A9A9; 
+}
+.input-form:focus, .form-check-input:focus {
+    border-color: var(--laranja);
+    box-shadow: 0 0 0 .2rem rgba(239, 176, 0, .25);
+}
+
+/* caixinha "Li e aceito os termos" */
+.form-check-input:checked {
+    background-color: var(--laranja);
+    border-color: var(--laranja);
+}
+
+/* Botões (redefinição das variáveis do Bootstrap) */
+.btn {
+    --bs-btn-padding-y: .75rem;
+    --bs-btn-font-size: 1.2rem;
+    --bs-btn-font-weight: 700;
+    --bs-btn-border-width: 2px;
+    --bs-btn-border-radius: 6px;
+}
+.btn-cancelar { --bs-btn-bg: #fff; }
+.btn-continuar {
+    --bs-btn-bg: var(--laranja);
+    --bs-btn-border-color: var(--laranja);
+    --bs-btn-hover-bg: var(--laranja-escuro);
+    --bs-btn-hover-border-color: var(--laranja-escuro);
+    --bs-btn-active-bg: var(--laranja-escuro);
+    --bs-btn-active-border-color: var(--laranja-escuro);
+}
+
+.acoes { 
+    gap: 1rem; 
+    margin-top: 2.4rem; 
+}
+
+/* "Já tem conta? Entrar" e "Esqueci minha senha" */
+.link-login { 
+    font-size: .92rem; 
+}
+.link-login a { 
+    color: var(--vermelho); 
+    font-weight: 700; 
+    text-decoration: none; 
+}
+.link-login :hover {
+    text-decoration: underline;
+    color: #860d21;
+}
+
+/* painel com 34,5% da largura (igual ao modelo) em telas médias e grandes */
+@media (min-width: 768px) {
+    .side { width: 34.5%; min-height: 100vh; }
+    #formulario { width: 65.5%; }
+}
