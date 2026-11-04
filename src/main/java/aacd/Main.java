@@ -11,7 +11,7 @@ import java.util.concurrent.Executors;
 public class Main {
 
     public static void main(String[] args) throws Exception {
-        int porta = Integer.parseInt(System.getenv().getOrDefault("PORTA", "8080"));
+        int porta = Integer.parseInt(System.getenv().getOrDefault("PORTA", "8081"));
 
         //só localhost
         HttpServer servidor = HttpServer.create(new InetSocketAddress(InetAddress.getLoopbackAddress(), porta), 0);

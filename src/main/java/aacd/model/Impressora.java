@@ -11,8 +11,12 @@ public class Impressora {
     private Disponibilidade disponibilidade;
     private boolean ativo;
     private final Set<Material> materiais = EnumSet.noneOf(Material.class);
+    private int comprimentoMm;
+    private int larguraMm;
+    private int alturaMm;
 
-    public Impressora(int id, int empresaId, String modelo, Disponibilidade disponibilidade, boolean ativo) {
+    public Impressora(int id, int empresaId, String modelo, Disponibilidade disponibilidade, boolean ativo,
+                      int comprimentoMm, int larguraMm, int alturaMm) {
         this.id = id;
 
         if (empresaId <= 0) {
@@ -31,10 +35,13 @@ public class Impressora {
         this.disponibilidade = disponibilidade;
 
         this.ativo = ativo;
+        this.comprimentoMm = medidaValida(comprimentoMm, "Comprimento");
+        this.larguraMm = medidaValida(larguraMm, "Largura");
+        this.alturaMm = medidaValida(alturaMm, "Altura");
     }
 
-    public Impressora(int empresaId, String modelo) {
-        this(0, empresaId, modelo, Disponibilidade.OCIOSA, true);
+    public Impressora(int empresaId, String modelo, int comprimentoMm, int larguraMm, int alturaMm) {
+        this(0, empresaId, modelo, Disponibilidade.OCIOSA, true, comprimentoMm, larguraMm, alturaMm);
     }
 
     //getters
@@ -44,6 +51,9 @@ public class Impressora {
     public Disponibilidade getDisponibilidade(){ return this.disponibilidade; }
     public boolean isAtivo(){ return this.ativo; }
     public Set<Material> getMateriais() { return Collections.unmodifiableSet(materiais); }
+    public int getComprimentoMm() { return comprimentoMm; }
+    public int getLarguraMm() { return larguraMm; }
+    public int getAlturaMm() { return alturaMm; }
 
     //setters
     public void setId(int id){
@@ -71,5 +81,16 @@ public class Impressora {
         }
         materiais.clear();
         materiais.addAll(novos);
+    }
+
+    public void setComprimentoMm(int valor) { this.comprimentoMm = medidaValida(valor, "Comprimento"); }
+    public void setLarguraMm(int valor) { this.larguraMm = medidaValida(valor, "Largura"); }
+    public void setAlturaMm(int valor) { this.alturaMm = medidaValida(valor, "Altura"); }
+
+    private static int medidaValida(int valor, String nome) {
+        if (valor <= 0) {
+            throw new IllegalArgumentException(nome + " deve ser maior que zero!");
+        }
+        return valor;
     }
 }

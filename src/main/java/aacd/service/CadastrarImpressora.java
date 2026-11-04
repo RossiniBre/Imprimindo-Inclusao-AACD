@@ -35,7 +35,8 @@ public class CadastrarImpressora {
         this.conexoes = conexoes;
     }
 
-    public int executar(Usuario ator, String modelo, Set<Material> materiais) throws SQLException {
+    public int executar(Usuario ator, String modelo, Set<Material> materiais,
+                        int comprimentoMm, int larguraMm, int alturaMm) throws SQLException {
         if (ator == null || !"EMPRESA".equals(ator.getPerfil()) || !ator.isAtivo()) {
             throw new IllegalStateException("Apenas empresas podem cadastrar impressoras!");
         }
@@ -45,7 +46,7 @@ public class CadastrarImpressora {
             throw new IllegalStateException("Empresa não encontrada!");
         }
 
-        Impressora impressora = new Impressora(empresa.getId(), modelo);
+        Impressora impressora = new Impressora(empresa.getId(), modelo, comprimentoMm, larguraMm, alturaMm);
         impressora.setMateriais(materiais);   // recusa nulo e vazio antes de tocar no banco
 
         int id;

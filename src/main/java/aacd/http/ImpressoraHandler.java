@@ -76,7 +76,8 @@ public class ImpressoraHandler implements HttpHandler {
             }
 
             int id = cadastro.executar(ator, campos.get("modelo"),
-                    lerMateriais(campos.get("materiais")));
+                    lerMateriais(campos.get("materiais")),
+                    220, 220, 250);
             Http.json(ex, 201, Json.objeto().campo("id", id).build());
 
         } catch (IllegalStateException e) {
@@ -150,6 +151,9 @@ public class ImpressoraHandler implements HttpHandler {
                 .campo("modelo", i.getModelo())
                 .campo("disponibilidade", i.getDisponibilidade().name())
                 .campo("ativo", i.isAtivo())
+                .campo("comprimentoMm", i.getComprimentoMm())
+                .campo("larguraMm", i.getLarguraMm())
+                .campo("alturaMm", i.getAlturaMm())
                 .build();
 
         return base.substring(0, base.lastIndexOf('}'))

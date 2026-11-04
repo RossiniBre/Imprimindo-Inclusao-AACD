@@ -12,25 +12,34 @@ public class ConteudoSolicitacao {
     private String titulo;
     private String descricao;
     private int quantidade;
+    private int comprimentoMm;
+    private int larguraMm;
+    private int alturaMm;
     private String arquivoId;
     private String nomeArquivo;
 
     // criação
     public ConteudoSolicitacao(String titulo, String descricao, int quantidade,
+                               int comprimentoMm, int larguraMm, int alturaMm,
                                String arquivoId, String nomeArquivo)
     {
         setTitulo(titulo);
         setDescricao(descricao);
         setQuantidade(quantidade);
+        setComprimentoMm(comprimentoMm);
+        setLarguraMm(larguraMm);
+        setAlturaMm(alturaMm);
         this.arquivoId = validarArquivoId(arquivoId);
         this.nomeArquivo = validarNomeArquivo(nomeArquivo);
     }
 
     // reconstrução
-    public ConteudoSolicitacao(String mongoId, String titulo, String descricao,
-                               int quantidade, String arquivoId, String nomeArquivo)
+    public ConteudoSolicitacao(String mongoId, String titulo, String descricao, int quantidade,
+                               int comprimentoMm, int larguraMm, int alturaMm,
+                               String arquivoId, String nomeArquivo)
     {
-        this(titulo, descricao, quantidade, arquivoId, nomeArquivo);
+        this(titulo, descricao, quantidade, comprimentoMm, larguraMm, alturaMm,
+                arquivoId, nomeArquivo);
         this.mongoId = validarObjectId(mongoId, "documento");
     }
 
@@ -39,6 +48,9 @@ public class ConteudoSolicitacao {
     public String getTitulo(){ return this.titulo; }
     public String getDescricao(){ return this.descricao; }
     public int getQuantidade(){ return this.quantidade; }
+    public int getComprimentoMm(){ return this.comprimentoMm; }
+    public int getLarguraMm(){ return this.larguraMm; }
+    public int getAlturaMm(){ return this.alturaMm; }
     public String getArquivoId(){ return this.arquivoId; }
     public String getNomeArquivo(){ return this.nomeArquivo; }
 
@@ -70,7 +82,18 @@ public class ConteudoSolicitacao {
         this.quantidade = quantidade;
     }
 
+    public void setComprimentoMm(int valor){ this.comprimentoMm = medidaValida(valor, "Comprimento"); }
+    public void setLarguraMm(int valor){ this.larguraMm = medidaValida(valor, "Largura"); }
+    public void setAlturaMm(int valor){ this.alturaMm = medidaValida(valor, "Altura"); }
+
     // validações
+    private static int medidaValida(int valor, String nome){
+        if (valor <= 0){
+            throw new IllegalArgumentException(nome + " deve ser maior que zero");
+        }
+        return valor;
+    }
+
     private static String validarObjectId(String valor, String nome){
         if (valor == null || !valor.matches("[0-9a-fA-F]{24}")){
             throw new IllegalArgumentException("ID do " + nome + " deve ter 24 caracteres hexadecimais");

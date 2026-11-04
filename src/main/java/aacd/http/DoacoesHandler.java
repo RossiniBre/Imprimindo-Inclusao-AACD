@@ -71,6 +71,7 @@ public class DoacoesHandler implements HttpHandler {
                 String empresa = Json.objeto()
                         .campo("id", d.getEmpresaId())
                         .campo("nome", d.getEmpresaNome())
+                        .campo("ativa", d.isEmpresaAtiva())
                         .campo("email", d.getEmail())
                         .campo("telefone", d.getTelefone())
                         .build();
@@ -81,7 +82,6 @@ public class DoacoesHandler implements HttpHandler {
                         .campo("descricao", d.getDescricao())
                         .campo("quantidade", d.getQuantidade())
                         .campo("dataManifestacao", d.getDataManifestacao() == null ? null : d.getDataManifestacao().toString())
-                        .campo("visualizada", d.isVisualizada())
                         .campoJson("empresa", empresa)
                         .build());
             }
