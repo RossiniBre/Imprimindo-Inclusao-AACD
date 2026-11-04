@@ -22,7 +22,7 @@ beforeEach(async () => {
   globalThis.bootstrap = { Modal: ModalFalso }
   globalThis.alert = vi.fn()
   carregarHtml('impressoras', 'impressoras')
-  tela = await import('../pages/impressoras/impressoras.js')
+  tela = await import('../public/pages/impressoras/impressoras.js')
   tela.iniciar()
 })
 

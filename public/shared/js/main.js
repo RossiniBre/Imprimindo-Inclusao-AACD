@@ -10,6 +10,6 @@ rota('/404',           { pagina: 'nao-encontrada', publica: true,  titulo: 'Não
 rota('/impressoras',   { pagina: 'impressoras',    publica: true,  titulo: 'Impressoras' });
 rota('/cadastro-empresa/cadastro1', { pagina: 'cadastro1', pasta: 'cadastro-empresa/cadastro1', publica: true, titulo: 'Cadastro 1/2' });
 rota('/cadastro-empresa/cadastro2', { pagina: 'cadastro2', pasta: 'cadastro-empresa/cadastro2', publica: true, titulo: 'Cadastro 2/2' });
-rota('/solicitacoes',  { pagina: 'solicitacoes',   publica: true,  titulo: 'Solicitações' });
+rota('/solicitacoes', { pagina: 'solicitacoes', pasta: 'Solicitacoes-empresa', publica: true, titulo: 'Solicitações' });
 
 iniciar(document.getElementById('conteudo'));

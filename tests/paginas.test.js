@@ -1,8 +1,9 @@
 import { describe, it, expect } from 'vitest'
 import { readFileSync, existsSync } from 'node:fs'
 import { resolve } from 'node:path'
+import process from 'node:process'
 
-const RAIZ = process.cwd()
+const RAIZ = resolve(process.cwd(), 'public')
 const main = readFileSync(resolve(RAIZ, 'shared/js/main.js'), 'utf-8')
 
 const rotas = [...main.matchAll(/rota\('([^']+)',\s*\{([^}]*)\}/g)].map(([, caminho, cfg]) => ({

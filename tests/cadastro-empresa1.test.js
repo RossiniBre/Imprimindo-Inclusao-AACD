@@ -11,8 +11,8 @@ const digitar = (el, valor) => {
 beforeEach(async () => {
   vi.resetModules()
   // ajuste a pasta se a tela estiver em pages/cadastro-empresa/cadastro1
-  carregarHtml('cadastro1', 'cadastro1')
-  const tela = await import('../pages/cadastro1/cadastro1.js')
+  carregarHtml('cadastro-empresa/cadastro1', 'cadastro1')
+  const tela = await import('../public/pages/cadastro-empresa/cadastro1/cadastro1.js')
   tela.iniciar?.()
 })
 

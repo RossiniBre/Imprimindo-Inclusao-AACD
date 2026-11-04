@@ -4,7 +4,7 @@ import { carregarHtml } from './helpers/carregarTela.js'
 
 const $ = (seletor) => document.querySelector(seletor)
 
-beforeEach(() => carregarHtml('cadastro2', 'cadastro2'))
+beforeEach(() => carregarHtml('cadastro-empresa/cadastro2', 'cadastro2'))
 
 describe('cadastro2 (endereço)', () => {
   it('lista os 26 estados + DF, com SP selecionado', () => {

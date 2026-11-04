@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { rota, lerHash, resolver } from '../shared/js/router.js'
+import { rota, lerHash, resolver } from '../public/shared/js/router.js'
 
 rota('/404', { pagina: 'nao-encontrada', publica: true })
 rota('/login', { pagina: 'login', publica: true })
