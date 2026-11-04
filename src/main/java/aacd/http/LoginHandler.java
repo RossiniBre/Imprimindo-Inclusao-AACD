@@ -51,6 +51,7 @@ public class LoginHandler implements HttpHandler {
             Http.json(ex, 200, Json.objeto().campo("perfil", usuario.getPerfil()).build());
 
         } catch (SQLException e) {
+            e.printStackTrace();
             Http.erro(ex, 500, "Erro interno.");
         } catch (ContaBloqueadaException e) {
             Http.erro(ex, 403, e.getMessage());

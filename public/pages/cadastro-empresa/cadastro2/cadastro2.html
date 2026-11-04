@@ -30,7 +30,7 @@
         <h2 id="titulo-form" class="fs-1 fw-bold mb-1">Cadastre sua empresa</h2>
         <p id="subT-Form" class="text-body-secondary mb-3">Preencha os dados abaixo. Seu cadastro será analisado pela AACD.</p>
 
-        <form id="endereco-form">
+        <form id="endereco-form" novalidate>
           <div class="row gx-3 gy-2">
 
             <div class="col-md-6">
@@ -100,6 +100,8 @@
             <label class="form-check-label link-login" for="termos">Li e aceito os <a href="#">Termos de uso</a> e a <a href="#">Política de privacidade</a></label>
           </div>
 
+          <p id="erro-geral" class="text-danger small mt-3 mb-0" role="alert" hidden></p>
+          
           <div class="acoes d-flex mt-4">
             <a href="#/cadastro-empresa/cadastro1" class="btn btn-outline-dark btn-cancelar w-50">Voltar</a>
             <button type="submit" class="btn btn-warning btn-continuar w-50">Cadastrar</button>
