@@ -30,4 +30,8 @@ export const api = {
   cadastrarFuncionario: (dados) => requisitar('POST', '/api/funcionarios', dados),
   desativarConta: (id) => requisitar('POST', '/api/conta/desativar', { id }),
   reativarConta:  (id) => requisitar('POST', '/api/conta/reativar', { id }),
+  editarFuncionario: (dados) => requisitar('POST', '/api/funcionario/editar', dados),
+  editarNomeUsuario: (dados) => requisitar('POST', '/api/usuario/nome', dados),                  
+  editarIdentificadorUsuario: (dados) => requisitar('POST', '/api/usuario/identificador', dados), 
+  excluirConta: (id, senha) => requisitar('POST', '/api/conta/excluir', { id, senha }),
 };

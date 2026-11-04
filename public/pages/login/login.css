@@ -263,3 +263,7 @@ main:has(> .login) {
     display: none;
   }
 }
+
+.login__senha-oculta:not(.visivel) {
+  -webkit-text-security: disc;
+}

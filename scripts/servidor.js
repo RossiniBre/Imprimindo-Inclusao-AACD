@@ -1,10 +1,11 @@
 // Servidor estático de desenvolvimento: serve a pasta public/ sem mexer nos arquivos.
 // (O Live Server do VS Code injeta um script em todo .html, inclusive nos fragmentos
 // das telas, e quebra qualquer tela que tenha <svg> inline.)
+// As chamadas /api/* são repassadas para o back (padrão: porta 8081).
 // Uso: npm run dev  ->  http://127.0.0.1:8080/#/login   (Ctrl+C para parar)
 // Sem dependências: só módulos que já vêm no Node.
 
-import { createServer } from 'node:http';
+import { createServer, request as requisitarHttp } from 'node:http';
 import { createReadStream, statSync } from 'node:fs';
 import { extname, join, normalize } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -12,6 +13,7 @@ import process from 'node:process';
 
 const raiz = fileURLToPath(new URL('../public/', import.meta.url));
 const porta = Number(process.env.PORT) || 8080;
+const portaBack = Number(process.env.BACK_PORT) || 8081;
 
 const tipos = {
   '.html': 'text/html; charset=utf-8',
@@ -26,6 +28,30 @@ const tipos = {
 };
 
 createServer((requisicao, resposta) => {
+  // /api/* vai para o back (o cookie de sessão e os cabeçalhos passam direto)
+  if (requisicao.url.startsWith('/api/')) {
+    const repasse = requisitarHttp(
+      {
+        host: '127.0.0.1',
+        port: portaBack,
+        path: requisicao.url,
+        method: requisicao.method,
+        headers: requisicao.headers,
+      },
+      (respostaBack) => {
+        resposta.writeHead(respostaBack.statusCode, respostaBack.headers);
+        respostaBack.pipe(resposta);
+      }
+    );
+    repasse.on('error', () => {
+      resposta
+        .writeHead(502, { 'Content-Type': 'application/json; charset=utf-8' })
+        .end('{"erro":"Back-end fora do ar."}');
+    });
+    requisicao.pipe(repasse);
+    return;
+  }
+
   const caminho = decodeURIComponent(new URL(requisicao.url, 'http://localhost').pathname);
   let arquivo = normalize(join(raiz, caminho));
 
@@ -50,4 +76,5 @@ createServer((requisicao, resposta) => {
   createReadStream(arquivo).pipe(resposta);
 }).listen(porta, '127.0.0.1', () => {
   console.log(`Front rodando em http://127.0.0.1:${porta}/#/login  (Ctrl+C para parar)`);
+  console.log(`Chamadas /api/* repassadas para o back na porta ${portaBack}`);
 });

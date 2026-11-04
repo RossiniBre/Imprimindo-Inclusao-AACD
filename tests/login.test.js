@@ -7,7 +7,7 @@ describe('tela de login', () => {
     expect(variante(undefined)).toBe('empresa')
   })
 
-  it('mostra a variante da AACD com ?perfil=aacd', () => {
+  it('mostra a variante da AACD com #/login', () => {
     expect(variante(new URLSearchParams('perfil=aacd'))).toBe('aacd')
   })
 
