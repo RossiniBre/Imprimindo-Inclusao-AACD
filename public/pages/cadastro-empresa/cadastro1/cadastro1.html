@@ -30,7 +30,7 @@
         <h2 id="titulo-form" class="fs-1 fw-bold mb-1">Cadastre sua empresa</h2>
         <p id="subT-Form" class="text-body-secondary mb-3">Preencha os dados abaixo. Seu cadastro será analisado pela AACD.</p>
 
-        <form id="cadastro-form">
+        <form id="cadastro-form" novalidate>
           <div class="row gx-3 gy-2">
 
             <div class="col-md-6">
@@ -81,6 +81,8 @@
 
           </div>
 
+          <p id="erro-geral" class="text-danger small mt-3 mb-0" role="alert" hidden></p>
+          
           <div class="acoes d-flex">
             <button type="reset" id="btn-cancelar" class="btn btn-outline-dark btn-cancelar flex-fill">Cancelar</button>
             <button type="submit" class="btn btn-warning btn-continuar flex-fill">Continuar</button>

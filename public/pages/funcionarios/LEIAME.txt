@@ -12,6 +12,6 @@ Rotas do back usadas (via shared/js/api.js):
   POST /api/funcionarios        -> cadastro (201; 400 dados inválidos; 409 login/e-mail em uso)
   POST /api/conta/desativar     -> { id }
   POST /api/conta/reativar      -> { id }
-Sem sessão (401) a tela redireciona para #/login?perfil=aacd.
+Sem sessão (401) a tela redireciona para #/login.
 
 Pendente: botão "Editar" (modal "Editar funcionário" do Figma; back: POST /api/funcionario/editar).

@@ -1,6 +1,6 @@
 // Tela "Esqueci minha senha".
 //   #/esqueci-senha              -> textos da empresa parceira (padrão)
-//   #/esqueci-senha?perfil=aacd  -> textos do funcionário da AACD
+//   #/esqueci-senha -> textos do funcionário da AACD
 // O back (POST /api/esqueci-senha) envia um código por e-mail; a resposta é
 // sempre 200 para não revelar se o e-mail existe.
 
@@ -19,7 +19,7 @@ const VARIANTES = {
     painelDescricao: 'Informe seu e-mail institucional para receber o código de recuperação.',
     painelRodape: 'Portal do funcionário',
     placeholder: 'nome@aacd.com',
-    linkVoltar: '#/login?perfil=aacd',
+    linkVoltar: '#/login',
   },
 };
 

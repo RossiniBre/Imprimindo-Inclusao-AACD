@@ -13,7 +13,7 @@ beforeEach(async () => {
   // ajuste a pasta se a tela estiver em pages/cadastro-empresa/cadastro1
   carregarHtml('cadastro-empresa/cadastro1', 'cadastro1')
   const tela = await import('../public/pages/cadastro-empresa/cadastro1/cadastro1.js')
-  tela.iniciar?.()
+  tela.iniciar(document.body)
 })
 
 describe('máscara de CNPJ', () => {

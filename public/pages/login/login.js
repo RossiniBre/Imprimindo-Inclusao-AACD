@@ -1,6 +1,6 @@
 // Tela de login. A mesma tela serve empresa e funcionário da AACD:
 //   #/login              -> textos da empresa parceira (padrão)
-//   #/login?perfil=aacd  -> textos do funcionário da AACD
+//   #/login  -> textos do funcionário da AACD
 // O back decide quem é quem pelo identificador (e-mail ou login).
 
 import { api } from '../../shared/js/api.js';
@@ -8,11 +8,11 @@ import { api } from '../../shared/js/api.js';
 const VARIANTES = {
   empresa: {
     painelTitulo: 'Sua impressora 3D pode mudar a vida de alguém.',
-    painelDescricao: 'Conecte sua empresa à AACD e ajude a produzir próteses e órteses para quem mais precisa.',
+    painelDescricao: 'Conecte-se à AACD e ajude a produzir próteses e órteses para quem mais precisa.',
     painelNota: '',
-    painelRodape: 'Portal de empresas parceiras',
-    subtitulo: 'Entre para gerenciar as impressoras da sua empresa.',
-    placeholder: 'empresa@exemplo.com.br',
+    painelRodape: 'Portal AACD',
+    subtitulo: 'Entre para acessar a sua conta.',
+    placeholder: 'e-mail ou login',
     mostrarCadastro: true,
     linkEsqueci: '#/esqueci-senha',
   },
@@ -24,13 +24,14 @@ const VARIANTES = {
     subtitulo: 'Entre para gerenciar as solicitações da AACD.',
     placeholder: 'nome@aacd.com',
     mostrarCadastro: false,
-    linkEsqueci: '#/esqueci-senha?perfil=aacd',
+    linkEsqueci: '#/esqueci-senha',
   },
 };
 
 // Qual variante mostrar, a partir dos parâmetros da URL
-export function variante(params) {
-  return params?.get('perfil') === 'aacd' ? 'aacd' : 'empresa';
+// Login único para todos: o back decide o perfil pelo identificador
+export function variante() {
+  return 'empresa';
 }
 
 // Para onde cada perfil vai depois de entrar
@@ -85,12 +86,11 @@ export function iniciar(container, { params } = {}) {
 
   // Mostrar / esconder a senha
   botaoOlho.addEventListener('click', () => {
-    const mostrando = campoSenha.type === 'text';
-    campoSenha.type = mostrando ? 'password' : 'text';
-    olhoAberto.hidden = !mostrando;
-    olhoFechado.hidden = mostrando;
-    botaoOlho.setAttribute('aria-pressed', String(!mostrando));
-    botaoOlho.setAttribute('aria-label', mostrando ? 'Mostrar senha' : 'Esconder senha');
+    const mostrando = campoSenha.classList.toggle('visivel');
+    olhoAberto.hidden = mostrando;
+    olhoFechado.hidden = !mostrando;
+    botaoOlho.setAttribute('aria-pressed', String(mostrando));
+    botaoOlho.setAttribute('aria-label', mostrando ? 'Esconder senha' : 'Mostrar senha');
     campoSenha.focus();
   });
 
