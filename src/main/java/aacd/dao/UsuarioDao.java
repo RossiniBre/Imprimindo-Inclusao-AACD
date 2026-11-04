@@ -1,0 +1,220 @@
+package aacd.dao;
+
+import aacd.config.ConnectionFactory;
+import aacd.model.Usuario;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+public class UsuarioDao {
+
+    public int inserir(Usuario usuario) throws SQLException {
+        try (Connection conn = ConnectionFactory.getConnection()) {
+            return inserir(conn, usuario);
+        }
+    }
+
+    public int inserir(Connection conn, Usuario usuario) throws SQLException {
+        String sql = "INSERT INTO usuario (nome, identificador, senha_hash, perfil, ativo) "
+                + "VALUES (?, ?, ?, ?, ?)";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setString(1, usuario.getNome());
+            ps.setString(2, usuario.getIdentificador());
+            ps.setString(3, usuario.getSenhaHash());
+            ps.setString(4, usuario.getPerfil());
+            ps.setBoolean(5, usuario.isAtivo());
+            ps.executeUpdate();
+
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    int id = rs.getInt(1);
+                    usuario.setId(id);
+                    return id;
+                }
+            }
+            throw new SQLException("Não foi possível obter o id do usuário inserido.");
+        }
+    }
+
+    public Usuario buscarPorIdentificador(String identificador) throws SQLException {
+        String sql = "SELECT idusuario, nome, identificador, senha_hash, perfil, ativo "
+                + "FROM usuario WHERE identificador = ?";
+
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, identificador);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return new Usuario(
+                            rs.getInt("idusuario"),
+                            rs.getString("nome"),
+                            rs.getString("identificador"),
+                            rs.getString("senha_hash"),
+                            rs.getString("perfil"),
+                            rs.getBoolean("ativo"));
+                }
+                return null;
+            }
+        }
+    }
+
+    public Usuario buscarPorId(int id) throws SQLException {
+        String sql = "SELECT idusuario, nome, identificador, senha_hash, perfil, ativo "
+                + "FROM usuario WHERE idusuario = ?";
+
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, id);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return new Usuario(
+                            rs.getInt("idusuario"),
+                            rs.getString("nome"),
+                            rs.getString("identificador"),
+                            rs.getString("senha_hash"),
+                            rs.getString("perfil"),
+                            rs.getBoolean("ativo"));
+                }
+                return null;
+            }
+        }
+    }
+
+    public void atualizarSituacao(Connection conn, int id, boolean ativo, boolean bloqueadaPelaAacd) throws SQLException {
+        String sql = "UPDATE usuario SET ativo = ?, bloqueada_pela_aacd = ? WHERE idusuario = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setBoolean(1, ativo);
+            ps.setBoolean(2, bloqueadaPelaAacd);
+            ps.setInt(3, id);
+            ps.executeUpdate();
+        }
+    }
+
+    public void atualizarSituacao(int id, boolean ativo, boolean bloqueadaPelaAacd) throws SQLException {
+        try (Connection conn = ConnectionFactory.getConnection()) {
+            atualizarSituacao(conn, id, ativo, bloqueadaPelaAacd);
+        }
+    }
+
+    public void excluir(int id) throws SQLException {
+        try (Connection conn = ConnectionFactory.getConnection()) {
+            conn.setAutoCommit(false);
+            try {
+                apagar(conn, "DELETE FROM funcionario WHERE usuario_id = ?", id);
+                apagar(conn, "DELETE FROM empresa WHERE usuario_id = ?", id);
+                apagar(conn, "DELETE FROM usuario WHERE idusuario = ?", id);
+                conn.commit();
+            } catch (SQLException e) {
+                conn.rollback();
+                throw e;
+            }
+        }
+    }
+
+    private void apagar(Connection conn, String sql, int id) throws SQLException {
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ps.executeUpdate();
+        }
+    }
+
+    public boolean atualizarNome(Connection conn, int id, String nome) throws SQLException {
+        String sql = "UPDATE usuario SET nome = ? WHERE idusuario = ?";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)){
+            ps.setString(1, nome);
+            ps.setInt(2, id);
+            return ps.executeUpdate() > 0;
+        }
+    }
+
+    public boolean existePorIdentificadorExceto(String identificador, int usuarioId) throws SQLException {
+        String sql = "SELECT 1 FROM usuario WHERE identificador = ? AND idusuario <> ?";
+
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, identificador);
+            ps.setInt(2, usuarioId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        }
+    }
+
+    public boolean atualizarIdentificador(Connection conn, int id, String identificador) throws SQLException {
+        String sql = "UPDATE usuario SET identificador = ? WHERE idusuario = ?";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, identificador);
+            ps.setInt(2, id);
+            return ps.executeUpdate() > 0;
+        }
+    }
+
+    public Usuario buscarPorEmail(String email) throws SQLException {
+        String sql = "SELECT u.idusuario, u.nome, u.identificador, u.senha_hash, u.perfil, u.ativo "
+                + "FROM usuario u "
+                + "LEFT JOIN funcionario f ON f.usuario_id = u.idusuario "
+                + "LEFT JOIN empresa e ON e.usuario_id = u.idusuario "
+                + "WHERE f.email = ? OR e.email = ?";
+
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, email);
+            ps.setString(2, email);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return new Usuario(
+                            rs.getInt("idusuario"),
+                            rs.getString("nome"),
+                            rs.getString("identificador"),
+                            rs.getString("senha_hash"),
+                            rs.getString("perfil"),
+                            rs.getBoolean("ativo"));
+                }
+                return null;
+            }
+        }
+    }
+
+    public boolean existePorEmailExceto(String email, int usuarioId) throws SQLException {
+        String sql = "SELECT 1 FROM funcionario WHERE email = ? AND usuario_id <> ? "
+                + "UNION ALL "
+                + "SELECT 1 FROM empresa WHERE email = ? AND usuario_id <> ?";
+
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, email);
+            ps.setInt(2, usuarioId);
+            ps.setString(3, email);
+            ps.setInt(4, usuarioId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        }
+    }
+
+    public boolean atualizarSenha(Connection conn, int id, String senhaHash) throws SQLException {
+        String sql = "UPDATE usuario SET senha_hash = ? WHERE idusuario = ?";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, senhaHash);
+            ps.setInt(2, id);
+            return ps.executeUpdate() > 0;
+        }
+    }
+}
