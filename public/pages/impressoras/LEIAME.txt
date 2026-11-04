@@ -1,0 +1,6 @@
+TELA: Impressoras da empresa
+Quem acessa: empresas (e admin).
+O que faz: lista as impressoras da empresa, com contadores no topo.
+Ações: cadastrar, editar, marcar livre/reservada, desativar e deletar.
+Impressora com solicitação pendente ou em andamento não pode ser desativada.
+Back: POST /api/impressoras (exige sessão de EMPRESA). Demais rotas: a definir.

@@ -1,0 +1,7 @@
+TELA: Painel da empresa parceira
+Quem acessa: empresas (perfil EMPRESA).
+O que faz: mostra as solicitações recebidas e o status de cada uma.
+Ações: aceitar (informando estimativa de tempo), recusar (com justificativa)
+e, em andamento, marcar como concluída ou falhou (com justificativa).
+Também mostra com qual funcionário da AACD falar e botões de contato.
+Rotas do back: a definir com quem cuida das solicitações.

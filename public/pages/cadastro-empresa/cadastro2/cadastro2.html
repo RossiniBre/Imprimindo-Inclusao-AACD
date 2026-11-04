@@ -1,0 +1,112 @@
+<section class="cadastro2">
+  <div class="geral row g-0">
+
+    <!-- painel vermelho -->
+    <aside class="side col-md-4 d-flex flex-column justify-content-between gap-4 position-relative overflow-hidden text-white">
+      <span class="circle circle-1 position-absolute rounded-circle"></span>
+      <span class="circle circle-2 position-absolute rounded-circle"></span>
+      <span class="circle circle-3 position-absolute rounded-circle"></span>
+
+      <div class="conteudo-lateral position-relative z-1">
+        <!-- circulo branco -->
+        <a id="logo" href="#/login" class="d-flex align-items-center justify-content-center rounded-circle bg-white">
+          <img id="img-aacd" class="ps-1" src="/shared/img/logo-aacd.png" alt="AACD - voltar para a home" width="30">
+        </a>
+      </div>
+
+      <div class="conteudo-lateral position-relative z-1">
+        <h1 id="titulo-lateral" class="fw-bold lh-sm mb-4 pe-5">Quase lá! Falta apenas uma etapa para você se tornar nosso colaborador!</h1>
+        <p id="subT-lateral" class="mb-0">Depois de avaliarmos sua solicitação, você fará parte do nosso time!</p>
+      </div>
+
+      <div class="conteudo-lateral position-relative z-1">
+        <small>Portal de empresas parceiras</small>
+      </div>
+    </aside>
+
+    <!-- formulario -->
+    <div id="formulario" class="col-md-8 d-flex align-items-center justify-content-center p-4">
+      <div id="form-junto" class="w-100">
+        <h2 id="titulo-form" class="fs-1 fw-bold mb-1">Cadastre sua empresa</h2>
+        <p id="subT-Form" class="text-body-secondary mb-3">Preencha os dados abaixo. Seu cadastro será analisado pela AACD.</p>
+
+        <form id="endereco-form">
+          <div class="row gx-3 gy-2">
+
+            <div class="col-md-6">
+              <label for="cep" class="label-form">CEP</label>
+              <input type="text" class="form-control input-form" id="cep" placeholder="00000-000" maxlength="9" inputmode="numeric" autocomplete="postal-code" required>
+            </div>
+            <div class="col-md-6">
+              <label for="uf" class="label-form">Estado (UF)</label>
+              <select class="form-select input-form pe-5" id="uf" autocomplete="address-level1" required>
+                <option>AC</option>
+                <option>AL</option>
+                <option>AP</option>
+                <option>AM</option>
+                <option>BA</option>
+                <option>CE</option>
+                <option>DF</option>
+                <option>ES</option>
+                <option>GO</option>
+                <option>MA</option>
+                <option>MT</option>
+                <option>MS</option>
+                <option>MG</option>
+                <option>PA</option>
+                <option>PB</option>
+                <option>PR</option>
+                <option>PE</option>
+                <option>PI</option>
+                <option>RJ</option>
+                <option>RN</option>
+                <option>RS</option>
+                <option>RO</option>
+                <option>RR</option>
+                <option>SC</option>
+                <option selected>SP</option>
+                <option>SE</option>
+                <option>TO</option>
+              </select>
+            </div>
+
+            <div class="col-md-6">
+              <label for="cidade" class="label-form">Cidade</label>
+              <input type="text" class="form-control input-form" id="cidade" placeholder="São Paulo" autocomplete="address-level2" required>
+            </div>
+            <div class="col-md-6">
+              <label for="bairro" class="label-form">Bairro</label>
+              <input type="text" class="form-control input-form" id="bairro" placeholder="Vila Mariana (Zona Sul)" required>
+            </div>
+
+            <div class="col-md-6">
+              <label for="logradouro" class="label-form">Logradouro</label>
+              <input type="text" class="form-control input-form" id="logradouro" placeholder="Rua, avenida, travessa..." autocomplete="address-line1" required>
+            </div>
+            <div class="col-md-6">
+              <label for="numero" class="label-form">Número</label>
+              <input type="text" class="form-control input-form" id="numero" placeholder="135" required>
+            </div>
+
+            <div class="col-12">
+              <label for="complemento" class="label-form">Complemento</label>
+              <input type="text" class="form-control input-form" id="complemento" placeholder="Portão preto, prédio rosa, Apto. 135A" autocomplete="address-line2">
+            </div>
+
+          </div>
+
+          <div class="form-check mt-4">
+            <input class="form-check-input" type="checkbox" id="termos" required>
+            <label class="form-check-label link-login" for="termos">Li e aceito os <a href="#">Termos de uso</a> e a <a href="#">Política de privacidade</a></label>
+          </div>
+
+          <div class="acoes d-flex mt-4">
+            <a href="#/cadastro-empresa/cadastro1" class="btn btn-outline-dark btn-cancelar w-50">Voltar</a>
+            <button type="submit" class="btn btn-warning btn-continuar w-50">Cadastrar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </div>
+</section>

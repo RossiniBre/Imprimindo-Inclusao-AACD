@@ -1,0 +1,232 @@
+/* Tela "Esqueci minha senha": mesmo layout dividido do login. */
+
+/* Nesta tela o cabeçalho vermelho do casco some e o <main> perde o respiro:
+   o painel vermelho e o formulário ocupam a janela inteira. */
+body:has(main > .esqueci) header {
+  display: none;
+}
+
+main:has(> .esqueci) {
+  padding: 0;
+}
+
+.esqueci [hidden] {
+  display: none !important;
+}
+
+.esqueci {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 100vh;
+}
+
+/* ---------- Painel vermelho ---------- */
+
+.esqueci__painel {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 2.75rem 1.875rem 1.5rem;
+  background: var(--cor-cabecalho);
+  color: var(--cor-superficie);
+}
+
+.esqueci__circulo {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.esqueci__circulo--topo  { width: 18.75rem; height: 18.75rem; top: -9.375rem; right: -6.875rem; }
+.esqueci__circulo--meio  { width: 5.25rem;  height: 5.25rem;  top: 70%;       right: 3.25rem; }
+.esqueci__circulo--baixo { width: 12.5rem;  height: 12.5rem;  bottom: -3.125rem; left: -3.75rem; }
+
+.esqueci__logo {
+  position: relative;
+  width: 6.875rem;
+  height: 6.875rem;
+  padding: 1rem;
+  border-radius: 50%;
+  background: var(--cor-superficie);
+  object-fit: contain;
+}
+
+.esqueci__texto {
+  position: relative;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.esqueci__texto h1 {
+  margin-bottom: 1.25rem;
+  font-size: 1.75rem;
+  line-height: 1.25;
+}
+
+.esqueci__texto p {
+  max-width: 17rem;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.esqueci__rodape {
+  position: relative;
+  font-size: 0.75rem;
+}
+
+/* ---------- Formulário ---------- */
+
+.esqueci__area {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem 1.5rem;
+}
+
+.esqueci__caixa {
+  width: 100%;
+  max-width: 35rem;
+}
+
+.esqueci__cadeado {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 5rem;
+  height: 5rem;
+  margin-bottom: 1.875rem;
+  border-radius: 50%;
+  background: var(--cor-destaque-claro);
+  color: var(--cor-botao-principal-hover);
+}
+
+.esqueci__caixa h2 {
+  margin-bottom: 0.625rem;
+  font-size: 2.375rem;
+}
+
+.esqueci__descricao {
+  margin-bottom: 2.25rem;
+  font-size: 1.25rem;
+  line-height: 1.6;
+  color: var(--cor-texto-suave);
+}
+
+.esqueci__caixa label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.esqueci__caixa input {
+  width: 100%;
+  height: 3.5rem;
+  padding: 0 1.25rem;
+  border: 1px solid var(--cor-borda);
+  border-radius: 0.375rem;
+  font-size: 1.0625rem;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.esqueci__caixa input::placeholder {
+  color: var(--cor-placeholder);
+}
+
+.esqueci__caixa input:focus {
+  border-color: var(--cor-botao-principal);
+  box-shadow: 0 0 0 3px var(--cor-destaque-claro);
+}
+
+.esqueci__caixa input.com-erro {
+  border-color: var(--cor-erro);
+}
+
+.esqueci__erro {
+  min-height: 1.125rem;
+  margin: 0.25rem 0 0.125rem;
+  font-size: 0.75rem;
+  color: var(--cor-erro);
+}
+
+.esqueci__erro-geral {
+  margin-bottom: 1rem;
+  padding: 0.75rem 0.875rem;
+  border-left: 4px solid var(--cor-erro);
+  border-radius: 0.375rem;
+  background: var(--cor-erro-claro);
+  font-size: 0.875rem;
+  color: var(--cor-erro);
+}
+
+.esqueci__enviar {
+  width: 100%;
+  height: 4rem;
+  border-radius: 0.375rem;
+  font-size: 1.0625rem;
+  font-weight: 700;
+  transition: background 0.2s;
+}
+
+.esqueci__enviar:hover:not(:disabled) {
+  background: var(--cor-botao-principal-hover);
+}
+
+.esqueci__sucesso {
+  padding: 0.875rem 1rem;
+  border-left: 4px solid var(--cor-sucesso);
+  border-radius: 0.375rem;
+  background: var(--cor-superficie);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.esqueci__sucesso strong {
+  color: var(--cor-sucesso);
+}
+
+.esqueci__voltar {
+  display: block;
+  margin-top: 2.25rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  text-align: center;
+  color: var(--cor-cabecalho);
+  text-decoration: none;
+}
+
+.esqueci__voltar:hover {
+  text-decoration: underline;
+}
+
+/* ---------- Responsivo ---------- */
+
+@media (max-width: 48rem) {
+  .esqueci {
+    grid-template-columns: 1fr;
+  }
+
+  .esqueci__painel {
+    gap: 1.25rem;
+    padding: 1.5rem 1rem;
+  }
+
+  .esqueci__texto h1 {
+    font-size: 1.375rem;
+  }
+
+  .esqueci__caixa h2 {
+    font-size: 1.75rem;
+  }
+
+  .esqueci__descricao {
+    font-size: 1rem;
+  }
+
+  .esqueci__rodape,
+  .esqueci__circulo--meio {
+    display: none;
+  }
+}

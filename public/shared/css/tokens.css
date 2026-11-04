@@ -1,0 +1,32 @@
+/* Tokens de design: paleta do moodboard.
+   Fontes e espaçamentos entram aqui depois. */
+
+:root {
+  /* Marca */
+  --cor-cabecalho: #C8102E;
+  --cor-botao-principal: #EFB000;
+  --cor-sucesso: #2E9E5B;
+
+  /* Superfícies */
+  --cor-fundo: #FAF8F5;
+  --cor-superficie: #FFFFFF;
+
+  /* Texto e bordas */
+  --cor-texto: #2B2B2B;
+  --cor-texto-suave: #6B6B6B;
+  --cor-placeholder: #A9A8A5;
+  --cor-borda: #CAC9C6;
+
+  /* Variações do botão principal: hover e fundo claro (chips, avisos, foco) */
+  --cor-botao-principal-hover: #D9A200;
+  --cor-destaque-claro: #FDF1C7;
+  --cor-destaque-texto: #7A5A00;
+
+  /* Estados */
+  --cor-erro: #C8102E;
+  --cor-erro-claro: #FDE8EB;
+  --cor-sucesso-claro: #DFF3E6;
+
+  /* Superfície neutra (chips inativos, hover de botão secundário) */
+  --cor-neutra-claro: #EFEDE9;
+}

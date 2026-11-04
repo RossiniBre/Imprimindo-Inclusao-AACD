@@ -1,0 +1,119 @@
+/* Base global: vale para o site inteiro.
+   Usa só os tokens de tokens.css. Estilos de tela ficam no .css da própria tela. */
+
+/* Reset */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+img, svg {
+  display: block;
+  max-width: 100%;
+}
+
+button, input, select, textarea {
+  font: inherit;
+  color: inherit;
+}
+
+/* Tipografia (fonte do sistema por enquanto) */
+body {
+  min-height: 100vh;
+  background: var(--cor-fundo);
+  color: var(--cor-texto);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+h1, h2, h3 {
+  line-height: 1.2;
+}
+
+/* Foco visível para navegação por teclado */
+:focus-visible {
+  outline: 3px solid var(--cor-texto);
+  outline-offset: 2px;
+}
+
+/* No cabeçalho vermelho, o contorno escuro some: usa branco */
+header :focus-visible {
+  outline-color: var(--cor-superficie);
+}
+
+/* Link "Pular para o conteúdo": escondido até receber foco */
+.pular {
+  position: absolute;
+  top: 0;
+  left: 1rem;
+  padding: 0.5rem 1rem;
+  background: var(--cor-superficie);
+  color: var(--cor-texto);
+  transform: translateY(-100%);
+}
+
+.pular:focus {
+  transform: translateY(0);
+}
+
+/* Casco: cabeçalho e menu */
+header {
+  padding: 0.75rem 1rem;
+  background: var(--cor-cabecalho);
+  color: var(--cor-superficie);
+}
+
+header a {
+  color: inherit;
+}
+
+header nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+}
+
+/* O router dá foco ao <main> ao trocar de tela; não precisa de contorno */
+main {
+  padding: 1.5rem 1rem;
+}
+
+main:focus {
+  outline: none;
+}
+
+/* Botões e campos: base compartilhada */
+button {
+  padding: 0.625rem 1.25rem;
+  border: 1px solid transparent;
+  border-radius: 0.5rem;
+  background: var(--cor-botao-principal);
+  color: var(--cor-texto);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+input, select, textarea {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--cor-texto);
+  border-radius: 0.5rem;
+  background: var(--cor-superficie);
+}
+
+/* Respeita quem reduz movimento no sistema */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

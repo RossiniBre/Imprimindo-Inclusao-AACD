@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+node_modules/
+.idea/
+=======
 # IntelliJ IDEA
 .idea/
 *.iws
@@ -63,3 +67,4 @@ bin/
 
 src/main/resources/db.properties
 src/main/resources/mail.properties
+>>>>>>> 84db774aed99c1f560a4f93cde53e97af334988a

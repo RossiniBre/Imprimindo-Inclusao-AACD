@@ -1,0 +1,108 @@
+/* Área da tela: centraliza o conteúdo e serve de palco para os enfeites */
+.nao-encontrada {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: max(24rem, calc(100vh - 8rem));
+  padding: 1rem;
+  overflow: hidden;
+  overflow: clip;
+}
+
+.nao-encontrada__conteudo {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 44rem;
+  text-align: center;
+}
+
+/* Ilustração: "404" impresso em camadas */
+.nao-encontrada__ilustracao {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0 auto 2rem;
+}
+
+.nc-quatro path {
+  fill: none;
+  stroke: var(--cor-cabecalho);
+  stroke-width: 22;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.nc-zero {
+  fill: none;
+  stroke: var(--cor-botao-principal);
+  stroke-width: 22;
+}
+
+/* Linhas na cor do fundo: simulam as camadas da impressão 3D */
+.nc-camadas-linhas {
+  fill: none;
+  stroke: var(--cor-fundo);
+  stroke-width: 2.5;
+}
+
+.nao-encontrada h1 {
+  margin-bottom: 1.75rem;
+  font-size: clamp(1.5rem, 4vw, 2.25rem);
+}
+
+.nao-encontrada__acao {
+  display: inline-block;
+  padding: 0.75rem 1.75rem;
+  border-radius: 0.5rem;
+  background: var(--cor-botao-principal);
+  color: var(--cor-texto);
+  font-size: 1.0625rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/* Enfeites vermelhos espalhados: pequenos, discretos e atrás do conteúdo */
+.nao-encontrada__enfeites span {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: var(--s);
+  height: var(--s);
+  background: var(--cor-cabecalho);
+  opacity: var(--o, 0.4);
+  transform: rotate(var(--r, 0deg));
+}
+
+.nao-encontrada__enfeites .nc-redondo {
+  border-radius: 50%;
+}
+
+.nao-encontrada__enfeites .nc-anel {
+  border: 0.14rem solid var(--cor-cabecalho);
+  border-radius: 50%;
+  background: none;
+}
+
+.nao-encontrada__enfeites .nc-quadrado {
+  border-radius: 0.15rem;
+}
+
+.nao-encontrada__enfeites .nc-risco {
+  height: 0.18rem;
+  border-radius: 1rem;
+}
+
+.nao-encontrada__enfeites .nc-mais {
+  background:
+    linear-gradient(var(--cor-cabecalho), var(--cor-cabecalho)) center / 100% 22% no-repeat,
+    linear-gradient(var(--cor-cabecalho), var(--cor-cabecalho)) center / 22% 100% no-repeat;
+}
+
+.nao-encontrada__enfeites .nc-camadas {
+  background: repeating-linear-gradient(
+    to bottom,
+    var(--cor-cabecalho) 0 0.12rem,
+    transparent 0.12rem 0.3rem
+  );
+}
