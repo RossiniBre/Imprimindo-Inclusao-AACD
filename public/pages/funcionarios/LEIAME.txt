@@ -1,0 +1,6 @@
+TELA: Funcionários da AACD
+Quem acessa: somente o admin.
+O que faz: lista os funcionários da AACD, com opção de excluir ou desativar.
+Também cadastra novos funcionários (nome de exibição, cargo, setor, identificador e senha).
+Funcionários comuns não cadastram ninguém, só fazem login.
+Rotas do back: a definir (cadastro e desativação do admin já existem no back).

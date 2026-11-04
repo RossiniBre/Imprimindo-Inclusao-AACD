@@ -1,0 +1,1 @@
+// mostrar erro na tela, abrir/fechar modal etc.

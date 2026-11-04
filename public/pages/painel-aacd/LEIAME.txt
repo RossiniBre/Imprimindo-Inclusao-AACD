@@ -1,0 +1,7 @@
+TELA: Painel da AACD
+Quem acessa: funcionários da AACD e admin.
+O que faz: lista todas as solicitações, com contadores por status.
+Clicar no contador filtra a lista; o botão "Total" mostra todas por ordem de adição.
+Também permite criar e cancelar solicitações.
+Cada solicitação mostra o ID curto e o funcionário que a criou.
+Rotas do back: a definir com quem cuida das solicitações.
