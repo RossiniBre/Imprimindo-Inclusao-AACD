@@ -46,34 +46,39 @@ public class CriarSolicitacao {
     }
 
     public int criar(int usuarioId, int impressoraId, String titulo, String descricao,
-                     int quantidade, String nomeArquivo, InputStream arquivo)
+                     int quantidade, int comprimentoMm, int larguraMm, int alturaMm,
+                     String nomeArquivo, InputStream arquivo)
             throws SQLException, ArmazenamentoException {
 
-        new ConteudoSolicitacao(titulo, descricao, quantidade, "validacao", nomeArquivo);
+        new ConteudoSolicitacao(titulo, descricao, quantidade,
+                comprimentoMm, larguraMm, alturaMm, "validacao", nomeArquivo);
 
         Funcionario funcionario = funcionarioDao.buscarPorUsuarioId(usuarioId);
         if (funcionario == null) {
             throw new IllegalArgumentException("Apenas funcionários podem criar solicitações");
         }
         return gravar(funcionario.getId(), null, impressoraId, titulo, descricao,
-                quantidade, nomeArquivo, arquivo);
+                quantidade, comprimentoMm, larguraMm, alturaMm, nomeArquivo, arquivo);
     }
 
     public int criarComoAdmin(Usuario admin, int impressoraId, String titulo, String descricao,
-                              int quantidade, String nomeArquivo, InputStream arquivo)
+                              int quantidade, int comprimentoMm, int larguraMm, int alturaMm,
+                              String nomeArquivo, InputStream arquivo)
             throws SQLException, ArmazenamentoException {
 
-        new ConteudoSolicitacao(titulo, descricao, quantidade, "validacao", nomeArquivo);
+        new ConteudoSolicitacao(titulo, descricao, quantidade,
+                comprimentoMm, larguraMm, alturaMm, "validacao", nomeArquivo);
 
         if (admin == null || !"ADMIN".equals(admin.getPerfil()) || !admin.isAtivo()) {
             throw new IllegalArgumentException("Apenas administradores podem criar solicitações como admin");
         }
         return gravar(null, admin.getIdentificador(), impressoraId, titulo, descricao,
-                quantidade, nomeArquivo, arquivo);
+                quantidade, comprimentoMm, larguraMm, alturaMm, nomeArquivo, arquivo);
     }
 
     private int gravar(Integer funcionarioId, String nomeCriador, int impressoraId,
                        String titulo, String descricao, int quantidade,
+                       int comprimentoMm, int larguraMm, int alturaMm,
                        String nomeArquivo, InputStream arquivo)
             throws SQLException, ArmazenamentoException {
 
@@ -87,7 +92,8 @@ public class CriarSolicitacao {
             String mongoId = null;
             try {
                 ConteudoSolicitacao conteudo = new ConteudoSolicitacao(
-                        titulo, descricao, quantidade, arquivoId, nomeArquivo);
+                        titulo, descricao, quantidade,
+                        comprimentoMm, larguraMm, alturaMm, arquivoId, nomeArquivo);
                 mongoId = conteudoDao.inserir(conteudo);
 
                 conn.setAutoCommit(false);

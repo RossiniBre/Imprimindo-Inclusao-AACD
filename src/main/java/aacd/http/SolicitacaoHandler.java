@@ -105,11 +105,17 @@ public class SolicitacaoHandler implements HttpHandler {
 
                 int quantidade;
                 int impressoraId;
+                int comprimentoMm;
+                int larguraMm;
+                int alturaMm;
                 try {
                     quantidade = Integer.parseInt(campos.getOrDefault("quantidade", "").trim());
                     impressoraId = Integer.parseInt(campos.getOrDefault("impressoraId", "").trim());
+                    comprimentoMm = Integer.parseInt(campos.getOrDefault("comprimentoMm", "").trim());
+                    larguraMm = Integer.parseInt(campos.getOrDefault("larguraMm", "").trim());
+                    alturaMm = Integer.parseInt(campos.getOrDefault("alturaMm", "").trim());
                 } catch (NumberFormatException e) {
-                    Http.erro(ex, 400, "Quantidade e impressora devem ser números.");
+                    Http.erro(ex, 400, "Quantidade, impressora e medidas devem ser números.");
                     return;
                 }
 
@@ -124,11 +130,13 @@ public class SolicitacaoHandler implements HttpHandler {
                 if ("ADMIN".equals(ator.getPerfil())) {
                     id = criarSolicitacao.criarComoAdmin(ator, impressoraId,
                             campos.get("titulo"), campos.get("descricao"),
-                            quantidade, item.getName(), limitado);
+                            quantidade, comprimentoMm, larguraMm, alturaMm,
+                            item.getName(), limitado);
                 } else {
                     id = criarSolicitacao.criar(ator.getId(), impressoraId,
                             campos.get("titulo"), campos.get("descricao"),
-                            quantidade, item.getName(), limitado);
+                            quantidade, comprimentoMm, larguraMm, alturaMm,
+                            item.getName(), limitado);
                 }
 
                 Http.json(ex, 201, Json.objeto().campo("id", id).build());

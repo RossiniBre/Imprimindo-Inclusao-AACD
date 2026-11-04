@@ -95,7 +95,8 @@ class ArquivoSolicitacaoHandlerTest {
     // ---------- apoio ----------
 
     private ConteudoSolicitacao conteudo(String nomeArquivo) {
-        return new ConteudoSolicitacao(MONGO_ID, "Titulo", "Descricao", 1, ARQUIVO_ID, nomeArquivo);
+        return new ConteudoSolicitacao(MONGO_ID, "Titulo", "Descricao", 1, 180, 60, 40,
+                ARQUIVO_ID, nomeArquivo);
     }
 
     private void pedir(String query) {

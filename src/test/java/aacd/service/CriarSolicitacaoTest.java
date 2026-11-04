@@ -29,6 +29,9 @@ class CriarSolicitacaoTest {
     private static final int FUNCIONARIO_ID = 5;
     private static final int IMPRESSORA_ID = 3;
     private static final int EMPRESA_ID = 7;
+    private static final int COMPRIMENTO_MM = 180;
+    private static final int LARGURA_MM = 60;
+    private static final int ALTURA_MM = 40;
     private static final String ARQUIVO_ID = "arquivo-gridfs-1";
     private static final String MONGO_ID = "6ac6a60e2cc2f73b96ef0dff";
     private static final String NOME = "peca.stl";
@@ -74,7 +77,8 @@ class CriarSolicitacaoTest {
 
     private int criar(int usuarioId, int impressoraId, String titulo, int quantidade, String nome)
             throws Exception {
-        return service.criar(usuarioId, impressoraId, titulo, "Descricao", quantidade, nome, arquivo());
+        return service.criar(usuarioId, impressoraId, titulo, "Descricao", quantidade,
+                COMPRIMENTO_MM, LARGURA_MM, ALTURA_MM, nome, arquivo());
     }
 
     private void assertNadaGravado() throws Exception {
@@ -108,6 +112,9 @@ class CriarSolicitacaoTest {
         verify(conteudoDao).inserir(conteudo.capture());
         assertEquals("Titulo", conteudo.getValue().getTitulo());
         assertEquals(2, conteudo.getValue().getQuantidade());
+        assertEquals(COMPRIMENTO_MM, conteudo.getValue().getComprimentoMm());
+        assertEquals(LARGURA_MM, conteudo.getValue().getLarguraMm());
+        assertEquals(ALTURA_MM, conteudo.getValue().getAlturaMm());
         assertEquals(ARQUIVO_ID, conteudo.getValue().getArquivoId());
         assertEquals(NOME, conteudo.getValue().getNomeArquivo());
 
@@ -164,6 +171,19 @@ class CriarSolicitacaoTest {
     void extensaoInvalidaEhRecusada() throws Exception {
         assertThrows(IllegalArgumentException.class,
                 () -> criar(USUARIO_ID, IMPRESSORA_ID, "Titulo", 1, "peca.exe"));
+        verifyNoInteractions(funcionarioDao, impressoraDao);
+        assertNadaGravado();
+    }
+
+    @Test
+    void medidaInvalidaEhRecusadaAntesDeQualquerAcesso() throws Exception {
+        assertThrows(IllegalArgumentException.class, () -> service.criar(USUARIO_ID, IMPRESSORA_ID,
+                "Titulo", "Descricao", 1, 0, LARGURA_MM, ALTURA_MM, NOME, arquivo()));
+        assertThrows(IllegalArgumentException.class, () -> service.criar(USUARIO_ID, IMPRESSORA_ID,
+                "Titulo", "Descricao", 1, COMPRIMENTO_MM, -1, ALTURA_MM, NOME, arquivo()));
+        assertThrows(IllegalArgumentException.class, () -> service.criar(USUARIO_ID, IMPRESSORA_ID,
+                "Titulo", "Descricao", 1, COMPRIMENTO_MM, LARGURA_MM, 0, NOME, arquivo()));
+
         verifyNoInteractions(funcionarioDao, impressoraDao);
         assertNadaGravado();
     }
@@ -247,7 +267,8 @@ class CriarSolicitacaoTest {
 
     private int criarComoAdmin(Usuario admin, int impressoraId, String titulo, int quantidade, String nome)
             throws Exception {
-        return service.criarComoAdmin(admin, impressoraId, titulo, "Descricao", quantidade, nome, arquivo());
+        return service.criarComoAdmin(admin, impressoraId, titulo, "Descricao", quantidade,
+                COMPRIMENTO_MM, LARGURA_MM, ALTURA_MM, nome, arquivo());
     }
 
     // ---------- criarComoAdmin: caminho feliz ----------
@@ -277,6 +298,17 @@ class CriarSolicitacaoTest {
         assertEquals(EMPRESA_ID, sol.getValue().getEmpresaId());
         assertEquals(IMPRESSORA_ID, sol.getValue().getImpressoraId());
         assertEquals(MONGO_ID, sol.getValue().getMongoId());
+    }
+
+    @Test
+    void adminGravaAsMedidasNoConteudo() throws Exception {
+        criarComoAdmin(usuario("ADMIN", true), IMPRESSORA_ID, "Titulo", 2, NOME);
+
+        ArgumentCaptor<ConteudoSolicitacao> conteudo = ArgumentCaptor.forClass(ConteudoSolicitacao.class);
+        verify(conteudoDao).inserir(conteudo.capture());
+        assertEquals(COMPRIMENTO_MM, conteudo.getValue().getComprimentoMm());
+        assertEquals(LARGURA_MM, conteudo.getValue().getLarguraMm());
+        assertEquals(ALTURA_MM, conteudo.getValue().getAlturaMm());
     }
 
     @Test
@@ -328,6 +360,16 @@ class CriarSolicitacaoTest {
     void adminComExtensaoInvalidaEhRecusado() throws Exception {
         assertThrows(IllegalArgumentException.class,
                 () -> criarComoAdmin(usuario("ADMIN", true), IMPRESSORA_ID, "Titulo", 1, "peca.exe"));
+        verifyNoInteractions(funcionarioDao, impressoraDao);
+        assertNadaGravado();
+    }
+
+    @Test
+    void adminComMedidaInvalidaEhRecusadoAntesDeQualquerAcesso() throws Exception {
+        assertThrows(IllegalArgumentException.class, () -> service.criarComoAdmin(
+                usuario("ADMIN", true), IMPRESSORA_ID, "Titulo", "Descricao", 1,
+                COMPRIMENTO_MM, 0, ALTURA_MM, NOME, arquivo()));
+
         verifyNoInteractions(funcionarioDao, impressoraDao);
         assertNadaGravado();
     }

@@ -22,6 +22,9 @@ public class ConteudoSolicitacaoDao {
         Document doc = new Document("titulo", conteudo.getTitulo())
                 .append("descricao", conteudo.getDescricao())
                 .append("quantidade", conteudo.getQuantidade())
+                .append("comprimentoMm", conteudo.getComprimentoMm())
+                .append("larguraMm", conteudo.getLarguraMm())
+                .append("alturaMm", conteudo.getAlturaMm())
                 .append("arquivoId", conteudo.getArquivoId())
                 .append("nomeArquivo", conteudo.getNomeArquivo());
         colecao.insertOne(doc);
@@ -41,6 +44,9 @@ public class ConteudoSolicitacaoDao {
                 doc.getString("titulo"),
                 doc.getString("descricao"),
                 doc.getInteger("quantidade"),
+                doc.getInteger("comprimentoMm"),
+                doc.getInteger("larguraMm"),
+                doc.getInteger("alturaMm"),
                 doc.getString("arquivoId"),
                 doc.getString("nomeArquivo")));
     }
