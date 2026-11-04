@@ -1,5 +1,6 @@
 // O router chama iniciar() toda vez que a tela abre e destruir() quando sai.
 // Por isso todo o código fica dentro de iniciar() (o módulo só é importado uma vez).
+/* global bootstrap */
 
 // guarda os modais pra poder limpar quando sair da tela
 let modais = [];
