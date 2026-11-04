@@ -7,6 +7,11 @@
     --texto: #2B2B2B;
 }
 
+/* tira a folga do <main> só enquanto o cadastro1 está na tela */
+main:has(.cadastro1) {
+    padding: 0;
+}
+
 body {
     font-family: "Inter", system-ui, sans-serif;
     background-color: var(--bg);
@@ -31,8 +36,9 @@ body {
 }
 
 #titulo-lateral { 
-    font-size: clamp(3.3rem, 2.6vw, 1.7rem); 
+    font-size: clamp(2rem, 2.6vw, 3.3rem); 
 }
+
 #subT-lateral { 
     max-width: 30.5rem; 
     font-size: 1.2rem; 
@@ -110,7 +116,13 @@ body {
 }
 
 /* painel com 34,5% da largura (igual ao modelo) em telas médias e grandes */
+/* esconde o menu de cima só enquanto o cadastro1 está na tela */
+body:has(.cadastro1) header {
+    display: none;
+}
+
 @media (min-width: 768px) {
-    .side { width: 34.5%; min-height: 100vh; }
+    .side { width: 34.5%; }
     #formulario { width: 65.5%; }
+    .geral { min-height: 100vh; }  /* era calc(100vh - 30px) */
 }

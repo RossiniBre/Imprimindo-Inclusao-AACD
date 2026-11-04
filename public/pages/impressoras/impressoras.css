@@ -62,10 +62,15 @@ main {
 }
 
 .btn-sm { 
-    padding: 8px 20px; 
+    padding: 8px 12px;      /* era 8px 20px */
     font-size: 14px; 
     border-width: 1px; 
     border-radius: 6px; 
+}
+
+.info {
+    padding: .5rem .75rem;  /* era 1rem nas laterais */
+    white-space: nowrap;    /* selo nunca quebra em 2 linhas */
 }
 
 /* borda card imprimindo */
@@ -105,14 +110,12 @@ main {
     color: black;
 }
 
-.info {
-    padding: 1rem;
-    padding-block-start: .5rem;
-    padding-block-end: .5rem;
-}
-
 /* telas grandes (o modelo é 1920px) */
 @media (min-width: 992px) {
     .menu nav { font-size: 32px; }
     .conteudo { padding: 52px 100px 30px; }
+}
+
+.card .d-flex.gap-2 {
+    flex-wrap: wrap;
 }

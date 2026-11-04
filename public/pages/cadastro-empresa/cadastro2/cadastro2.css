@@ -31,8 +31,9 @@ body {
 }
 
 #titulo-lateral { 
-    font-size: clamp(3.3rem, 2.6vw, 1.7rem); 
+    font-size: clamp(1.8rem, 2.4vw, 3rem); 
 }
+
 #subT-lateral { 
     max-width: 30.5rem; 
     font-size: 1.2rem; 
@@ -115,8 +116,16 @@ body {
     color: #860d21;
 }
 
+body:has(.cadastro2) header {
+    display: none;
+}
+main:has(.cadastro2) {
+    padding: 0;
+}
+
 /* painel com 34,5% da largura (igual ao modelo) em telas médias e grandes */
 @media (min-width: 768px) {
-    .side { width: 34.5%; min-height: 100vh; }
+    .side { width: 34.5%; }          /* sem min-height aqui */
     #formulario { width: 65.5%; }
+    .geral { min-height: 100vh; }
 }

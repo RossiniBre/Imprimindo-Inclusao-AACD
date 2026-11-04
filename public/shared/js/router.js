@@ -1,12 +1,15 @@
 // Router por hash: lê a parte depois do # (ex.: /#/login), carrega o
-// fragmento da tela em pages/<nome>/ e coloca o conteúdo dentro do <main>.
+// fragmento da tela em pages/<pasta>/ e coloca o conteúdo dentro do <main>.
 
 const rotas = new Map();
 let paginaAtual = null;
 let navegacao = 0; // número da navegação mais recente (evita corrida entre telas)
 
 export function rota(caminho, config) {
-  rotas.set(caminho, config); // config = { pagina, titulo, publica }
+  // config = { pagina, titulo, publica, pasta? }
+  // pagina: nome dos arquivos (<pagina>.html/.css/.js)
+  // pasta:  (opcional) pasta dentro de /pages. Se omitida, usa o próprio "pagina"
+  rotas.set(caminho, config);
 }
 
 // '#/redefinir-senha?token=abc' -> { caminho: '/redefinir-senha', params }
@@ -51,11 +54,19 @@ export function iniciar(container, { autenticado = () => true } = {}) {
     }
     if (minha !== navegacao) return;
 
-    const base = `/pages/${cfg.pagina}/${cfg.pagina}`;
-    const resposta = await fetch(`${base}.html`);
+    // pasta e nome dos arquivos podem ser diferentes
+    const pasta = cfg.pasta ?? cfg.pagina;
+    const base = `/pages/${pasta}/${cfg.pagina}`;
+
+    let resposta;
+    try {
+      resposta = await fetch(`${base}.html`);
+    } catch (erro) {
+      console.error(`Erro de rede ao buscar "${base}.html":`, erro);
+    }
     if (minha !== navegacao) return;
 
-    if (!resposta.ok) {
+    if (!resposta?.ok) {
       limparPaginaAtual();
       container.textContent = 'Não foi possível carregar esta tela.';
       return;
