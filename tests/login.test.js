@@ -7,8 +7,8 @@ describe('tela de login', () => {
     expect(variante(undefined)).toBe('empresa')
   })
 
-  it('mostra a variante da AACD com #/login', () => {
-    expect(variante(new URLSearchParams('perfil=aacd'))).toBe('aacd')
+  it('usa login único: mesmo com perfil=aacd na URL, mostra a variante da empresa', () => {
+    expect(variante(new URLSearchParams('perfil=aacd'))).toBe('empresa')
   })
 
   it('manda cada perfil para a sua tela inicial', () => {
