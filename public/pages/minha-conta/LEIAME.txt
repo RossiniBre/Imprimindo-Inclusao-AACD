@@ -1,5 +1,30 @@
-TELA: Minha conta
-Quem acessa: empresas e funcionários logados.
-O que faz: editar os próprios dados, sair (logout) e excluir a conta.
-O admin da AACD não pode excluir a própria conta.
-Back: POST /api/logout e GET /api/me já existem. Edição e exclusão: a definir.
+TELA: Minha conta / Meu perfil (lado AACD: funcionário e admin)
+Quem acessa: funcionários da AACD e admin logados. Rota: #/minha-conta (ícone de perfil das barras).
+O que faz: resumo com avatar de iniciais, nome, cargo · setor, e-mail e chip da função;
+contadores "Seus pedidos" (enviados, imprimindo, aguardando resposta, recusados);
+formulário "Dados pessoais" (nome, cargo e setor editáveis; e-mail, login e função travados);
+"Segurança e acesso" com Alterar senha (manda para #/esqueci-senha?perfil=aacd, fluxo do código);
+"Meus pedidos recentes" (últimos 5 criados por mim) e "Sair da conta".
+Versão do ADMIN (frame "Gerenciamento de Perfil (ADM)"): mesma tela, mudando pelo perfil de /api/me:
+aba "Painel ADM" no lugar de "Acompanhamento", chip "ADM", subtítulo do painel,
+bloco "No painel" (funcionários ativos, inativos e administradores, de GET /api/funcionarios)
+e cartão "Equipe" com os últimos funcionários adicionados e o link "Ver todos em Funcionários".
+
+Rotas do back usadas (via shared/js/api.js):
+  GET  /api/me                   -> { perfil } hoje; a tela já lê nome, identificador, email,
+                                    cargo e setor quando o back incluir (PEDIDO AO BACK)
+  GET  /api/solicitacoes         -> todos os pedidos; a tela filtra por criadoPor == meu nome
+  POST /api/usuario/nome         -> { nome } (400 nome vazio/longo; 409 sem permissão)
+  POST /api/funcionario/editar   -> { email, cargo, setor } sem id = a própria conta
+  POST /api/logout
+Sem sessão (401) a tela redireciona para #/login?perfil=aacd.
+
+Depende do back (não dá para fazer no front):
+  - GET /api/me precisa devolver nome, identificador, email, cargo e setor. Sem isso os campos
+    ficam vazios, os contadores em 0 e cargo/setor não podem ser salvos (a rota exige o e-mail).
+  - Telefone ou ramal, foto do avatar e verificação em duas etapas do Figma: não existem no back.
+  - Alterar senha logado: não existe rota; usa-se o fluxo de código do esqueci-senha.
+  - Excluir a própria conta (LEIAME original): POST /api/conta/excluir é só para admin excluir outros.
+  - No perfil do ADMIN, "Convites pendentes" e o feed "Atividade recente" do Figma não existem no back
+    (não há convites nem registro de eventos de contas); o cartão "Equipe" ocupa o lugar do feed.
+  - A versão "Minha conta" da empresa parceira é outro frame do Figma e ainda não foi feita.

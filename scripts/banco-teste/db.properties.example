@@ -1,0 +1,5 @@
+db.url=jdbc:mysql://localhost:3306/imprimindo_inclusao?useUnicode=true&characterEncoding=UTF-8&serverTimezone=America/Sao_Paulo
+db.user=aacd
+db.password=aacd-teste-2026
+mongo.uri=mongodb://localhost:27017
+mongo.database=imprimindo_inclusao

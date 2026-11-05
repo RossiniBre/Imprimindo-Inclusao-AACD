@@ -3,15 +3,25 @@ Quem acessa: somente o admin.
 O que faz: lista os funcionários da AACD com busca (nome, e-mail ou login) e filtros
 Todos / Ativos / Inativos, e permite desativar ou reativar cada um.
 Também cadastra novos funcionários pelo modal "Adicionar funcionário"
-(nome, login, e-mail institucional @aacd.com, senha, cargo e setor opcionais).
+(nome, login, e-mail institucional @aacd.com, senha, cargo e setor opcionais)
+e edita pelo modal "Editar funcionário" (só e-mail, cargo e setor: é o que o back altera;
+nome e login aparecem travados).
+Barra vermelha "Painel ADM" no topo, com o ícone de perfil (#/minha-conta).
 Funcionários comuns não cadastram ninguém, só fazem login.
 Contas ADMIN não podem ser desativadas/reativadas (regra do back): o botão não aparece.
 
 Rotas do back usadas (via shared/js/api.js):
   GET  /api/funcionarios        -> lista
   POST /api/funcionarios        -> cadastro (201; 400 dados inválidos; 409 login/e-mail em uso)
+  POST /api/funcionario/editar  -> { id, email, cargo, setor } (400 e-mail inválido; 409 em uso)
   POST /api/conta/desativar     -> { id }
   POST /api/conta/reativar      -> { id }
 Sem sessão (401) a tela redireciona para #/login?perfil=aacd.
 
-Pendente: botão "Editar" (modal "Editar funcionário" do Figma; back: POST /api/funcionario/editar).
+Fora do back (não dá para fazer no front):
+  - colunas "Pedidos enviados" e "Último pedido" e o badge "Você" do Figma: a lista não traz
+    contagem de pedidos e a sessão não devolve o id;
+  - nos modais, "Telefone ou ramal" e a escolha de função Funcionário/Admin: o cadastro só cria
+    funcionário comum e a edição só altera e-mail, cargo e setor;
+  - fluxo de convite do Figma ("Enviar convite", "vale 7 dias", status "Convite pendente",
+    "Reenviar convite"): o back cria a conta na hora com login e senha, sem convite.

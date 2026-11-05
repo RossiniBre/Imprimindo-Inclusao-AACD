@@ -1,5 +1,24 @@
 <section class="funcionarios">
 
+  <!-- Barra superior do painel do admin -->
+  <nav class="funcionarios__barra" aria-label="Painel do administrador">
+    <a class="funcionarios__marca" href="#/funcionarios" aria-label="Início do painel">
+      <img src="/shared/img/logo-aacd.png" alt="AACD">
+    </a>
+    <div class="funcionarios__abas">
+      <a class="funcionarios__aba ativa" href="#/funcionarios" aria-current="page">Painel ADM</a>
+    </div>
+    <a class="funcionarios__perfil" href="#/minha-conta" aria-label="Meu perfil">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="10"/>
+        <circle cx="12" cy="10" r="3.2"/>
+        <path d="M6.2 18.4a6.5 6.5 0 0 1 11.6 0"/>
+      </svg>
+    </a>
+  </nav>
+
+  <div class="funcionarios__conteudo">
+
   <div class="funcionarios__cabecalho">
     <div>
       <h1>Funcionários</h1>
@@ -51,6 +70,8 @@
   <div class="funcionarios__rodape">
     <span id="contador-mostrando"></span>
     <span>Só administradores veem esta página. Desativar não apaga os pedidos já enviados.</span>
+  </div>
+
   </div>
 
   <!-- Modal: Adicionar funcionário -->
@@ -119,6 +140,67 @@
         <div class="modal__rodape">
           <button type="button" class="modal__secundario" id="botao-cancelar-modal">Cancelar</button>
           <button type="submit" class="funcionarios__principal" id="botao-cadastrar">Cadastrar funcionário</button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- Modal: Editar funcionário (o back só altera e-mail, cargo e setor) -->
+  <div class="modal-fundo" id="modal-editar" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-editar-titulo">
+
+      <div class="modal__cabecalho">
+        <div>
+          <h2 id="modal-editar-titulo">Editar funcionário</h2>
+          <p class="modal__subtitulo">Nome e login não mudam por aqui. Altere e-mail, cargo e setor.</p>
+        </div>
+        <button type="button" class="modal__fechar" id="botao-fechar-editar" aria-label="Fechar">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="6" y1="6" x2="18" y2="18"/>
+            <line x1="18" y1="6" x2="6" y2="18"/>
+          </svg>
+        </button>
+      </div>
+
+      <form id="form-editar" novalidate>
+        <div class="modal__linha">
+          <div class="modal__campo">
+            <label for="editar-nome">Nome completo</label>
+            <input type="text" id="editar-nome" disabled>
+            <p class="modal__erro" aria-hidden="true"></p>
+          </div>
+          <div class="modal__campo">
+            <label for="editar-login">Login</label>
+            <input type="text" id="editar-login" disabled>
+            <p class="modal__erro" aria-hidden="true"></p>
+          </div>
+        </div>
+
+        <div class="modal__campo">
+          <label for="editar-email">E-mail institucional</label>
+          <input type="email" id="editar-email" name="email" maxlength="100" autocomplete="off">
+          <p class="modal__erro" id="erro-editar-email" aria-live="polite"></p>
+        </div>
+
+        <div class="modal__linha">
+          <div class="modal__campo">
+            <label for="editar-cargo">Cargo (opcional)</label>
+            <input type="text" id="editar-cargo" name="cargo" placeholder="Fisioterapeuta" maxlength="45" autocomplete="off">
+            <p class="modal__erro" aria-hidden="true"></p>
+          </div>
+          <div class="modal__campo">
+            <label for="editar-setor">Setor (opcional)</label>
+            <input type="text" id="editar-setor" name="setor" placeholder="Ortopedia" maxlength="45" autocomplete="off">
+            <p class="modal__erro" aria-hidden="true"></p>
+          </div>
+        </div>
+
+        <p class="modal__erro-geral" id="erro-editar" role="alert" hidden></p>
+
+        <div class="modal__rodape">
+          <button type="button" class="modal__secundario" id="botao-cancelar-editar">Cancelar</button>
+          <button type="submit" class="funcionarios__principal" id="botao-salvar">Salvar alterações</button>
         </div>
       </form>
 

@@ -1,7 +1,24 @@
-TELA: Painel da AACD
-Quem acessa: funcionários da AACD e admin.
-O que faz: lista todas as solicitações, com contadores por status.
-Clicar no contador filtra a lista; o botão "Total" mostra todas por ordem de adição.
-Também permite criar e cancelar solicitações.
-Cada solicitação mostra o ID curto e o funcionário que a criou.
-Rotas do back: a definir com quem cuida das solicitações.
+TELA: Painel da AACD (Acompanhamento)
+Quem acessa: funcionários da AACD e admin. Rota: #/painel-aacd (o login manda o FUNCIONARIO para cá).
+O que faz: lista todos os pedidos de impressão em quatro seções, pelo status do back:
+  Esperando aceite (PENDENTE) · Imprimindo (EM_ANDAMENTO) · Prontas (CONCLUIDA)
+  Recusadas (RECUSADA, CANCELADA e FALHOU, cada uma com o próprio chip e o motivo).
+Os contadores do topo filtram a lista (clicar de novo, ou "Ver todos os pedidos", mostra tudo).
+Cada seção mostra até 4 cartões e o botão "Ver todos (n)" abre o resto.
+Cada cartão mostra o número do pedido, título, empresa, impressora e quem enviou.
+Imprimindo: barra de progresso da aceitação até o prazo estimado pela empresa.
+Ações: Cancelar pedido (só pendente) e Remover (pronta ou recusada), com modal de confirmação.
+"+ Nova solicitação" e "Escolher outra empresa" levam para #/parceiros (criação é lá).
+
+Rotas do back usadas (via shared/js/api.js):
+  GET  /api/solicitacoes          -> lista (todos os pedidos para AACD)
+  GET  /api/solicitacao/ver?id=   -> detalhe, usado só para pegar prazoEstimado
+  POST /api/solicitacao/cancelar  -> { id } (PENDENTE; EM_ANDAMENTO só admin com justificativa)
+  POST /api/solicitacao/excluir   -> { id } (não aceita PENDENTE nem EM_ANDAMENTO)
+Sem sessão (401) a tela redireciona para #/login?perfil=aacd.
+Regras do back usadas nos textos: pendente expira em 30 dias; prontas/recusadas somem em 60 dias.
+
+Pendente / fora do back:
+  - "Reenviar pedido" e "Marcar como retirada" do Figma não existem no back; ficaram de fora.
+  - Abas Contato (#/contato) e perfil (#/minha-conta) ainda não têm tela do lado da AACD.
+  - Cancelar pedido em andamento (só admin, com justificativa) não está na tela.

@@ -240,8 +240,8 @@ export function iniciar(container) {
     const acao = botao.dataset.acao;
 
     if (acao === 'editar') {
-      // O modal "Editar funcionário" é outra tela do Figma; ligar aqui quando existir.
-      console.log('Editar funcionário', id);
+      const funcionario = funcionarios.find((f) => f.id === id);
+      if (funcionario) abrirEdicao(funcionario, botao);
       return;
     }
 
@@ -299,7 +299,9 @@ export function iniciar(container) {
   }
 
   function aoApertarEsc(evento) {
-    if (evento.key === 'Escape' && !modal.hidden) fecharModal();
+    if (evento.key !== 'Escape') return;
+    if (!modal.hidden) fecharModal();
+    else if (!modalEditar.hidden) fecharEdicao();
   }
 
   botaoAdicionar.addEventListener('click', abrirModal);
@@ -386,6 +388,121 @@ export function iniciar(container) {
 
     botaoCadastrar.disabled = false;
     botaoCadastrar.textContent = 'Cadastrar funcionário';
+  });
+
+  // ----- Modal: editar funcionário -----
+  // O back (POST /api/funcionario/editar) só altera e-mail, cargo e setor.
+
+  const modalEditar = container.querySelector('#modal-editar');
+  const formEditar = container.querySelector('#form-editar');
+  const botaoSalvar = container.querySelector('#botao-salvar');
+  const erroEditar = container.querySelector('#erro-editar');
+  const edicao = {
+    nome:          container.querySelector('#editar-nome'),
+    identificador: container.querySelector('#editar-login'),
+    email:         container.querySelector('#editar-email'),
+    cargo:         container.querySelector('#editar-cargo'),
+    setor:         container.querySelector('#editar-setor'),
+  };
+  const erroEdicaoEmail = container.querySelector('#erro-editar-email');
+  let editando = null;        // funcionário aberto no modal
+  let botaoDeOrigem = null;   // botão Editar que abriu, para devolver o foco
+
+  function mostrarErroEmailEdicao(texto) {
+    erroEdicaoEmail.textContent = texto;
+    edicao.email.classList.add('com-erro');
+  }
+
+  function limparErrosEdicao() {
+    erroEdicaoEmail.textContent = '';
+    edicao.email.classList.remove('com-erro');
+    erroEditar.hidden = true;
+  }
+
+  function abrirEdicao(funcionario, origem) {
+    editando = funcionario;
+    botaoDeOrigem = origem ?? null;
+    edicao.nome.value = funcionario.nome ?? '';
+    edicao.identificador.value = funcionario.identificador ?? '';
+    edicao.email.value = funcionario.email ?? '';
+    edicao.cargo.value = funcionario.cargo ?? '';
+    edicao.setor.value = funcionario.setor ?? '';
+    limparErrosEdicao();
+    botaoSalvar.disabled = false;
+    botaoSalvar.textContent = 'Salvar alterações';
+    modalEditar.hidden = false;
+    document.body.style.overflow = 'hidden';
+    edicao.email.focus();
+  }
+
+  function fecharEdicao() {
+    modalEditar.hidden = true;
+    document.body.style.overflow = '';
+    editando = null;
+    botaoDeOrigem?.focus?.();
+    botaoDeOrigem = null;
+  }
+
+  container.querySelector('#botao-fechar-editar').addEventListener('click', fecharEdicao);
+  container.querySelector('#botao-cancelar-editar').addEventListener('click', fecharEdicao);
+  modalEditar.addEventListener('click', (evento) => {
+    if (evento.target === modalEditar) fecharEdicao();
+  });
+  edicao.email.addEventListener('input', limparErrosEdicao);
+
+  formEditar.addEventListener('submit', async (evento) => {
+    evento.preventDefault();
+    if (!editando) return;
+    limparErrosEdicao();
+
+    const dados = {
+      id: editando.id,
+      email: edicao.email.value.trim().toLowerCase(),
+      cargo: edicao.cargo.value.trim(),
+      setor: edicao.setor.value.trim(),
+    };
+
+    if (dados.email === '') {
+      mostrarErroEmailEdicao('Digite o e-mail institucional.');
+      edicao.email.focus();
+      return;
+    }
+    if (!emailInstitucionalValido(dados.email)) {
+      mostrarErroEmailEdicao(`O e-mail precisa terminar em ${DOMINIO_AACD}.`);
+      edicao.email.focus();
+      return;
+    }
+
+    botaoSalvar.disabled = true;
+    botaoSalvar.textContent = 'Salvando...';
+
+    try {
+      const resposta = await api.editarFuncionario(dados);
+
+      if (resposta.ok) {
+        fecharEdicao();
+        await carregar();
+        // A tabela foi redesenhada: devolve o foco ao Editar da mesma linha
+        container.querySelector(`button[data-acao="editar"][data-id="${dados.id}"]`)?.focus();
+        return;
+      }
+
+      // 400 (e-mail inválido) ou 409 (e-mail já em uso / sem permissão)
+      const mensagem = resposta.corpo?.erro ?? 'Não foi possível salvar. Tente de novo.';
+      if (campoDoErro(mensagem) === 'email') {
+        mostrarErroEmailEdicao(mensagem);
+        edicao.email.focus();
+      } else {
+        erroEditar.textContent = mensagem;
+        erroEditar.hidden = false;
+      }
+    } catch {
+      erroEditar.textContent = 'Sem conexão com o servidor. Tente de novo em instantes.';
+      erroEditar.hidden = false;
+    }
+
+    botaoSalvar.disabled = false;
+    botaoSalvar.textContent = 'Salvar alterações';
   });
 
   limpar = () => {

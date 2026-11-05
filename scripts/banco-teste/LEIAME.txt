@@ -1,0 +1,15 @@
+BANCO DE TESTE DO GRUPO (lado AACD)
+
+Pré-requisitos na máquina: MySQL 8 e MongoDB rodando como serviço, Java 17+ e Maven.
+
+1. Uma vez, como root do MySQL (Workbench ou "mysql -u root -p"):
+     scripts/banco-teste/1-criar-usuario.sql      -> cria o usuário 'aacd' que o back usa
+2. Esquema do banco (branch main):
+     mysql -u aacd -p < dump.sql
+3. Usuários de teste (os logins e senhas estão no cabeçalho do arquivo):
+     mysql -u aacd -p < scripts/banco-teste/2-usuarios-teste.sql
+4. No back (branch main), criar src/main/resources/db.properties e mail.properties
+   (modelos em scripts/banco-teste/*.example). Os dois são ignorados pelo git.
+5. Rodar o back: mvn compile exec:java   -> http://localhost:8081 (serve a pasta public/ junto)
+
+Para testar só o front sem o back: npm run dev -> http://127.0.0.1:8080

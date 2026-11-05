@@ -1,0 +1,512 @@
+/* Meu perfil (funcionário e admin da AACD): resumo à esquerda,
+   dados pessoais e pedidos recentes à direita. */
+
+.conta [hidden] {
+  display: none !important;
+}
+
+/* A tela traz a própria barra; o cabeçalho do casco fica escondido. */
+body:has(main > .conta) > header {
+  display: none;
+}
+
+main:has(> .conta) {
+  padding: 0;
+}
+
+/* ---------- Barra superior ---------- */
+
+.conta__barra {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  height: 3.5rem;
+  padding: 0 1.25rem;
+  background: var(--cor-cabecalho);
+  color: var(--cor-superficie);
+}
+
+.conta__barra a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.conta__barra :focus-visible {
+  outline-color: var(--cor-superficie);
+}
+
+.conta__marca img {
+  width: 2.625rem;
+  height: 2.625rem;
+  padding: 0.3125rem;
+  border-radius: 50%;
+  background: var(--cor-superficie);
+  object-fit: contain;
+}
+
+.conta__abas {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  gap: 3rem;
+  height: 100%;
+}
+
+.conta__aba {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  border-bottom: 3px solid transparent;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  opacity: 0.85;
+}
+
+.conta__aba:hover {
+  opacity: 1;
+}
+
+.conta__perfil {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+}
+
+.conta__perfil:hover,
+.conta__perfil.ativa {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+/* ---------- Conteúdo ---------- */
+
+.conta__conteudo {
+  max-width: 73.75rem;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 2rem;
+}
+
+.conta__cabecalho {
+  margin-bottom: 1.5rem;
+}
+
+.conta h1 {
+  margin-bottom: 0.375rem;
+  font-size: 1.875rem;
+}
+
+.conta__descricao {
+  font-size: 0.875rem;
+  color: var(--cor-texto-suave);
+}
+
+.conta__aviso-geral {
+  margin-bottom: 1rem;
+  padding: 0.75rem 0.875rem;
+  border-left: 4px solid var(--cor-erro);
+  border-radius: 0.375rem;
+  background: var(--cor-erro-claro);
+  font-size: 0.875rem;
+  color: var(--cor-erro);
+}
+
+.conta__grade {
+  display: grid;
+  grid-template-columns: 19rem 1fr;
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.conta__lateral,
+.conta__principal {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* ---------- Cartões ---------- */
+
+.cartao {
+  padding: 1.375rem 1.5rem;
+  border: 1px solid var(--cor-borda);
+  border-radius: 0.625rem;
+  background: var(--cor-superficie);
+}
+
+.cartao__titulo {
+  margin-bottom: 0.25rem;
+  font-size: 1.0625rem;
+}
+
+.cartao__nota {
+  font-size: 0.75rem;
+  color: var(--cor-texto-suave);
+}
+
+.cartao__nota--abaixo {
+  margin-bottom: 1.125rem;
+}
+
+.cartao__cabecalho {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.cartao__link {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--cor-cabecalho);
+  white-space: nowrap;
+}
+
+.tabela__email {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--cor-texto-suave);
+}
+
+/* Resumo do perfil */
+
+.cartao--perfil {
+  text-align: center;
+}
+
+.avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 4rem;
+  height: 4rem;
+  margin-bottom: 0.75rem;
+  border: 2px solid var(--cor-botao-principal);
+  border-radius: 50%;
+  background: var(--cor-destaque-claro);
+  font-size: 1.375rem;
+  font-weight: 700;
+  color: var(--cor-destaque-texto);
+}
+
+.cartao__nome {
+  font-size: 1.125rem;
+}
+
+.cartao__cargo {
+  margin-top: 0.25rem;
+  font-size: 0.8125rem;
+  color: var(--cor-texto-suave);
+}
+
+.cartao__email {
+  margin-bottom: 0.625rem;
+  font-size: 0.75rem;
+  color: var(--cor-texto-suave);
+  overflow-wrap: anywhere;
+}
+
+.cartao__divisor {
+  margin: 1.25rem 0 1rem;
+  border: none;
+  border-top: 1px solid var(--cor-borda);
+}
+
+.cartao__rotulo {
+  margin-bottom: 0.5rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-align: left;
+  text-transform: uppercase;
+  color: var(--cor-texto-suave);
+}
+
+.estatisticas {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.estatisticas div {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8125rem;
+}
+
+.estatisticas dt {
+  color: var(--cor-texto-suave);
+}
+
+.estatisticas dd {
+  font-weight: 700;
+}
+
+/* Segurança */
+
+.seguranca {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-top: 0.75rem;
+}
+
+.seguranca strong {
+  display: block;
+  font-size: 0.875rem;
+}
+
+.conta__sair {
+  align-self: flex-start;
+  padding: 0;
+  border: none;
+  background: none;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--cor-cabecalho);
+  text-decoration: underline;
+}
+
+/* ---------- Formulário ---------- */
+
+.campo {
+  margin-bottom: 0.875rem;
+}
+
+.campo label {
+  display: block;
+  margin-bottom: 0.375rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.campo input {
+  width: 100%;
+  height: 2.75rem;
+  padding: 0 0.875rem;
+  border: 1px solid var(--cor-borda);
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.campo input::placeholder {
+  color: var(--cor-placeholder);
+}
+
+.campo input:focus {
+  border-color: var(--cor-botao-principal);
+  box-shadow: 0 0 0 3px var(--cor-destaque-claro);
+}
+
+.campo input.com-erro {
+  border-color: var(--cor-erro);
+}
+
+.campo input:disabled {
+  background: var(--cor-neutra-claro);
+  color: var(--cor-texto-suave);
+  cursor: not-allowed;
+}
+
+.campo__travado {
+  position: relative;
+}
+
+.campo__travado input {
+  padding-right: 2.5rem;
+}
+
+.campo__travado svg {
+  position: absolute;
+  top: 50%;
+  right: 0.875rem;
+  transform: translateY(-50%);
+  color: var(--cor-texto-suave);
+  pointer-events: none;
+}
+
+.campo__erro {
+  min-height: 1rem;
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  color: var(--cor-erro);
+}
+
+.campo__linha {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.875rem;
+}
+
+.conta__erro-form {
+  margin-bottom: 1rem;
+  padding: 0.75rem 0.875rem;
+  border-left: 4px solid var(--cor-erro);
+  border-radius: 0.375rem;
+  background: var(--cor-erro-claro);
+  font-size: 0.875rem;
+  color: var(--cor-erro);
+}
+
+.conta__sucesso {
+  margin-bottom: 1rem;
+  padding: 0.75rem 0.875rem;
+  border-left: 4px solid var(--cor-sucesso);
+  border-radius: 0.375rem;
+  background: var(--cor-sucesso-claro);
+  font-size: 0.875rem;
+  color: var(--cor-sucesso);
+}
+
+.form__rodape {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.conta__principal-botao {
+  height: 2.75rem;
+  padding: 0 1.5rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  transition: background 0.2s;
+}
+
+.conta__principal-botao:hover:not(:disabled) {
+  background: var(--cor-botao-principal-hover);
+}
+
+/* ---------- Botões pequenos e chips ---------- */
+
+.botao-linha {
+  display: inline-flex;
+  align-items: center;
+  height: 2rem;
+  padding: 0 0.875rem;
+  border: 1px solid var(--cor-texto);
+  border-radius: 0.375rem;
+  background: var(--cor-superficie);
+  color: var(--cor-texto);
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.botao-linha:hover:not(:disabled) {
+  background: var(--cor-neutra-claro);
+}
+
+.botao-linha--grande {
+  height: 2.75rem;
+  padding: 0 1.5rem;
+  font-size: 0.875rem;
+}
+
+.chip {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.chip--destaque { background: var(--cor-destaque-claro); color: var(--cor-destaque-texto); }
+.chip--sucesso  { background: var(--cor-sucesso-claro);  color: var(--cor-sucesso); }
+.chip--erro     { background: var(--cor-erro-claro);     color: var(--cor-erro); }
+.chip--neutro   { background: var(--cor-neutra-claro);   color: var(--cor-texto-suave); }
+
+/* ---------- Tabela de pedidos ---------- */
+
+.tabela-envolto {
+  overflow-x: auto;
+}
+
+.tabela {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tabela th {
+  padding: 0.5rem 0.5rem;
+  border-bottom: 1px solid var(--cor-borda);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-align: left;
+  text-transform: uppercase;
+  color: var(--cor-texto-suave);
+}
+
+.tabela td {
+  padding: 0.75rem 0.5rem;
+  border-bottom: 1px solid var(--cor-borda);
+  font-size: 0.8125rem;
+  vertical-align: middle;
+}
+
+.tabela tr:last-child td {
+  border-bottom: none;
+}
+
+.tabela__pedido {
+  font-weight: 700;
+}
+
+.tabela__empresa,
+.tabela__data {
+  color: var(--cor-texto-suave);
+}
+
+.tabela__vazia {
+  padding: 1.5rem 0 0.5rem;
+  font-size: 0.875rem;
+  text-align: center;
+  color: var(--cor-texto-suave);
+}
+
+.tabela__rodape {
+  margin-top: 0.875rem;
+  font-size: 0.8125rem;
+  text-align: right;
+}
+
+.tabela__rodape a {
+  font-weight: 700;
+  color: var(--cor-cabecalho);
+}
+
+/* ---------- Responsivo ---------- */
+
+@media (max-width: 56rem) {
+  .conta__grade {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 37.5rem) {
+  .conta__barra {
+    gap: 0.75rem;
+    padding: 0 0.75rem;
+  }
+
+  .conta__abas {
+    gap: 1.25rem;
+  }
+
+  .campo__linha {
+    grid-template-columns: 1fr;
+  }
+
+  .form__rodape {
+    flex-direction: column;
+  }
+}

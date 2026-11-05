@@ -6,6 +6,8 @@ rota('/',              { pagina: 'login',          publica: true,  titulo: 'Entr
 rota('/login',         { pagina: 'login',          publica: true,  titulo: 'Entrar' });
 rota('/esqueci-senha', { pagina: 'esqueci-senha',  publica: true,  titulo: 'Recuperar senha' });
 rota('/funcionarios',  { pagina: 'funcionarios',   publica: false, titulo: 'Funcionários' });
+rota('/painel-aacd',   { pagina: 'painel-aacd',    publica: false, titulo: 'Acompanhamento' });
+rota('/minha-conta',   { pagina: 'minha-conta',    publica: false, titulo: 'Meu perfil' });
 rota('/404',           { pagina: 'nao-encontrada', publica: true,  titulo: 'Não encontrada' });
 
 iniciar(document.getElementById('conteudo'));

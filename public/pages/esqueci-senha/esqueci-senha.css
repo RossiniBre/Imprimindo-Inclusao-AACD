@@ -2,7 +2,7 @@
 
 /* Nesta tela o cabeçalho vermelho do casco some e o <main> perde o respiro:
    o painel vermelho e o formulário ocupam a janela inteira. */
-body:has(main > .esqueci) header {
+body:has(main > .esqueci) > header {
   display: none;
 }
 

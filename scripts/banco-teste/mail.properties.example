@@ -1,0 +1,6 @@
+# Só o "esqueci a senha" usa. Com estes valores o servidor sobe, mas o e-mail não sai.
+mail.host=smtp.gmail.com
+mail.port=587
+mail.usuario=nao-configurado@example.com
+mail.senha=nao-configurado
+mail.remetente.nome=Imprimindo Inclusão (teste)

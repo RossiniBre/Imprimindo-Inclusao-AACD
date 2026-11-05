@@ -21,6 +21,7 @@ export const api = {
   login:   (identificador, senha) => requisitar('POST', '/api/login', { identificador, senha }),
   logout:  () => requisitar('POST', '/api/logout'),
   eu:      () => requisitar('GET', '/api/me'),
+  editarNome: (nome) => requisitar('POST', '/api/usuario/nome', { nome }),
   esqueciSenha: (email) => requisitar('POST', '/api/esqueci-senha', { email }),
   cadastrarEmpresa:  (dados) => requisitar('POST', '/api/empresas', dados),
   cadastrarImpressora: (dados) => requisitar('POST', '/api/impressoras', dados),
@@ -28,6 +29,14 @@ export const api = {
   // Funcionários (só o admin)
   funcionarios: () => requisitar('GET', '/api/funcionarios'),
   cadastrarFuncionario: (dados) => requisitar('POST', '/api/funcionarios', dados),
+  editarFuncionario: (dados) => requisitar('POST', '/api/funcionario/editar', dados),
   desativarConta: (id) => requisitar('POST', '/api/conta/desativar', { id }),
   reativarConta:  (id) => requisitar('POST', '/api/conta/reativar', { id }),
+
+  // Solicitações de impressão (funcionário e admin da AACD)
+  solicitacoes: () => requisitar('GET', '/api/solicitacoes'),
+  verSolicitacao: (id) => requisitar('GET', `/api/solicitacao/ver?id=${encodeURIComponent(id)}`),
+  cancelarSolicitacao: (id, justificativa) =>
+    requisitar('POST', '/api/solicitacao/cancelar', justificativa ? { id, justificativa } : { id }),
+  excluirSolicitacao: (id) => requisitar('POST', '/api/solicitacao/excluir', { id }),
 };

@@ -1,0 +1,203 @@
+<section class="conta">
+
+  <!-- Barra superior do portal (as abas dependem do perfil: ver minha-conta.js) -->
+  <nav class="conta__barra" aria-label="Portal da AACD">
+    <a class="conta__marca" href="#/painel-aacd" aria-label="Início do portal">
+      <img src="/shared/img/logo-aacd.png" alt="AACD">
+    </a>
+    <div class="conta__abas">
+      <a class="conta__aba" id="aba-painel-adm" href="#/funcionarios" hidden>Painel ADM</a>
+      <a class="conta__aba" id="aba-acompanhamento" href="#/painel-aacd">Acompanhamento</a>
+    </div>
+    <a class="conta__perfil ativa" href="#/minha-conta" aria-label="Meu perfil" aria-current="page">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="10"/>
+        <circle cx="12" cy="10" r="3.2"/>
+        <path d="M6.2 18.4a6.5 6.5 0 0 1 11.6 0"/>
+      </svg>
+    </a>
+  </nav>
+
+  <div class="conta__conteudo">
+
+    <div class="conta__cabecalho">
+      <h1>Meu perfil</h1>
+      <p class="conta__descricao" id="descricao">Seus dados e os pedidos que você enviou em nome da AACD.</p>
+    </div>
+
+    <p class="conta__aviso-geral" id="aviso-geral" role="alert" hidden></p>
+
+    <div class="conta__grade">
+
+      <!-- Coluna esquerda: resumo + segurança -->
+      <aside class="conta__lateral">
+
+        <div class="cartao cartao--perfil">
+          <span class="avatar" id="avatar" aria-hidden="true">?</span>
+          <h2 class="cartao__nome" id="resumo-nome">Carregando...</h2>
+          <p class="cartao__cargo" id="resumo-cargo"></p>
+          <p class="cartao__email" id="resumo-email"></p>
+          <span class="chip chip--destaque" id="resumo-funcao"></span>
+
+          <hr class="cartao__divisor">
+
+          <div id="bloco-pedidos">
+            <h3 class="cartao__rotulo">Seus pedidos</h3>
+            <dl class="estatisticas">
+              <div><dt>Enviados no total</dt><dd id="total-enviados">0</dd></div>
+              <div><dt>Imprimindo agora</dt><dd id="total-imprimindo">0</dd></div>
+              <div><dt>Aguardando resposta</dt><dd id="total-aguardando">0</dd></div>
+              <div><dt>Recusados</dt><dd id="total-recusados">0</dd></div>
+            </dl>
+          </div>
+
+          <div id="bloco-painel" hidden>
+            <h3 class="cartao__rotulo">No painel</h3>
+            <dl class="estatisticas">
+              <div><dt>Funcionários ativos</dt><dd id="total-ativos">0</dd></div>
+              <div><dt>Funcionários inativos</dt><dd id="total-inativos">0</dd></div>
+              <div><dt>Administradores</dt><dd id="total-admins">0</dd></div>
+            </dl>
+          </div>
+        </div>
+
+        <div class="cartao">
+          <h2 class="cartao__titulo">Segurança e acesso</h2>
+
+          <div class="seguranca">
+            <div>
+              <strong>Senha</strong>
+              <p class="cartao__nota">A troca é feita com um código enviado ao seu e-mail institucional.</p>
+            </div>
+            <a class="botao-linha" href="#/esqueci-senha?perfil=aacd">Alterar senha</a>
+          </div>
+        </div>
+
+        <button type="button" class="conta__sair" id="botao-sair">Sair da conta</button>
+
+      </aside>
+
+      <!-- Coluna direita: dados + pedidos recentes -->
+      <div class="conta__principal">
+
+        <div class="cartao">
+          <h2 class="cartao__titulo">Dados pessoais</h2>
+          <p class="cartao__nota cartao__nota--abaixo">O e-mail e a função são definidos pela administração da AACD.</p>
+
+          <form id="form-dados" novalidate>
+            <div class="campo">
+              <label for="dado-nome">Nome completo</label>
+              <input type="text" id="dado-nome" name="nome" maxlength="45" autocomplete="name">
+              <p class="campo__erro" id="erro-nome" aria-live="polite"></p>
+            </div>
+
+            <div class="campo__linha">
+              <div class="campo">
+                <label for="dado-cargo">Cargo</label>
+                <input type="text" id="dado-cargo" name="cargo" maxlength="45" placeholder="Fisioterapeuta" autocomplete="off">
+                <p class="campo__erro" aria-hidden="true"></p>
+              </div>
+              <div class="campo">
+                <label for="dado-setor">Setor</label>
+                <input type="text" id="dado-setor" name="setor" maxlength="45" placeholder="Ortopedia" autocomplete="off">
+                <p class="campo__erro" aria-hidden="true"></p>
+              </div>
+            </div>
+
+            <div class="campo__linha">
+              <div class="campo">
+                <label for="dado-email">E-mail institucional</label>
+                <div class="campo__travado">
+                  <input type="email" id="dado-email" disabled>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <rect x="4" y="10" width="16" height="11" rx="2"/>
+                    <path d="M8 10V7a4 4 0 0 1 8 0v3"/>
+                  </svg>
+                </div>
+                <p class="campo__erro" aria-hidden="true"></p>
+              </div>
+              <div class="campo">
+                <label for="dado-login">Login</label>
+                <div class="campo__travado">
+                  <input type="text" id="dado-login" disabled>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <rect x="4" y="10" width="16" height="11" rx="2"/>
+                    <path d="M8 10V7a4 4 0 0 1 8 0v3"/>
+                  </svg>
+                </div>
+                <p class="campo__erro" aria-hidden="true"></p>
+              </div>
+            </div>
+
+            <div class="campo">
+              <label for="dado-funcao">Função</label>
+              <div class="campo__travado">
+                <input type="text" id="dado-funcao" disabled>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect x="4" y="10" width="16" height="11" rx="2"/>
+                  <path d="M8 10V7a4 4 0 0 1 8 0v3"/>
+                </svg>
+              </div>
+              <p class="campo__erro" aria-hidden="true"></p>
+            </div>
+
+            <p class="conta__erro-form" id="erro-form" role="alert" hidden></p>
+            <p class="conta__sucesso" id="sucesso-form" role="status" hidden>Alterações salvas.</p>
+
+            <div class="form__rodape">
+              <button type="submit" class="conta__principal-botao" id="botao-salvar">Salvar alterações</button>
+              <button type="button" class="botao-linha botao-linha--grande" id="botao-cancelar">Cancelar</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="cartao" id="cartao-pedidos">
+          <h2 class="cartao__titulo">Meus pedidos recentes</h2>
+          <p class="cartao__nota cartao__nota--abaixo">Os pedidos prontos e recusados somem depois de <span id="dias-limpeza">60</span> dias.</p>
+
+          <div class="tabela-envolto">
+            <table class="tabela">
+              <thead>
+                <tr>
+                  <th>Pedido</th>
+                  <th>Empresa</th>
+                  <th>Status</th>
+                  <th>Enviado em</th>
+                </tr>
+              </thead>
+              <tbody id="corpo-pedidos"></tbody>
+            </table>
+          </div>
+          <p class="tabela__vazia" id="pedidos-vazio" hidden>Você ainda não enviou pedidos.</p>
+          <p class="tabela__rodape" id="pedidos-rodape" hidden>
+            <a href="#/painel-aacd">Ver todos no Acompanhamento</a>
+          </p>
+        </div>
+
+        <div class="cartao" id="cartao-equipe" hidden>
+          <div class="cartao__cabecalho">
+            <h2 class="cartao__titulo">Equipe</h2>
+            <a class="cartao__link" href="#/funcionarios">Ver todos em Funcionários</a>
+          </div>
+          <p class="cartao__nota cartao__nota--abaixo">Os funcionários adicionados por último.</p>
+
+          <div class="tabela-envolto">
+            <table class="tabela">
+              <thead>
+                <tr>
+                  <th>Funcionário</th>
+                  <th>Função</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="corpo-equipe"></tbody>
+            </table>
+          </div>
+          <p class="tabela__vazia" id="equipe-vazia" hidden>Nenhum funcionário cadastrado ainda.</p>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</section>

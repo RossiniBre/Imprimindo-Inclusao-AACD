@@ -1,0 +1,156 @@
+<section class="painel">
+
+  <!-- Barra superior do portal do funcionário (abas do Figma) -->
+  <nav class="painel__barra" aria-label="Portal do funcionário">
+    <a class="painel__marca" href="#/painel-aacd" aria-label="Início do portal">
+      <img src="/shared/img/logo-aacd.png" alt="AACD">
+    </a>
+    <div class="painel__abas">
+      <a class="painel__aba ativa" href="#/painel-aacd" aria-current="page">Acompanhamento</a>
+      <a class="painel__aba" href="#/contato">Contato</a>
+    </div>
+    <a class="painel__perfil" href="#/minha-conta" aria-label="Meu perfil">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="10"/>
+        <circle cx="12" cy="10" r="3.2"/>
+        <path d="M6.2 18.4a6.5 6.5 0 0 1 11.6 0"/>
+      </svg>
+    </a>
+  </nav>
+
+  <div class="painel__conteudo">
+
+    <div class="painel__cabecalho">
+      <div>
+        <h1>Acompanhamento</h1>
+        <p class="painel__descricao">
+          Pedidos de impressão enviados às empresas parceiras.
+          Pedidos prontos, recusados ou cancelados saem da lista sozinhos depois de <span id="dias-limpeza">60</span> dias.
+        </p>
+      </div>
+      <a class="painel__principal" href="#/parceiros">+ Nova solicitação</a>
+    </div>
+
+    <!-- Contadores: clicar filtra a lista (clicar de novo mostra tudo) -->
+    <div class="painel__contadores" role="group" aria-label="Filtrar pedidos por status">
+      <button type="button" class="contador contador--esperando" data-grupo="esperando" aria-pressed="false">
+        <span class="contador__rotulo">Esperando aceite</span>
+        <strong class="contador__numero" data-papel="numero">0</strong>
+        <span class="contador__acao">Ver pedidos ↓</span>
+      </button>
+      <button type="button" class="contador contador--imprimindo" data-grupo="imprimindo" aria-pressed="false">
+        <span class="contador__rotulo">Imprimindo</span>
+        <strong class="contador__numero" data-papel="numero">0</strong>
+        <span class="contador__acao">Ver pedidos ↓</span>
+      </button>
+      <button type="button" class="contador contador--prontas" data-grupo="prontas" aria-pressed="false">
+        <span class="contador__rotulo">Prontas</span>
+        <strong class="contador__numero" data-papel="numero">0</strong>
+        <span class="contador__acao">Ver pedidos ↓</span>
+      </button>
+      <button type="button" class="contador contador--recusadas" data-grupo="recusadas" aria-pressed="false">
+        <span class="contador__rotulo">Recusadas</span>
+        <strong class="contador__numero" data-papel="numero">0</strong>
+        <span class="contador__acao">Ver pedidos ↓</span>
+      </button>
+    </div>
+
+    <p class="painel__filtro" id="filtro-ativo" hidden>
+      Mostrando só <strong id="filtro-nome"></strong>.
+      <button type="button" class="painel__link" id="botao-todos">Ver todos os pedidos</button>
+    </p>
+
+    <p class="painel__aviso-geral" id="aviso-geral" role="alert" hidden></p>
+    <p class="painel__vazio" id="lista-carregando">Carregando pedidos...</p>
+    <p class="painel__vazio" id="lista-vazia" hidden>
+      Nenhum pedido por aqui ainda. Comece por <a href="#/parceiros">Nova solicitação</a>.
+    </p>
+
+    <section class="grupo" data-grupo="esperando" hidden>
+      <div class="grupo__cabecalho">
+        <h2><span class="grupo__ponto grupo__ponto--esperando" aria-hidden="true"></span>Esperando aceite <span class="grupo__total" data-papel="total">0</span></h2>
+        <div class="grupo__direita">
+          <span class="grupo__mostrando" data-papel="mostrando"></span>
+          <button type="button" class="botao-linha" data-papel="ver-todos" hidden>Ver todos</button>
+        </div>
+      </div>
+      <div class="grupo__cartoes" data-papel="cartoes"></div>
+    </section>
+
+    <section class="grupo" data-grupo="imprimindo" hidden>
+      <div class="grupo__cabecalho">
+        <h2><span class="grupo__ponto grupo__ponto--imprimindo" aria-hidden="true"></span>Imprimindo <span class="grupo__total" data-papel="total">0</span></h2>
+        <div class="grupo__direita">
+          <span class="grupo__mostrando" data-papel="mostrando"></span>
+          <button type="button" class="botao-linha" data-papel="ver-todos" hidden>Ver todos</button>
+        </div>
+      </div>
+      <div class="grupo__cartoes" data-papel="cartoes"></div>
+    </section>
+
+    <section class="grupo" data-grupo="prontas" hidden>
+      <div class="grupo__cabecalho">
+        <h2><span class="grupo__ponto grupo__ponto--prontas" aria-hidden="true"></span>Prontas <span class="grupo__total" data-papel="total">0</span></h2>
+        <div class="grupo__direita">
+          <span class="grupo__mostrando" data-papel="mostrando"></span>
+          <button type="button" class="botao-linha" data-papel="ver-todos" hidden>Ver todos</button>
+        </div>
+      </div>
+      <div class="grupo__cartoes" data-papel="cartoes"></div>
+    </section>
+
+    <section class="grupo" data-grupo="recusadas" hidden>
+      <div class="grupo__cabecalho">
+        <h2><span class="grupo__ponto grupo__ponto--recusadas" aria-hidden="true"></span>Recusadas <span class="grupo__total" data-papel="total">0</span></h2>
+        <div class="grupo__direita">
+          <span class="grupo__mostrando" data-papel="mostrando"></span>
+          <button type="button" class="botao-linha" data-papel="ver-todos" hidden>Ver todos</button>
+        </div>
+      </div>
+      <div class="grupo__cartoes" data-papel="cartoes"></div>
+    </section>
+
+  </div>
+
+  <!-- Modal de confirmação: cancelar (pendente) ou remover (pronta/recusada) -->
+  <div class="modal-fundo" id="modal-confirmar" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-titulo" aria-describedby="modal-texto">
+
+      <button type="button" class="modal__fechar" id="botao-fechar-modal" aria-label="Fechar">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <line x1="6" y1="6" x2="18" y2="18"/>
+          <line x1="18" y1="6" x2="6" y2="18"/>
+        </svg>
+      </button>
+
+      <div class="modal__icone" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 6h18"/>
+          <path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/>
+          <path d="M19 6l-1 14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1L5 6"/>
+          <line x1="10" y1="11" x2="10" y2="17"/>
+          <line x1="14" y1="11" x2="14" y2="17"/>
+        </svg>
+      </div>
+
+      <h2 id="modal-titulo"></h2>
+      <p class="modal__texto" id="modal-texto"></p>
+
+      <p class="modal__pedido"><span class="chip chip--neutro" id="modal-pedido"></span></p>
+
+      <p class="modal__alternativa" id="modal-alternativa" hidden>
+        Prefere reenviar?<br>
+        <a href="#/parceiros">Escolher outra empresa</a>
+      </p>
+
+      <p class="modal__erro-geral" id="erro-modal" role="alert" hidden></p>
+
+      <div class="modal__rodape">
+        <button type="button" class="modal__secundario" id="botao-voltar-modal">Cancelar</button>
+        <button type="button" class="painel__principal" id="botao-confirmar-modal"></button>
+      </div>
+
+    </div>
+  </div>
+
+</section>
