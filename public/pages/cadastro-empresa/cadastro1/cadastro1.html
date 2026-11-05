@@ -1,0 +1,97 @@
+<section class="cadastro1">
+  <div class="geral row g-0">
+
+    <!-- painel vermelho -->
+    <aside class="side col-md-4 d-flex flex-column justify-content-between gap-4 position-relative overflow-hidden text-white">
+      <span class="circle circle-1 position-absolute rounded-circle"></span>
+      <span class="circle circle-2 position-absolute rounded-circle"></span>
+      <span class="circle circle-3 position-absolute rounded-circle"></span>
+
+      <div class="conteudo-lateral position-relative z-1">
+        <!-- circulo branco -->
+        <a id="logo" href="#/login" class="d-flex align-items-center justify-content-center rounded-circle bg-white">
+          <img id="img-aacd" class="ps-1" src="/shared/img/logo-aacd.png" alt="AACD - voltar para a home" width="30">
+        </a>
+      </div>
+
+      <div class="conteudo-lateral position-relative z-1">
+        <h1 id="titulo-lateral" class="fw-bold lh-sm mb-4 pe-5">Sua impressora 3D pode devolver movimento a alguém.</h1>
+        <p id="subT-lateral" class="mb-0">Conecte sua empresa à AACD e ajude a produzir próteses e órteses para quem mais precisa.</p>
+      </div>
+
+      <div class="conteudo-lateral position-relative z-1">
+        <small>Portal de empresas parceiras</small>
+      </div>
+    </aside>
+
+    <!-- formulario -->
+    <div id="formulario" class="col-md-8 d-flex align-items-center justify-content-center p-4">
+      <div id="form-junto" class="w-100">
+        <h2 id="titulo-form" class="fs-1 fw-bold mb-1">Cadastre sua empresa</h2>
+        <p id="subT-Form" class="text-body-secondary mb-3">Preencha os dados abaixo. Seu cadastro será analisado pela AACD.</p>
+
+        <form id="cadastro-form" novalidate>
+          <div class="row gx-3 gy-2">
+
+            <div class="col-md-6">
+              <label for="razao" class="label-form">Razão social</label>
+              <input type="text" class="form-control input-form" id="razao" placeholder="Nome da empresa" autocomplete="organization" required>
+            </div>
+            <div class="col-md-6">
+              <label for="cnpj" class="label-form">CNPJ</label>
+              <input type="text" class="form-control input-form" id="cnpj" placeholder="00.000.000/0000-00" maxlength="18" inputmode="numeric" required>
+            </div>
+
+            <div class="col-md-6">
+              <label for="responsavel" class="label-form">Nome do responsável</label>
+              <input type="text" class="form-control input-form" id="responsavel" placeholder="Nome completo" autocomplete="name" required>
+            </div>
+            <div class="col-md-6">
+              <label for="telefone" class="label-form">Telefone</label>
+              <input type="tel" class="form-control input-form" id="telefone" placeholder="(11) 00000-0000" maxlength="15" autocomplete="tel-national" required>
+            </div>
+
+            <div class="col-md-6">
+              <label for="email" class="label-form">E-mail corporativo</label>
+              <input type="email" class="form-control input-form" id="email" placeholder="empresa@exemplo.com.br" autocomplete="email" required>
+            </div>
+            <div class="col-md-6">
+              <label for="email2" class="label-form">Confirmar E-mail</label>
+              <input type="email" class="form-control input-form" id="email2" placeholder="Repita o E-mail" autocomplete="off" required>
+            </div>
+
+            <div class="col-md-6">
+              <label for="senha" class="label-form">Senha</label>
+              <div class="grupo-senha position-relative">
+                <input type="password" class="form-control input-form pe-5" id="senha" placeholder="Mínimo 8 caracteres" minlength="8" autocomplete="new-password" required>
+                <button type="button" class="botao-senha position-absolute top-50 end-0 translate-middle-y border-0 bg-transparent p-1 me-2" data-target="senha" aria-label="Mostrar senha" aria-pressed="false">
+                  <i class="bi bi-eye"></i>
+                </button>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label for="senha2" class="label-form">Confirmar senha</label>
+              <div class="grupo-senha position-relative">
+                <input type="password" class="form-control input-form pe-5" id="senha2" placeholder="Repita a senha" autocomplete="new-password" required>
+                <button type="button" class="botao-senha position-absolute top-50 end-0 translate-middle-y border-0 bg-transparent p-1 me-2" data-target="senha2" aria-label="Mostrar senha" aria-pressed="false">
+                  <i class="bi bi-eye"></i>
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+          <p id="erro-geral" class="text-danger small mt-3 mb-0" role="alert" hidden></p>
+          
+          <div class="acoes d-flex">
+            <button type="reset" id="btn-cancelar" class="btn btn-outline-dark btn-cancelar flex-fill">Cancelar</button>
+            <button type="submit" class="btn btn-warning btn-continuar flex-fill">Continuar</button>
+          </div>
+
+          <p class="link-login text-center mt-3 mb-0">Já tem conta? <a href="#/login">Entrar</a></p>
+        </form>
+      </div>
+    </div>
+
+  </div>
+</section>

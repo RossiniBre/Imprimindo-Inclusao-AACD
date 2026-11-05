@@ -39,4 +39,7 @@ export const api = {
   cancelarSolicitacao: (id, justificativa) =>
     requisitar('POST', '/api/solicitacao/cancelar', justificativa ? { id, justificativa } : { id }),
   excluirSolicitacao: (id) => requisitar('POST', '/api/solicitacao/excluir', { id }),
+  editarNomeUsuario: (dados) => requisitar('POST', '/api/usuario/nome', dados),
+  editarIdentificadorUsuario: (dados) => requisitar('POST', '/api/usuario/identificador', dados),
+  excluirConta: (id, senha) => requisitar('POST', '/api/conta/excluir', { id, senha }),
 };

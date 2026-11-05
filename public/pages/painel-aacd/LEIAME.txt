@@ -15,7 +15,7 @@ Rotas do back usadas (via shared/js/api.js):
   GET  /api/solicitacao/ver?id=   -> detalhe, usado só para pegar prazoEstimado
   POST /api/solicitacao/cancelar  -> { id } (PENDENTE; EM_ANDAMENTO só admin com justificativa)
   POST /api/solicitacao/excluir   -> { id } (não aceita PENDENTE nem EM_ANDAMENTO)
-Sem sessão (401) a tela redireciona para #/login?perfil=aacd.
+Sem sessão (401) a tela redireciona para #/login.
 Regras do back usadas nos textos: pendente expira em 30 dias; prontas/recusadas somem em 60 dias.
 
 Pendente / fora do back:

@@ -146,53 +146,47 @@
     </div>
   </div>
 
-  <!-- Modal: Editar funcionário (o back só altera e-mail, cargo e setor) -->
+    <!-- Modal: Editar funcionário -->
   <div class="modal-fundo" id="modal-editar" hidden>
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-editar-titulo">
-
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="editar-titulo">
       <div class="modal__cabecalho">
         <div>
-          <h2 id="modal-editar-titulo">Editar funcionário</h2>
-          <p class="modal__subtitulo">Nome e login não mudam por aqui. Altere e-mail, cargo e setor.</p>
+          <h2 id="editar-titulo">Editar funcionário</h2>
+          <p class="modal__subtitulo">Altere os dados e salve</p>
         </div>
         <button type="button" class="modal__fechar" id="botao-fechar-editar" aria-label="Fechar">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
-            <line x1="6" y1="6" x2="18" y2="18"/>
-            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/>
           </svg>
         </button>
       </div>
 
       <form id="form-editar" novalidate>
+        <div class="modal__campo">
+          <label for="editar-nome">Nome completo</label>
+          <input type="text" id="editar-nome" maxlength="45" autocomplete="off">
+          <p class="modal__erro" id="editar-erro-nome" aria-live="polite"></p>
+        </div>
         <div class="modal__linha">
           <div class="modal__campo">
-            <label for="editar-nome">Nome completo</label>
-            <input type="text" id="editar-nome" disabled>
-            <p class="modal__erro" aria-hidden="true"></p>
+            <label for="editar-login">Login</label>
+            <input type="text" id="editar-login" maxlength="45" autocomplete="off">
+            <p class="modal__erro" id="editar-erro-identificador" aria-live="polite"></p>
           </div>
           <div class="modal__campo">
-            <label for="editar-login">Login</label>
-            <input type="text" id="editar-login" disabled>
-            <p class="modal__erro" aria-hidden="true"></p>
+            <label for="editar-email">E-mail institucional</label>
+            <input type="email" id="editar-email" maxlength="100" autocomplete="off">
+            <p class="modal__erro" id="editar-erro-email" aria-live="polite"></p>
           </div>
         </div>
-
-        <div class="modal__campo">
-          <label for="editar-email">E-mail institucional</label>
-          <input type="email" id="editar-email" name="email" maxlength="100" autocomplete="off">
-          <p class="modal__erro" id="erro-editar-email" aria-live="polite"></p>
-        </div>
-
         <div class="modal__linha">
           <div class="modal__campo">
             <label for="editar-cargo">Cargo (opcional)</label>
-            <input type="text" id="editar-cargo" name="cargo" placeholder="Fisioterapeuta" maxlength="45" autocomplete="off">
-            <p class="modal__erro" aria-hidden="true"></p>
+            <input type="text" id="editar-cargo" maxlength="45" autocomplete="off">
           </div>
           <div class="modal__campo">
             <label for="editar-setor">Setor (opcional)</label>
-            <input type="text" id="editar-setor" name="setor" placeholder="Ortopedia" maxlength="45" autocomplete="off">
-            <p class="modal__erro" aria-hidden="true"></p>
+            <input type="text" id="editar-setor" maxlength="45" autocomplete="off">
           </div>
         </div>
 
@@ -200,11 +194,46 @@
 
         <div class="modal__rodape">
           <button type="button" class="modal__secundario" id="botao-cancelar-editar">Cancelar</button>
-          <button type="submit" class="funcionarios__principal" id="botao-salvar">Salvar alterações</button>
+          <button type="submit" class="funcionarios__principal" id="botao-salvar-editar">Salvar alterações</button>
         </div>
       </form>
-
     </div>
   </div>
+
+    <!-- Modal: Excluir funcionário -->
+<div class="modal-fundo" id="modal-excluir" hidden>
+  <div class="modal" role="alertdialog" aria-modal="true" aria-labelledby="excluir-titulo" aria-describedby="excluir-texto">
+    <div class="modal__cabecalho">
+      <div>
+        <h2 id="excluir-titulo">Excluir funcionário</h2>
+        <p class="modal__subtitulo">Esta ação não pode ser desfeita</p>
+      </div>
+      <button type="button" class="modal__fechar" id="botao-fechar-excluir" aria-label="Fechar">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+    <p class="modal__texto" id="excluir-texto">
+      Tem certeza que deseja excluir <strong id="excluir-nome"></strong>?
+      A conta e os dados do funcionário serão apagados. Se for só uma pausa, use Desativar.
+    </p>
+
+    <div class="modal__campo">
+  <label for="excluir-senha">Sua senha, para confirmar</label>
+  <input type="text" id="excluir-senha" autocomplete="off"
+         autocapitalize="off" spellcheck="false"
+         class="campo-senha-oculta">
+</div>
+
+    <p class="modal__erro-geral" id="erro-excluir" role="alert" hidden></p>
+
+    <div class="modal__rodape">
+      <button type="button" class="modal__secundario" id="botao-cancelar-excluir">Cancelar</button>
+      <button type="button" class="modal__perigo" id="botao-confirmar-excluir">Excluir funcionário</button>
+    </div>
+  </div>
+</div>
 
 </section>

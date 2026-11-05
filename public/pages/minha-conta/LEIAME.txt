@@ -17,7 +17,7 @@ Rotas do back usadas (via shared/js/api.js):
   POST /api/usuario/nome         -> { nome } (400 nome vazio/longo; 409 sem permissão)
   POST /api/funcionario/editar   -> { email, cargo, setor } sem id = a própria conta
   POST /api/logout
-Sem sessão (401) a tela redireciona para #/login?perfil=aacd.
+Sem sessão (401) a tela redireciona para #/login.
 
 Depende do back (não dá para fazer no front):
   - GET /api/me precisa devolver nome, identificador, email, cargo e setor. Sem isso os campos

@@ -346,7 +346,7 @@ export function iniciar(container) {
     }
 
     if (resposta.status === 401) {
-      location.hash = '#/login?perfil=aacd';
+      location.hash = '#/login';
       return;
     }
     if (!resposta.ok) {

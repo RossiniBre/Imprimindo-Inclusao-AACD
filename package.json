@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-     "scripts": {
-     "dev": "node scripts/servidor.js",
-     "lint": "eslint public tests",
-     "test": "vitest run"
-   },
+  "scripts": {
+    "dev": "node scripts/servidor.js",
+    "lint": "eslint public tests",
+    "test": "vitest run"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/RossiniBre/Imprimindo-Inclusao-AACD.git"

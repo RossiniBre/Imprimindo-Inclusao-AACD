@@ -87,7 +87,7 @@ main:has(> .funcionarios) {
 
 .funcionarios__cabecalho {
   display: flex;
-  align-items: flex-start;
+  align-items: flex-start;  
   justify-content: space-between;
   gap: 1.5rem;
   margin-bottom: 1.625rem;
@@ -522,6 +522,14 @@ main:has(> .funcionarios) {
   background: var(--cor-neutra-claro);
 }
 
+/* Bootstrap também tem uma classe .modal (display:none, position:fixed); aqui ela é só a caixa */
+.modal-fundo .modal {
+  position: static;
+  display: block;
+  height: auto;
+  z-index: auto;
+}
+
 /* ---------- Responsivo ---------- */
 
 @media (max-width: 56rem) {
@@ -550,4 +558,38 @@ main:has(> .funcionarios) {
   .modal__linha {
     grid-template-columns: 1fr;
   }
+}
+
+.botao-linha--excluir {
+  color: var(--cor-perigo, #c62828);
+}
+.botao-linha--excluir:hover {
+  background: var(--cor-perigo-fundo, #fdecea);
+}
+
+.modal__texto {
+  margin: 0 0 16px;
+  line-height: 1.5;
+}
+
+.modal__perigo {
+  padding: 10px 18px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--cor-perigo, #c62828);
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.modal__perigo:hover:not(:disabled) {
+  filter: brightness(0.92);
+}
+.modal__perigo:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.campo-senha-oculta {
+  -webkit-text-security: disc;
 }

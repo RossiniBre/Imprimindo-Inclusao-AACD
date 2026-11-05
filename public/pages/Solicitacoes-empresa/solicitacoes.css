@@ -1,0 +1,135 @@
+:root {
+    --vermelho: #C8102E;
+    --vermelho-circulo: #CC213D;
+    --laranja: #EFB000;
+    --laranja-escuro: #D69E00;
+    --bg: #FAF8F5;
+    --texto: #2B2B2B;
+    --verde: #2E9E5B;
+    --verde-escuro: #298d51;
+    --cinza: #CAC9C6;
+}
+
+body {
+    color: var(--texto);
+    background-color: var(--bg);
+}
+
+main {
+    padding: 7rem;
+}
+
+/* menu fixo de cima */
+.menu { 
+    height: 80px; 
+    background-color: var(--vermelho); 
+}
+.menu a { 
+    color: #fff; 
+    text-decoration: none; 
+}
+.menu a:hover { 
+    color: rgb(197, 197, 197);
+}
+nav .menu { 
+    font-size: 13px;
+}
+.logo-menu { 
+    width: 52px; 
+    height: 52px; 
+}
+
+/* cards de resumo (funcionam como filtro) */
+.filtro { 
+    width: 150px; 
+}
+
+.pendente { 
+    color: var(--laranja-escuro); 
+}
+
+.resumo-cards {
+    font-size: 1.3rem;
+}
+
+
+/* botões card */
+.btn-aceitar { 
+    background-color: #36B367; 
+    border-color: #36B367; 
+    color: black;
+}
+.btn-aceitar:hover { 
+    background-color: var(--verde); 
+    border-color: var(--verde); 
+    color: black;
+}
+
+.btn-recusar {
+    border-color: var(--cinza);
+}
+.btn-recusar:hover {
+    background-color: var(--cinza);
+    color: black;
+}
+
+/* janelas (modais) */
+.modal-dialog { 
+    max-width: 720px; 
+}
+.caixa { 
+    background-color: var(--bg); 
+}
+.motivo { 
+    background-color: #fff; 
+    color: var(--texto); 
+    border-color: #ccc; 
+}
+.motivo:hover, .btn-check:checked + .motivo { 
+    background-color: #FFF4D1; 
+    border-color: var(--laranja); 
+    color: var(--texto); 
+}
+.btn-recusa{ 
+    background-color: var(--vermelho); 
+    border-color: var(--vermelho); 
+    color: white; 
+}
+.btn-recusa:hover { 
+    background-color: #A60D26;
+    color: white;
+}
+
+.btn-voltar {
+    border-color: var(--cinza);
+}
+.btn-voltar:hover {
+    background-color: var(--cinza);
+    color: black;
+}
+
+.btn-confirm {
+    background-color: #36B367; 
+    border-color: #36B367; 
+    color: black;
+}
+.btn-confirm:hover {
+    background-color: var(--verde); 
+    border-color: var(--verde); 
+    color: black;
+}
+
+.botao-modal {
+    font-size: 1.1rem;
+}
+
+/* telas grandes (o modelo é 1920px) */
+@media (min-width: 992px) {
+    .filtro { 
+        width: 276px; 
+    }
+
+    .menu nav {
+        font-size: 2rem;
+    }
+}

@@ -1,7 +1,9 @@
 // Tela Funcionários (só o admin).
 // Lista vem de GET /api/funcionarios:
 //   { id, nome, identificador, email, perfil, cargo, setor, ativo }
-// Cadastro: POST /api/funcionarios. Status: POST /api/conta/desativar | reativar.
+// Cadastro: POST /api/funcionarios.
+// Edição: POST /api/usuario/nome, /api/usuario/identificador e /api/funcionario/editar.
+// Status: POST /api/conta/desativar | reativar. Exclusão: POST /api/conta/excluir.
 
 import { api } from '../../shared/js/api.js';
 
@@ -79,6 +81,7 @@ export function iniciar(container) {
   const avisoGeral = container.querySelector('#aviso-geral');
   const botaoAdicionar = container.querySelector('#botao-adicionar');
 
+  // Modal: adicionar
   const modal = container.querySelector('#modal-adicionar');
   const formAdicionar = container.querySelector('#form-adicionar');
   const botaoFecharModal = container.querySelector('#botao-fechar-modal');
@@ -100,6 +103,33 @@ export function iniciar(container) {
     email:         container.querySelector('#erro-email'),
     senha:         container.querySelector('#erro-senha'),
   };
+
+  // Modal: editar
+  const modalEditar = container.querySelector('#modal-editar');
+  const formEditar = container.querySelector('#form-editar');
+  const erroEditar = container.querySelector('#erro-editar');
+  const botaoSalvarEditar = container.querySelector('#botao-salvar-editar');
+  const camposEditar = {
+    nome:          container.querySelector('#editar-nome'),
+    identificador: container.querySelector('#editar-login'),
+    email:         container.querySelector('#editar-email'),
+    cargo:         container.querySelector('#editar-cargo'),
+    setor:         container.querySelector('#editar-setor'),
+  };
+  const errosEditar = {
+    nome:          container.querySelector('#editar-erro-nome'),
+    identificador: container.querySelector('#editar-erro-identificador'),
+    email:         container.querySelector('#editar-erro-email'),
+  };
+  let editandoId = null;
+
+  // Modal: excluir
+  const modalExcluir = container.querySelector('#modal-excluir');
+  const erroExcluir = container.querySelector('#erro-excluir');
+  const nomeExcluir = container.querySelector('#excluir-nome');
+  const botaoCancelarExcluir = container.querySelector('#botao-cancelar-excluir');
+  const botaoConfirmarExcluir = container.querySelector('#botao-confirmar-excluir');
+  let excluindoId = null;
 
   // ----- Avisos -----
 
@@ -138,6 +168,11 @@ export function iniciar(container) {
         : `<button type="button" class="botao-linha botao-linha--reativar" data-acao="reativar" data-id="${f.id}">Reativar</button>`;
     }
 
+    // Admin não é excluído pelo painel, igual ao desativar.
+    const botaoExcluir = admin
+      ? ''
+      : `<button type="button" class="botao-linha botao-linha--excluir" data-acao="excluir" data-id="${f.id}">Excluir</button>`;
+
     tr.innerHTML = `
       <td>
         <div class="pessoa">
@@ -157,6 +192,7 @@ export function iniciar(container) {
         <div class="acoes">
           <button type="button" class="botao-linha" data-acao="editar" data-id="${f.id}">Editar</button>
           ${botaoStatus}
+          ${botaoExcluir}
         </div>
       </td>
     `;
@@ -207,7 +243,7 @@ export function iniciar(container) {
     }
 
     if (resposta.status === 401) {
-      location.hash = '#/login?perfil=aacd';
+      location.hash = '#/login';
       return;
     }
     if (!resposta.ok) {
@@ -240,8 +276,12 @@ export function iniciar(container) {
     const acao = botao.dataset.acao;
 
     if (acao === 'editar') {
-      const funcionario = funcionarios.find((f) => f.id === id);
-      if (funcionario) abrirEdicao(funcionario, botao);
+      abrirModalEditar(funcionarios.find((f) => f.id === id));
+      return;
+    }
+
+    if (acao === 'excluir') {
+      abrirModalExcluir(funcionarios.find((f) => f.id === id));
       return;
     }
 
@@ -301,7 +341,8 @@ export function iniciar(container) {
   function aoApertarEsc(evento) {
     if (evento.key !== 'Escape') return;
     if (!modal.hidden) fecharModal();
-    else if (!modalEditar.hidden) fecharEdicao();
+    if (!modalEditar.hidden) fecharModalEditar();
+    if (!modalExcluir.hidden) fecharModalExcluir();
   }
 
   botaoAdicionar.addEventListener('click', abrirModal);
@@ -391,107 +432,136 @@ export function iniciar(container) {
   });
 
   // ----- Modal: editar funcionário -----
-  // O back (POST /api/funcionario/editar) só altera e-mail, cargo e setor.
 
-  const modalEditar = container.querySelector('#modal-editar');
-  const formEditar = container.querySelector('#form-editar');
-  const botaoSalvar = container.querySelector('#botao-salvar');
-  const erroEditar = container.querySelector('#erro-editar');
-  const edicao = {
-    nome:          container.querySelector('#editar-nome'),
-    identificador: container.querySelector('#editar-login'),
-    email:         container.querySelector('#editar-email'),
-    cargo:         container.querySelector('#editar-cargo'),
-    setor:         container.querySelector('#editar-setor'),
-  };
-  const erroEdicaoEmail = container.querySelector('#erro-editar-email');
-  let editando = null;        // funcionário aberto no modal
-  let botaoDeOrigem = null;   // botão Editar que abriu, para devolver o foco
-
-  function mostrarErroEmailEdicao(texto) {
-    erroEdicaoEmail.textContent = texto;
-    edicao.email.classList.add('com-erro');
+  function erroEditarCampo(nome, texto) {
+    errosEditar[nome].textContent = texto;
+    camposEditar[nome].classList.add('com-erro');
   }
 
-  function limparErrosEdicao() {
-    erroEdicaoEmail.textContent = '';
-    edicao.email.classList.remove('com-erro');
+  function limparErrosEditar() {
+    Object.keys(errosEditar).forEach((nome) => {
+      errosEditar[nome].textContent = '';
+      camposEditar[nome].classList.remove('com-erro');
+    });
     erroEditar.hidden = true;
   }
 
-  function abrirEdicao(funcionario, origem) {
-    editando = funcionario;
-    botaoDeOrigem = origem ?? null;
-    edicao.nome.value = funcionario.nome ?? '';
-    edicao.identificador.value = funcionario.identificador ?? '';
-    edicao.email.value = funcionario.email ?? '';
-    edicao.cargo.value = funcionario.cargo ?? '';
-    edicao.setor.value = funcionario.setor ?? '';
-    limparErrosEdicao();
-    botaoSalvar.disabled = false;
-    botaoSalvar.textContent = 'Salvar alterações';
+  function abrirModalEditar(f) {
+    if (!f) return;
+    editandoId = f.id;
+    camposEditar.nome.value = f.nome ?? '';
+    camposEditar.identificador.value = f.identificador ?? '';
+    camposEditar.email.value = f.email ?? '';
+    camposEditar.cargo.value = f.cargo ?? '';
+    camposEditar.setor.value = f.setor ?? '';
+    limparErrosEditar();
     modalEditar.hidden = false;
     document.body.style.overflow = 'hidden';
-    edicao.email.focus();
+    camposEditar.nome.focus();
   }
 
-  function fecharEdicao() {
+  function fecharModalEditar() {
     modalEditar.hidden = true;
     document.body.style.overflow = '';
-    editando = null;
-    botaoDeOrigem?.focus?.();
-    botaoDeOrigem = null;
+    limparErrosEditar();
+    botaoSalvarEditar.disabled = false;
+    botaoSalvarEditar.textContent = 'Salvar alterações';
+    editandoId = null;
   }
 
-  container.querySelector('#botao-fechar-editar').addEventListener('click', fecharEdicao);
-  container.querySelector('#botao-cancelar-editar').addEventListener('click', fecharEdicao);
+  container.querySelector('#botao-fechar-editar').addEventListener('click', fecharModalEditar);
+  container.querySelector('#botao-cancelar-editar').addEventListener('click', fecharModalEditar);
   modalEditar.addEventListener('click', (evento) => {
-    if (evento.target === modalEditar) fecharEdicao();
+    if (evento.target === modalEditar) fecharModalEditar();
   });
-  edicao.email.addEventListener('input', limparErrosEdicao);
+  Object.keys(errosEditar).forEach((nome) => {
+    camposEditar[nome].addEventListener('input', () => {
+      errosEditar[nome].textContent = '';
+      camposEditar[nome].classList.remove('com-erro');
+    });
+  });
 
   formEditar.addEventListener('submit', async (evento) => {
     evento.preventDefault();
-    if (!editando) return;
-    limparErrosEdicao();
+    limparErrosEditar();
 
+    const original = funcionarios.find((f) => f.id === editandoId);
     const dados = {
-      id: editando.id,
-      email: edicao.email.value.trim().toLowerCase(),
-      cargo: edicao.cargo.value.trim(),
-      setor: edicao.setor.value.trim(),
+      id: editandoId,
+      nome: camposEditar.nome.value.trim(),
+      identificador: camposEditar.identificador.value.trim(),
+      email: camposEditar.email.value.trim().toLowerCase(),
+      cargo: camposEditar.cargo.value.trim(),
+      setor: camposEditar.setor.value.trim(),
     };
+    let temErro = false;
 
-    if (dados.email === '') {
-      mostrarErroEmailEdicao('Digite o e-mail institucional.');
-      edicao.email.focus();
-      return;
+    if (dados.nome === '') {
+      erroEditarCampo('nome', 'Digite o nome completo.');
+      temErro = true;
+    }
+    if (dados.identificador === '') {
+      erroEditarCampo('identificador', 'Digite o login.');
+      temErro = true;
+    } else if (dados.identificador.includes('@')) {
+      erroEditarCampo('identificador', 'O login não pode conter @.');
+      temErro = true;
     }
     if (!emailInstitucionalValido(dados.email)) {
-      mostrarErroEmailEdicao(`O e-mail precisa terminar em ${DOMINIO_AACD}.`);
-      edicao.email.focus();
+      erroEditarCampo('email', `O e-mail precisa terminar em ${DOMINIO_AACD}.`);
+      temErro = true;
+    }
+    if (temErro) {
+      formEditar.querySelector('input.com-erro')?.focus();
       return;
     }
 
-    botaoSalvar.disabled = true;
-    botaoSalvar.textContent = 'Salvando...';
+    botaoSalvarEditar.disabled = true;
+    botaoSalvarEditar.textContent = 'Salvando...';
 
     try {
-      const resposta = await api.editarFuncionario(dados);
+      // Cada etapa guarda o campo do modal a que pertence, para mostrar o erro no lugar certo
+      const etapas = [];
+      if (dados.nome !== original?.nome) {
+        etapas.push({
+          campo: 'nome',
+          chamar: () => api.editarNomeUsuario({ id: dados.id, nome: dados.nome }),
+        });
+      }
+      if (dados.identificador !== original?.identificador) {
+        etapas.push({
+          campo: 'identificador',
+          chamar: () => api.editarIdentificadorUsuario({ id: dados.id, identificador: dados.identificador }),
+        });
+      }
+      etapas.push({
+        campo: 'email',
+        chamar: () => api.editarFuncionario({
+          id: dados.id, email: dados.email, cargo: dados.cargo, setor: dados.setor,
+        }),
+      });
+
+      let resposta = { ok: true };
+      let campoFalhou = null;
+      for (const etapa of etapas) {
+        resposta = await etapa.chamar();
+        if (!resposta.ok) {
+          campoFalhou = etapa.campo;
+          break;
+        }
+      }
 
       if (resposta.ok) {
-        fecharEdicao();
+        fecharModalEditar();
         await carregar();
-        // A tabela foi redesenhada: devolve o foco ao Editar da mesma linha
-        container.querySelector(`button[data-acao="editar"][data-id="${dados.id}"]`)?.focus();
         return;
       }
 
-      // 400 (e-mail inválido) ou 409 (e-mail já em uso / sem permissão)
       const mensagem = resposta.corpo?.erro ?? 'Não foi possível salvar. Tente de novo.';
-      if (campoDoErro(mensagem) === 'email') {
-        mostrarErroEmailEdicao(mensagem);
-        edicao.email.focus();
+      const campo = campoDoErro(mensagem) ?? campoFalhou;
+      if (campo && errosEditar[campo]) {
+        erroEditarCampo(campo, mensagem);
+        camposEditar[campo].focus();
       } else {
         erroEditar.textContent = mensagem;
         erroEditar.hidden = false;
@@ -501,8 +571,80 @@ export function iniciar(container) {
       erroEditar.hidden = false;
     }
 
-    botaoSalvar.disabled = false;
-    botaoSalvar.textContent = 'Salvar alterações';
+    botaoSalvarEditar.disabled = false;
+    botaoSalvarEditar.textContent = 'Salvar alterações';
+  });
+
+  // ----- Modal: excluir funcionário -----
+
+  const campoSenhaExcluir = container.querySelector('#excluir-senha');
+
+  function abrirModalExcluir(f) {
+    if (!f) return;
+    excluindoId = f.id;
+    nomeExcluir.textContent = f.nome;
+    campoSenhaExcluir.value = '';
+    erroExcluir.hidden = true;
+    modalExcluir.hidden = false;
+    document.body.style.overflow = 'hidden';
+    campoSenhaExcluir.focus();
+  }
+
+  function fecharModalExcluir() {
+    modalExcluir.hidden = true;
+    document.body.style.overflow = '';
+    campoSenhaExcluir.value = '';
+    erroExcluir.hidden = true;
+    botaoConfirmarExcluir.disabled = false;
+    botaoConfirmarExcluir.textContent = 'Excluir funcionário';
+    excluindoId = null;
+  }
+
+  container.querySelector('#botao-fechar-excluir').addEventListener('click', fecharModalExcluir);
+  botaoCancelarExcluir.addEventListener('click', fecharModalExcluir);
+  modalExcluir.addEventListener('click', (evento) => {
+    if (evento.target === modalExcluir) fecharModalExcluir();
+  });
+  campoSenhaExcluir.addEventListener('keydown', (evento) => {
+    if (evento.key === 'Enter') {
+      evento.preventDefault();
+      botaoConfirmarExcluir.click();
+    }
+  });
+
+  botaoConfirmarExcluir.addEventListener('click', async () => {
+    if (excluindoId === null) return;
+
+    const senha = campoSenhaExcluir.value;
+    if (senha === '') {
+      erroExcluir.textContent = 'Digite a sua senha para confirmar.';
+      erroExcluir.hidden = false;
+      campoSenhaExcluir.focus();
+      return;
+    }
+
+    erroExcluir.hidden = true;
+    botaoConfirmarExcluir.disabled = true;
+    botaoConfirmarExcluir.textContent = 'Excluindo...';
+
+    try {
+      const resposta = await api.excluirConta(excluindoId, senha);
+      if (resposta.ok) {
+        fecharModalExcluir();
+        await carregar();
+        return;
+      }
+      erroExcluir.textContent = resposta.corpo?.erro ?? 'Não foi possível excluir. Tente de novo.';
+      erroExcluir.hidden = false;
+      campoSenhaExcluir.value = '';
+      campoSenhaExcluir.focus();
+    } catch {
+      erroExcluir.textContent = 'Sem conexão com o servidor. Tente de novo em instantes.';
+      erroExcluir.hidden = false;
+    }
+
+    botaoConfirmarExcluir.disabled = false;
+    botaoConfirmarExcluir.textContent = 'Excluir funcionário';
   });
 
   limpar = () => {

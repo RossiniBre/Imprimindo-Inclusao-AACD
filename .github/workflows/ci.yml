@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  testes:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Baixar o código
+        uses: actions/checkout@v4
+
+      - name: Configurar Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Criar db.properties de teste
+        run: |
+          mkdir -p src/main/resources
+          cat > src/main/resources/db.properties <<'EOF'
+          db.url=jdbc:mysql://localhost:3306/teste
+          db.user=teste
+          db.password=teste
+          mongo.uri=mongodb://localhost:27017
+          mongo.database=teste
+          EOF
+
+      - name: Compilar e rodar os testes
+        run: mvn -B verify
+
+      - name: Guardar relatório dos testes
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: relatorio-testes
+          path: target/surefire-reports/

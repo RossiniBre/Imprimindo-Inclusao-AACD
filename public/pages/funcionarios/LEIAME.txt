@@ -16,7 +16,7 @@ Rotas do back usadas (via shared/js/api.js):
   POST /api/funcionario/editar  -> { id, email, cargo, setor } (400 e-mail inválido; 409 em uso)
   POST /api/conta/desativar     -> { id }
   POST /api/conta/reativar      -> { id }
-Sem sessão (401) a tela redireciona para #/login?perfil=aacd.
+Sem sessão (401) a tela redireciona para #/login.
 
 Fora do back (não dá para fazer no front):
   - colunas "Pedidos enviados" e "Último pedido" e o badge "Você" do Figma: a lista não traz

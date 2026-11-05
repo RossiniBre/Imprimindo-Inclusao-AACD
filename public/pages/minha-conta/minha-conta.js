@@ -261,7 +261,7 @@ export function iniciar(container) {
     }
 
     if (respostaEu.status === 401) {
-      location.hash = '#/login?perfil=aacd';
+      location.hash = '#/login';
       return;
     }
     if (!respostaEu.ok) {
@@ -390,7 +390,7 @@ export function iniciar(container) {
     } catch {
       // Sem conexão: a sessão do navegador já era; segue para o login mesmo assim
     }
-    location.hash = '#/login?perfil=aacd';
+    location.hash = '#/login';
   });
 
   carregar();

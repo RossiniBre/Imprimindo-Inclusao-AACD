@@ -9,5 +9,9 @@ rota('/funcionarios',  { pagina: 'funcionarios',   publica: false, titulo: 'Func
 rota('/painel-aacd',   { pagina: 'painel-aacd',    publica: false, titulo: 'Acompanhamento' });
 rota('/minha-conta',   { pagina: 'minha-conta',    publica: false, titulo: 'Meu perfil' });
 rota('/404',           { pagina: 'nao-encontrada', publica: true,  titulo: 'Não encontrada' });
+rota('/impressoras',   { pagina: 'impressoras',    publica: true,  titulo: 'Impressoras' });
+rota('/cadastro-empresa/cadastro1', { pagina: 'cadastro1', pasta: 'cadastro-empresa/cadastro1', publica: true, titulo: 'Cadastro 1/2' });
+rota('/cadastro-empresa/cadastro2', { pagina: 'cadastro2', pasta: 'cadastro-empresa/cadastro2', publica: true, titulo: 'Cadastro 2/2' });
+rota('/solicitacoes', { pagina: 'solicitacoes', pasta: 'Solicitacoes-empresa', publica: true, titulo: 'Solicitações' });
 
 iniciar(document.getElementById('conteudo'));
