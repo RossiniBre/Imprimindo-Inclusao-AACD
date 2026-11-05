@@ -1,0 +1,28 @@
+/* menu que fica em cima (serve para as 3 navbars) */
+.menu {
+    display: flex;
+    align-items: center;
+    height: 70px;
+    background-color: var(--cor-cabecalho);
+}
+.menu[hidden] { 
+    display: none; 
+}    /* fica sem login nas telas que não precisam */
+.menu a { 
+    color: #fff; 
+    text-decoration: none; 
+}
+.menu a:hover { 
+    color: #c5c5c5; 
+}
+.logo-menu { 
+    width: 52px; 
+    height: 52px; 
+    padding-left: 2px;
+}
+
+@media (min-width: 992px) {
+    .menu nav { 
+        font-size: 2rem; 
+    }
+}

@@ -19,26 +19,6 @@ main {
     padding: 7rem;
 }
 
-/* menu fixo de cima */
-.menu { 
-    height: 80px; 
-    background-color: var(--vermelho); 
-}
-.menu a { 
-    color: #fff; 
-    text-decoration: none; 
-}
-.menu a:hover { 
-    color: rgb(197, 197, 197);
-}
-nav .menu { 
-    font-size: 13px;
-}
-.logo-menu { 
-    width: 52px; 
-    height: 52px; 
-}
-
 /* cards de resumo (funcionam como filtro) */
 .filtro { 
     width: 150px; 
@@ -127,9 +107,5 @@ nav .menu {
 @media (min-width: 992px) {
     .filtro { 
         width: 276px; 
-    }
-
-    .menu nav {
-        font-size: 2rem;
     }
 }

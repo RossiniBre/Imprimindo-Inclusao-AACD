@@ -9,24 +9,6 @@
     --cinza: #CAC9C6;
 }
 
-/* menu de cima */
-.menu { 
-    height: 80px; 
-    background-color: var(--vermelho); 
-}
-.menu a { 
-    color: #fff; 
-    text-decoration: none; 
-}
-.menu a:hover { 
-    color: rgb(197, 197, 197);
-}
-
-.logo-menu { 
-    width: 52px; 
-    height: 52px; 
-}
-
 /* conteúdo de rolagem */
 main { 
     scroll-behavior: smooth; 
@@ -52,12 +34,12 @@ main {
 }
 
 /* botões */
-#btn-adicionar { 
+.btn-doacao-adicionar { 
     padding: 8px 30px; 
     font-size: 18px;
     color: var(--texto);
 }
-#btn-adicionar:hover { 
+.btn-doacao-adicionar:hover { 
     background-color: var(--laranja);
 }
 
@@ -112,7 +94,6 @@ main {
 
 /* telas grandes (o modelo é 1920px) */
 @media (min-width: 992px) {
-    .menu nav { font-size: 32px; }
     .conteudo { padding: 52px 100px 30px; }
 }
 
