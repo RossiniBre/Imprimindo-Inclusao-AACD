@@ -3,16 +3,12 @@
 
 const rotas = new Map();
 let paginaAtual = null;
-let navegacao = 0; // número da navegação mais recente (evita corrida entre telas)
+let navegacao = 0;
 
 export function rota(caminho, config) {
-  // config = { pagina, titulo, publica, pasta? }
-  // pagina: nome dos arquivos (<pagina>.html/.css/.js)
-  // pasta:  (opcional) pasta dentro de /pages. Se omitida, usa o próprio "pagina"
   rotas.set(caminho, config);
 }
 
-// '#/redefinir-senha?token=abc' -> { caminho: '/redefinir-senha', params }
 export function lerHash(hash) {
   const [caminho, consulta = ''] = hash.replace(/^#/, '').split('?');
   return { caminho: caminho || '/', params: new URLSearchParams(consulta) };

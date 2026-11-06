@@ -1,8 +1,4 @@
 // Tela "Esqueci minha senha".
-//   #/esqueci-senha              -> textos da empresa parceira (padrão)
-//   #/esqueci-senha -> textos do funcionário da AACD
-// O back (POST /api/esqueci-senha) envia um código por e-mail; a resposta é
-// sempre 200 para não revelar se o e-mail existe.
 
 import { api } from '../../shared/js/api.js';
 

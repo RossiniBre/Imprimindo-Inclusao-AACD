@@ -1,111 +1,544 @@
+
 :root {
     --vermelho: #C8102E;
     --vermelho-circulo: #CC213D;
-    --laranja: #EFB000;
+    --laranja: #F2B400;
     --laranja-escuro: #D69E00;
     --bg: #FAF8F5;
     --texto: #2B2B2B;
     --verde: #2E9E5B;
     --verde-escuro: #298d51;
     --cinza: #CAC9C6;
+    --borda: #DCDAD6;
 }
+
+/* =========================================
+   GERAL
+========================================= */
 
 body {
     color: var(--texto);
     background-color: var(--bg);
+    font-family: Arial, Helvetica, sans-serif;
 }
 
-main {
-    padding: 7rem;
+.solicitacoes {
+    min-height: 100vh;
+    padding: 1.5rem 2rem;
 }
 
-/* cards de resumo (funcionam como filtro) */
-.filtro { 
-    width: 150px; 
+.conteudo {
+    width: 100%;
+    max-width: 1600px;
+    margin: 0 auto;
 }
 
-.pendente { 
-    color: var(--laranja-escuro); 
-}
+/* =========================================
+   RESUMO DOS STATUS
+========================================= */
 
 .resumo-cards {
-    font-size: 1.3rem;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 1.25rem;
+
+    width: 100%;
+    max-width: 1320px;
+    margin: 0 auto 2rem;
 }
 
+.filtro {
+    width: 100%;
+    min-height: 100px;
+    padding: 1rem;
 
-/* botões card */
-.btn-aceitar { 
-    background-color: #36B367; 
-    border-color: #36B367; 
-    color: black;
-}
-.btn-aceitar:hover { 
-    background-color: var(--verde); 
-    border-color: var(--verde); 
-    color: black;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: .4rem;
+
+    border: 1px solid var(--borda);
+    border-radius: 12px;
+    background: #fff;
+
+    cursor: pointer;
+
+    transition: .2s ease;
 }
 
-.btn-recusar {
-    border-color: var(--cinza);
-}
-.btn-recusar:hover {
-    background-color: var(--cinza);
-    color: black;
+.filtro:hover {
+    border-color: #BDBAB5;
+    transform: translateY(-2px);
 }
 
-/* janelas (modais) */
-.modal-dialog { 
-    max-width: 720px; 
+.filtro.active {
+    border: 2px solid var(--vermelho);
+    background: #FFFAFA;
+    box-shadow: 0 3px 10px rgba(200, 16, 46, .08);
 }
-.caixa { 
-    background-color: var(--bg); 
+
+.filtro-titulo {
+    font-size: .95rem;
+    font-weight: 500;
+    color: #666;
 }
-.motivo { 
-    background-color: #fff; 
-    color: var(--texto); 
-    border-color: #ccc; 
+
+.filtro-numero {
+    font-size: 1.8rem;
+    line-height: 1;
+    font-weight: 700;
+    color: var(--texto);
 }
-.motivo:hover, .btn-check:checked + .motivo { 
-    background-color: #FFF4D1; 
-    border-color: var(--laranja); 
-    color: var(--texto); 
+
+.pendente {
+    color: var(--laranja-escuro);
 }
-.btn-recusa{ 
-    background-color: var(--vermelho); 
-    border-color: var(--vermelho); 
-    color: white; 
+
+.aceito {
+    color: var(--verde);
 }
-.btn-recusa:hover { 
+
+.recusado {
+    color: #737373;
+}
+
+/* =========================================
+   GRID DOS PEDIDOS
+========================================= */
+
+#lista-solicitacoes {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.25rem;
+
+    margin: 0;
+
+    --bs-gutter-x: 0;
+    --bs-gutter-y: 0;
+}
+
+#lista-solicitacoes > .col {
+    width: 100%;
+    min-width: 0;
+    padding: 0;
+
+    display: flex;
+}
+
+/* =========================================
+   CARD DA SOLICITAÇÃO
+========================================= */
+
+#lista-solicitacoes .pedido.card {
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    border: 1px solid var(--borda);
+    border-radius: 13px;
+
+    background: #fff;
+    box-shadow: none !important;
+
+    overflow: hidden;
+
+    transition: border-color .2s ease,
+                box-shadow .2s ease;
+}
+
+#lista-solicitacoes .pedido.card:hover {
+    border-color: #D0CEC9;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, .04) !important;
+}
+
+/* Conteúdo interno */
+
+#lista-solicitacoes .pedido .card-body {
+    width: 100%;
+    padding: 1.2rem;
+
+    display: flex;
+    flex-direction: column;
+}
+
+/* =========================================
+   CABEÇALHO DO CARD
+========================================= */
+
+/* Título do pedido */
+
+#lista-solicitacoes .pedido .card-title {
+    order: 1;
+
+    margin: 0 0 .2rem;
+
+    font-size: 1.2rem;
+    font-weight: 700;
+    line-height: 1.3;
+
+    color: #292929;
+}
+
+/* Número da solicitação */
+
+#lista-solicitacoes .pedido .card-body > .d-flex:first-child {
+    order: 2;
+
+    margin-bottom: .6rem !important;
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+/* Texto do número */
+
+#lista-solicitacoes .pedido .card-body > .d-flex:first-child .text-muted {
+    font-size: .72rem;
+    color: #777 !important;
+}
+
+/* Label de status */
+
+#lista-solicitacoes .pedido .card-body > .d-flex:first-child {
+    gap: .5rem;
+}
+
+#lista-solicitacoes .pedido .status-badge {
+    padding: .25rem .65rem;
+
+    font-size: .68rem;
+    font-weight: 700;
+    letter-spacing: .02em;
+    line-height: 1.2;
+
+    border-radius: 999px;
+
+    background-color: #EEEDEB;
+    color: #6B6B6B;
+}
+
+#lista-solicitacoes .pedido .status-pendente   { background-color: #FFF4D1; color: #A87600; }
+#lista-solicitacoes .pedido .status-aceita     { background-color: #E3F5EA; color: #2E9E5B; }
+#lista-solicitacoes .pedido .status-recusada   { background-color: #FDE8EC; color: #C8102E; }
+#lista-solicitacoes .pedido .status-cancelada  { background-color: #EEEDEB; color: #6B6B6B; }
+#lista-solicitacoes .pedido .status-concluida  { background-color: #E1EEFB; color: #1F6FB5; }
+#lista-solicitacoes .pedido .status-falhou     { background-color: #FFE9DC; color: #C2410C; }
+
+/* =========================================
+   INFORMAÇÕES DO PEDIDO
+========================================= */
+
+#lista-solicitacoes .pedido .pedido-info {
+    order: 3;
+
+    margin: 0 0 1rem;
+
+    border: 1.5px solid #8A8A8A;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+#lista-solicitacoes .pedido .pedido-info .card-text {
+    margin: 0;
+    padding: .4rem .65rem;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .75rem;
+
+    font-size: .85rem;
+    line-height: 1.3;
+    color: #444;
+}
+
+#lista-solicitacoes .pedido .pedido-info .card-text + .card-text {
+    border-top: 1px solid #D5D3CF;
+}
+
+#lista-solicitacoes .pedido .pedido-info .card-text strong {
+    font-weight: 400;
+    color: #444;
+}
+
+#lista-solicitacoes .pedido .pedido-info .card-text span {
+    font-weight: 700;
+    color: #2B2B2B;
+    text-align: right;
+}
+
+/* =========================================
+   BOTÕES
+========================================= */
+
+#lista-solicitacoes .pedido .card-body > .mt-auto {
+    order: 5;
+
+    margin-top: auto !important;
+    padding-top: .65rem;
+
+    display: flex;
+    gap: .5rem !important;
+}
+
+/* Estilo comum */
+
+#lista-solicitacoes .pedido .btn {
+    flex: 1;
+    min-width: 0;
+    min-height: 39px;
+
+    padding: .45rem .75rem;
+
+    font-size: .9rem;
+    font-weight: 700;
+
+    border-radius: 9px;
+
+    transition: .2s ease;
+}
+
+/* Aceitar */
+
+#lista-solicitacoes .pedido .btn-success {
+    background-color: var(--laranja);
+    border: 1px solid var(--laranja);
+    color: #171717;
+}
+
+#lista-solicitacoes .pedido .btn-success:hover {
+    background-color: var(--laranja-escuro);
+    border-color: var(--laranja-escuro);
+    color: #171717;
+}
+
+/* Recusar */
+
+#lista-solicitacoes .pedido .btn-danger {
+    background-color: #fff;
+    border: 1px solid #777;
+    color: #5C5C5C;
+}
+
+#lista-solicitacoes .pedido .btn-danger:hover {
+    background-color: #F5F4F2;
+    border-color: #555;
+    color: #333;
+}
+
+/* Ver detalhes */
+
+#lista-solicitacoes .pedido .btn-outline-primary {
+    background-color: #fff;
+    border: 1px solid #777;
+    color: #5C5C5C;
+}
+
+#lista-solicitacoes .pedido .btn-outline-primary:hover {
+    background-color: #F5F4F2;
+    border-color: #555;
+    color: #333;
+}
+
+/* =========================================
+   ESTADO VAZIO
+========================================= */
+
+.estado-vazio {
+    display: none;
+
+    margin-top: 1rem;
+    padding: 3rem 1rem;
+
+    text-align: center;
+
+    background: #fff;
+    border: 1px dashed var(--cinza);
+    border-radius: 13px;
+}
+
+.estado-vazio.visivel {
+    display: block;
+}
+
+.estado-icone {
+    margin-bottom: .75rem;
+
+    font-size: 2.5rem;
+    color: #aaa;
+}
+
+.estado-vazio h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.estado-vazio p {
+    margin-bottom: 0;
+    color: #777;
+}
+
+/* =========================================
+   MODAIS
+========================================= */
+
+.modal-dialog {
+    max-width: 720px;
+}
+
+.caixa {
+    background-color: var(--bg);
+}
+
+.motivo {
+    background-color: #fff;
+    color: var(--texto);
+    border-color: #ccc;
+}
+
+.motivo:hover,
+.btn-check:checked + .motivo {
+    background-color: #FFF4D1;
+    border-color: var(--laranja);
+    color: var(--texto);
+}
+
+/* Botão de recusa */
+
+.btn-recusa {
+    background-color: var(--vermelho);
+    border-color: var(--vermelho);
+    color: #fff;
+}
+
+.btn-recusa:hover {
     background-color: #A60D26;
-    color: white;
+    color: #fff;
 }
+
+/* Botão voltar */
 
 .btn-voltar {
     border-color: var(--cinza);
 }
+
 .btn-voltar:hover {
     background-color: var(--cinza);
-    color: black;
+    color: #000;
 }
 
+/* Botão confirmar */
+
 .btn-confirm {
-    background-color: #36B367; 
-    border-color: #36B367; 
-    color: black;
+    background-color: #36B367;
+    border-color: #36B367;
+    color: #fff;
 }
+
 .btn-confirm:hover {
-    background-color: var(--verde); 
-    border-color: var(--verde); 
-    color: black;
+    background-color: var(--verde-escuro);
+    color: #fff;
 }
 
 .botao-modal {
-    font-size: 1.1rem;
+    font-size: 1rem;
 }
 
-/* telas grandes (o modelo é 1920px) */
-@media (min-width: 992px) {
-    .filtro { 
-        width: 276px; 
+/* =========================================
+   RESPONSIVIDADE
+========================================= */
+
+@media (max-width: 1100px) {
+    #lista-solicitacoes {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
+
+    .solicitacoes {
+        padding: 1.5rem 1.25rem;
+    }
+}
+
+@media (max-width: 991px) {
+    .resumo-cards {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 650px) {
+    .solicitacoes {
+        padding: 1rem .75rem;
+    }
+
+    #lista-solicitacoes {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    #lista-solicitacoes .pedido .card-body {
+        padding: 1rem;
+    }
+
+    #lista-solicitacoes .pedido .card-title {
+        font-size: 1.1rem;
+    }
+
+    #lista-solicitacoes .pedido .btn {
+        font-size: .85rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .resumo-cards {
+        gap: .75rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .filtro {
+        min-height: 85px;
+        padding: .65rem;
+    }
+
+    .filtro-titulo {
+        font-size: .85rem;
+    }
+
+    .filtro-numero {
+        font-size: 1.5rem;
+    }
+}
+
+#lista-solicitacoes .pedido .card-body {
+    padding: 1.5rem;                  /* era 1.2rem */
+}
+
+#lista-solicitacoes .pedido .card-title {
+    font-size: 1.5rem;                /* era 1.4rem / 1.2rem */
+}
+
+#lista-solicitacoes .pedido .card-body > .d-flex:first-child .text-muted {
+    font-size: .8rem;                 /* era .72rem */
+}
+
+#lista-solicitacoes .pedido .status-badge {
+    font-size: .75rem;                /* era .68rem */
+    padding: .3rem .75rem;
+}
+
+#lista-solicitacoes .pedido .pedido-info .card-text {
+    padding: .6rem .9rem;             /* era .4rem .65rem */
+    font-size: .95rem;                /* era .85rem */
+}
+
+#lista-solicitacoes .pedido .card-body > .mt-auto {
+    padding-top: .25rem;              /* era .65rem */
+}
+
+#lista-solicitacoes .pedido .btn {
+    min-height: 46px;                 /* era 39px */
+    font-size: 1rem;                  /* era .9rem */
 }

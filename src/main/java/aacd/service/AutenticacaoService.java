@@ -9,8 +9,6 @@ import aacd.util.Senha;
 import java.sql.SQLException;
 import java.util.Optional;
 
-import static aacd.util.Identificador.normalizar;
-
 public class AutenticacaoService {
 
     private final UsuarioDao usuarioDao;

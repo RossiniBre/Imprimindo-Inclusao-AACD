@@ -1,27 +1,107 @@
 import { perfilAtual } from './sessao.js';
 
 const MENUS = {
-  EMPRESA:     [['/impressoras', 'Impressoras'], ['/solicitacoes', 'Solicitações'], ['/contato', 'Contato']],
+  EMPRESA:     [['/impressoras', 'Minhas impressoras'], ['/solicitacoes', 'Solicitações recebidas'], ['/contato', 'Entre em contato']],
   FUNCIONARIO: [['/impressoras-aacd', 'Impressoras'], ['/painel-aacd', 'Solicitações'], ['/parceiros', 'Parceiros'], ['/doacoes', 'Doações']],
   ADMIN:       [['/impressoras-aacd', 'Impressoras'], ['/painel-aacd', 'Solicitações'], ['/parceiros', 'Parceiros'], ['/doacoes', 'Doações'], ['/funcionarios', 'Funcionários']],
 };
 
-const ATIVO = ['border-bottom', 'border-3', 'border-white', 'pb-1', 'fw-bold', 'pe-none'];
+// telas em que o menu nunca aparece, mesmo com sessão ativa
+const SEM_MENU = ['/', '/login', '/esqueci-senha', '/cadastro-empresa/cadastro1', '/cadastro-empresa/cadastro2'];
+
+function rotaAtual() {
+  return location.hash.slice(1).split('?')[0].replace(/\/$/, '') || '/';
+}
+
+let indicador = null;
+let perfilDesenhado = null;
 
 export function desenharMenu() {
   const header = document.getElementById('menu');
-  const itens = MENUS[perfilAtual()];
-  header.hidden = !itens;  // deslogado (login, cadastro): sem menu
-  if (!itens) return;
-  header.querySelector('nav').innerHTML =
-    itens.map(([rota, texto]) => `<a href="#${rota}">${texto}</a>`).join('');
-  marcarAtivo();
+  const perfil = perfilAtual();
+  const itens = MENUS[perfil];
+
+  const esconder = !itens || SEM_MENU.includes(rotaAtual());
+  header.hidden = esconder;
+
+  if (!itens) {
+    perfilDesenhado = null;
+    return;
+  }
+  if (esconder) return;   // tem sessão, mas a tela não usa menu
+
+  // mesmo perfil: o nav já existe, só reposiciona a barra
+  if (perfil === perfilDesenhado) {
+    marcarAtivo();
+    return;
+  }
+  perfilDesenhado = perfil;
+
+  // ... o resto continua igual (const nav = ..., innerHTML, listeners)
+
+  const nav = header.querySelector('nav');
+  indicador = null;
+  nav.innerHTML = itens.map(([rota, texto]) => `<a href="#${rota}">${texto}</a>`).join('');
+  obterIndicador();
+
+  nav.querySelectorAll('a').forEach((a) =>
+    a.addEventListener('mouseenter', () => moverIndicador(a)));
+  nav.addEventListener('mouseleave', () => moverIndicador(linkAtivo()));
+
+  marcarAtivo(false);
+  document.fonts?.ready.then(() => marcarAtivo(false));
+}
+
+function linkAtivo() {
+  return document.querySelector('#menu nav a.ativo');
+}
+
+function obterIndicador() {
+  const nav = document.querySelector('#menu nav');
+  if (!nav) return null;
+  if (!indicador || !indicador.isConnected) {
+    indicador = document.createElement('span');
+    indicador.className = 'menu__indicador';
+    nav.append(indicador);
+  }
+  return indicador;
+}
+
+function moverIndicador(link, animar = true) {
+  const barra = obterIndicador();
+  if (!barra) return;
+
+  // sem link ativo (ex.: #/minha-conta): esconde a barra
+  if (!link) {
+    barra.style.opacity = '0';
+    return;
+  }
+
+  // layout ainda sem medida: tenta de novo no próximo frame
+  if (link.offsetWidth === 0) {
+    requestAnimationFrame(() => moverIndicador(link, animar));
+    return;
+  }
+
+  if (!animar) barra.style.transition = 'none';
+  barra.style.width = `${link.offsetWidth}px`;
+  barra.style.transform = `translateX(${link.offsetLeft}px)`;
+  barra.style.opacity = '1';
+  if (!animar) {
+    barra.offsetWidth;   // força aplicar sem animação
+    barra.style.transition = '';
+  }
+}
+
+function mesmaRota(a) {
+  const limpar = (h) => h.split('?')[0].replace(/\/$/, '');
+  return limpar(a.hash) === limpar(location.hash);
 }
 
 // marca o link da tela atual
-export function marcarAtivo() {
-  document.querySelectorAll('#menu nav a').forEach(a => {
-    const atual = a.hash === location.hash.split('?')[0];
-    a.classList[atual ? 'add' : 'remove'](...ATIVO);
+export function marcarAtivo(animar = true) {
+  document.querySelectorAll('#menu nav a').forEach((a) => {
+    a.classList.toggle('ativo', mesmaRota(a));
   });
+  moverIndicador(linkAtivo(), animar);
 }

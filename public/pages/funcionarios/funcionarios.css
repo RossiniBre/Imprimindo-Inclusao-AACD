@@ -11,7 +11,7 @@ body:has(main > .funcionarios) > header {
 }
 
 main:has(> .funcionarios) {
-  padding: 0;
+  padding: 2;
 }
 
 /* ---------- Barra superior ---------- */

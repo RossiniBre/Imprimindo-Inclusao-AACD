@@ -1,23 +1,5 @@
 <section class="conta">
 
-  <!-- Barra superior do portal (as abas dependem do perfil: ver minha-conta.js) -->
-  <nav class="conta__barra" aria-label="Portal da AACD">
-    <a class="conta__marca" href="#/painel-aacd" aria-label="Início do portal">
-      <img src="/shared/img/logo-aacd.png" alt="AACD">
-    </a>
-    <div class="conta__abas">
-      <a class="conta__aba" id="aba-painel-adm" href="#/funcionarios" hidden>Painel ADM</a>
-      <a class="conta__aba" id="aba-acompanhamento" href="#/painel-aacd">Acompanhamento</a>
-    </div>
-    <a class="conta__perfil ativa" href="#/minha-conta" aria-label="Meu perfil" aria-current="page">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <circle cx="12" cy="12" r="10"/>
-        <circle cx="12" cy="10" r="3.2"/>
-        <path d="M6.2 18.4a6.5 6.5 0 0 1 11.6 0"/>
-      </svg>
-    </a>
-  </nav>
-
   <div class="conta__conteudo">
 
     <div class="conta__cabecalho">
@@ -29,7 +11,6 @@
 
     <div class="conta__grade">
 
-      <!-- Coluna esquerda: resumo + segurança -->
       <aside class="conta__lateral">
 
         <div class="cartao cartao--perfil">
@@ -77,14 +58,12 @@
 
       </aside>
 
-      <!-- Coluna direita: dados + pedidos recentes -->
       <div class="conta__principal">
 
-        <div class="cartao">
-          <h2 class="cartao__titulo">Dados pessoais</h2>
-          <p class="cartao__nota cartao__nota--abaixo">O e-mail e a função são definidos pela administração da AACD.</p>
+        <h2 class="cartao__titulo">Dados pessoais</h2>
+        <p class="cartao__nota cartao__nota--abaixo" id="nota-dados">O e-mail e a função são definidos pela administração da AACD.</p>
 
-          <form id="form-dados" novalidate>
+        <form id="form-dados" novalidate>
             <div class="campo">
               <label for="dado-nome">Nome completo</label>
               <input type="text" id="dado-nome" name="nome" maxlength="45" autocomplete="name">

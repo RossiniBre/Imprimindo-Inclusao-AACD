@@ -1,9 +1,8 @@
 // Tela de login. A mesma tela serve empresa e funcionário da AACD:
-//   #/login              -> textos da empresa parceira (padrão)
-//   #/login  -> textos do funcionário da AACD
-// O back decide quem é quem pelo identificador (e-mail ou login).
 
 import { api } from '../../shared/js/api.js';
+import { salvarSessao } from '../../shared/js/sessao.js';
+import { desenharMenu } from '../../shared/js/navbar.js';
 
 const VARIANTES = {
   empresa: {
@@ -28,8 +27,6 @@ const VARIANTES = {
   },
 };
 
-// Qual variante mostrar, a partir dos parâmetros da URL
-// Login único para todos: o back decide o perfil pelo identificador
 export function variante() {
   return 'empresa';
 }
@@ -37,9 +34,9 @@ export function variante() {
 // Para onde cada perfil vai depois de entrar
 export function destinoPorPerfil(perfil) {
   switch (perfil) {
-    case 'ADMIN':       return '#/funcionarios';
+    case 'ADMIN':       return '#/painel-aacd';
     case 'FUNCIONARIO': return '#/painel-aacd';
-    case 'EMPRESA':     return '#/painel-empresa';
+    case 'EMPRESA':     return '#/impressoras';
     default:            return '#/';
   }
 }
@@ -125,7 +122,10 @@ export function iniciar(container, { params } = {}) {
       const resposta = await api.login(identificador, senha);
 
       if (resposta.ok) {
-        location.hash = destinoPorPerfil(resposta.corpo?.perfil);
+        const perfil = resposta.corpo?.perfil;
+        salvarSessao({ perfil });
+        location.hash = destinoPorPerfil(perfil);
+        desenharMenu();
         return;
       }
 

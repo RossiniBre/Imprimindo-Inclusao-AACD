@@ -22,7 +22,7 @@ export function iniciar(container) {
   let consultaAtual = 0;
 
   async function buscarCep(cep) {
-    const minhaConsulta = ++consultaAtual; // ignora respostas antigas
+    const minhaConsulta = ++consultaAtual;
     campoCep.disabled = true;
     erroGeral.hidden = true;
 

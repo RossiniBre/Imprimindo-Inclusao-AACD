@@ -1,18 +1,12 @@
 // Meu perfil (funcionário e admin da AACD).
-// Lê GET /api/me: hoje o back devolve só { perfil }; a tela já usa também
-// { nome, identificador, email, cargo, setor } quando vierem (pedido ao back).
-// Altera o nome por POST /api/usuario/nome e cargo/setor por
-// POST /api/funcionario/editar (sem id = a própria conta).
-// Os pedidos vêm de GET /api/solicitacoes, filtrados por quem criou.
 
 import { api } from '../../shared/js/api.js';
 
-export const DIAS_LIMPEZA = 60;           // regra do back (PrazosSolicitacao)
+export const DIAS_LIMPEZA = 60;
 const PEDIDOS_RECENTES = 5;
 
 // ---------- Funções puras (testáveis) ----------
 
-// "Ana Martins" -> "AM"
 export function iniciais(nome) {
   const partes = (nome ?? '').trim().split(/\s+/).filter(Boolean);
   if (partes.length === 0) return '?';
@@ -38,7 +32,6 @@ export function descricaoFuncao(perfil) {
   }
 }
 
-// Pedidos criados por este usuário (o back manda o nome de quem criou)
 export function meusPedidos(pedidos, nome) {
   const alvo = (nome ?? '').trim().toLowerCase();
   if (alvo === '') return [];
@@ -54,12 +47,10 @@ export function estatisticas(pedidos) {
   };
 }
 
-// Mais novos primeiro (o back lista por id crescente = ordem de criação)
 export function recentes(pedidos, limite = PEDIDOS_RECENTES) {
   return [...pedidos].sort((a, b) => b.id - a.id).slice(0, limite);
 }
 
-// Resumo do painel do admin, a partir de GET /api/funcionarios
 export function estatisticasEquipe(funcionarios) {
   return {
     ativos: funcionarios.filter((f) => f.ativo && f.perfil !== 'ADMIN').length,
@@ -68,7 +59,6 @@ export function estatisticasEquipe(funcionarios) {
   };
 }
 
-// Últimos adicionados primeiro (id maior = mais novo)
 export function equipeRecente(funcionarios, limite = PEDIDOS_RECENTES) {
   return [...funcionarios].sort((a, b) => b.id - a.id).slice(0, limite);
 }
@@ -85,7 +75,6 @@ export function rotuloStatus(status) {
   }
 }
 
-// "2026-10-14T16:30:00" -> "14/10" (data local, sem fuso, como o back manda)
 export function formatarData(texto) {
   if (!texto) return '';
   const d = new Date(texto);
@@ -93,13 +82,17 @@ export function formatarData(texto) {
   return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}`;
 }
 
+function mostrar(elemento, visivel) {
+  if (elemento) elemento.hidden = !visivel;
+}
+
 // ---------- Tela ----------
 
 export function iniciar(container) {
-  let eu = {};          // dados do usuário logado
+  let eu = {};  
   let pedidos = [];
 
-  let equipe = [];      // só para o admin
+  let equipe = [];
   const ehAdmin = () => eu.perfil === 'ADMIN';
 
   const avisoGeral = container.querySelector('#aviso-geral');
@@ -112,6 +105,7 @@ export function iniciar(container) {
   const cartaoEquipe = container.querySelector('#cartao-equipe');
   const corpoEquipe = container.querySelector('#corpo-equipe');
   const equipeVazia = container.querySelector('#equipe-vazia');
+  const notaDados = container.querySelector('#nota-dados');
   const totaisEquipe = {
     ativos: container.querySelector('#total-ativos'),
     inativos: container.querySelector('#total-inativos'),
@@ -156,6 +150,18 @@ export function iniciar(container) {
     avisoGeral.hidden = false;
   }
 
+  function houveMudanca() {
+    return campos.nome.value.trim() !== (eu.nome ?? '')
+      || campos.cargo.value.trim() !== (eu.cargo ?? '')
+      || campos.setor.value.trim() !== (eu.setor ?? '')
+      || (ehAdmin() && (
+          campos.email.value.trim() !== (eu.email ?? '')
+        || campos.login.value.trim() !== (eu.identificador ?? '')));
+  }
+
+  function atualizarBotaoCancelar() {
+    botaoCancelar.disabled = !houveMudanca();
+  }
   // ----- Preenchimento -----
 
   function preencherResumo() {
@@ -167,16 +173,15 @@ export function iniciar(container) {
     resumo.funcao.textContent = ehAdmin() ? 'ADM' : nomeFuncao(eu.perfil);
     resumo.funcao.className = `chip ${ehAdmin() ? 'chip--erro' : 'chip--destaque'}`;
 
-    // Admin vê o painel de administração; funcionário vê o acompanhamento
-    abaPainelAdm.hidden = !ehAdmin();
-    abaAcompanhamento.hidden = ehAdmin();
+    mostrar(abaPainelAdm, ehAdmin());
+    mostrar(abaAcompanhamento, !ehAdmin());
     descricao.textContent = ehAdmin()
       ? 'Seus dados de acesso ao painel de administração da AACD.'
       : 'Seus dados e os pedidos que você enviou em nome da AACD.';
-    blocoPedidos.hidden = ehAdmin();
-    blocoPainel.hidden = !ehAdmin();
-    cartaoPedidos.hidden = ehAdmin();
-    cartaoEquipe.hidden = !ehAdmin();
+    mostrar(blocoPedidos, !ehAdmin());
+    mostrar(blocoPainel, ehAdmin());
+    mostrar(cartaoPedidos, !ehAdmin());
+    mostrar(cartaoEquipe, ehAdmin());
   }
 
   function preencherEquipe() {
@@ -206,6 +211,23 @@ export function iniciar(container) {
     equipeVazia.hidden = lista.length > 0;
   }
 
+  function aplicarPermissoes() {
+    const editavel = ehAdmin();
+    for (const campo of [campos.email, campos.login]) {
+      campo.disabled = !editavel;
+      const caixa = campo.closest('.campo__travado') ?? campo.closest('.campo__livre');
+      if (caixa) {
+        caixa.classList.toggle('campo__travado', !editavel);
+        caixa.classList.toggle('campo__livre', editavel);
+        const cadeado = caixa.querySelector('svg');
+        if (cadeado) cadeado.hidden = editavel;
+      }
+    }
+    notaDados.textContent = editavel
+      ? 'Você pode alterar seu e-mail e login. A função é definida pela administração da AACD.'
+      : 'O e-mail e a função são definidos pela administração da AACD.';
+  }
+
   function preencherFormulario() {
     campos.nome.value = eu.nome ?? '';
     campos.cargo.value = eu.cargo ?? '';
@@ -213,10 +235,12 @@ export function iniciar(container) {
     campos.email.value = eu.email ?? '';
     campos.login.value = eu.identificador ?? '';
     campos.funcao.value = descricaoFuncao(eu.perfil);
+    aplicarPermissoes();
     erroNome.textContent = '';
     campos.nome.classList.remove('com-erro');
     erroForm.hidden = true;
     sucessoForm.hidden = true;
+    atualizarBotaoCancelar();
   }
 
   function preencherPedidos() {
@@ -304,14 +328,17 @@ export function iniciar(container) {
     preencherPedidos();
   }
 
-  // ----- Formulário -----
+// ----- Formulário -----
 
   campos.nome.addEventListener('input', () => {
     erroNome.textContent = '';
     campos.nome.classList.remove('com-erro');
     sucessoForm.hidden = true;
   });
-  [campos.cargo, campos.setor].forEach((c) => c.addEventListener('input', () => { sucessoForm.hidden = true; }));
+  [campos.cargo, campos.setor, campos.email, campos.login].forEach((c) =>
+    c.addEventListener('input', () => { sucessoForm.hidden = true; }));
+
+  form.addEventListener('input', atualizarBotaoCancelar);
 
   botaoCancelar.addEventListener('click', preencherFormulario);
 
@@ -323,6 +350,8 @@ export function iniciar(container) {
     const nome = campos.nome.value.trim();
     const cargo = campos.cargo.value.trim();
     const setor = campos.setor.value.trim();
+    const email = campos.email.value.trim();
+    const login = campos.login.value.trim();
 
     if (nome === '') {
       erroNome.textContent = 'Digite seu nome completo.';
@@ -331,9 +360,17 @@ export function iniciar(container) {
       return;
     }
 
+    if (ehAdmin() && (email === '' || login === '')) {
+      erroForm.textContent = 'E-mail e login não podem ficar vazios.';
+      erroForm.hidden = false;
+      return;
+    }
+
+    const mudouLogin = ehAdmin() && login !== (eu.identificador ?? '');
     const mudouNome = nome !== (eu.nome ?? '');
-    const mudouCargoSetor = cargo !== (eu.cargo ?? '') || setor !== (eu.setor ?? '');
-    if (!mudouNome && !mudouCargoSetor) {
+    const mudouEmail = ehAdmin() && email !== (eu.email ?? '');
+    const mudouFuncionario = cargo !== (eu.cargo ?? '') || setor !== (eu.setor ?? '') || mudouEmail;
+    if (!mudouNome && !mudouFuncionario) {
       sucessoForm.textContent = 'Nada para salvar.';
       sucessoForm.hidden = false;
       return;
@@ -348,22 +385,50 @@ export function iniciar(container) {
         if (!r.ok) throw r;
         eu.nome = nome;
       }
-      if (mudouCargoSetor) {
+
+      if (mudouLogin) {
+        const meu = equipe.find((f) => f.email === eu.email);
+        const idMeu = eu.id ?? meu?.id;
+        if (idMeu == null) {
+          throw { corpo: { erro: 'Não foi possível identificar sua conta para alterar o login.' } };
+        }
+        const r = await api.editarIdentificadorUsuario({ id: idMeu, identificador: login });
+        console.log('DEBUG resposta:', r.status, r.corpo);
+        if (!r.ok) throw r;
+        eu.identificador = login;
+      }
+
+      if (mudouFuncionario) {
         if (!eu.email) {
           throw { corpo: { erro: 'Cargo e setor só podem ser salvos quando o servidor informar seu e-mail.' } };
         }
-        const r = await api.editarFuncionario({ email: eu.email, cargo, setor });
+        const r = await api.editarFuncionario({
+          email: ehAdmin() ? email : eu.email,
+          cargo,
+          setor,
+        });
         if (!r.ok) throw r;
         eu.cargo = cargo;
         eu.setor = setor;
+        if (mudouEmail) eu.email = email;
       }
+
+      if (mudouLogin) {
+        const recarregado = await api.eu();
+        if (recarregado.ok && recarregado.corpo?.identificador !== login) {
+          throw { corpo: { erro: 'O servidor não confirmou a alteração do login.' } };
+        }
+      }
+
       sucessoForm.textContent = 'Alterações salvas.';
       sucessoForm.hidden = false;
+      atualizarBotaoCancelar();
       preencherResumo();
       if (ehAdmin()) preencherEquipe();
       else if (mudouNome) await recarregarPedidos();
       else preencherPedidos();
     } catch (falha) {
+
       // 400 dados inválidos · 409 sem permissão / e-mail em uso · sem corpo = sem conexão
       const mensagem = falha?.corpo?.erro
         ?? (falha?.status ? 'Não foi possível salvar. Tente de novo.' : 'Sem conexão com o servidor. Tente de novo em instantes.');
@@ -388,7 +453,7 @@ export function iniciar(container) {
     try {
       await api.logout();
     } catch {
-      // Sem conexão: a sessão do navegador já era; segue para o login mesmo assim
+      // Sem conexão
     }
     location.hash = '#/login';
   });

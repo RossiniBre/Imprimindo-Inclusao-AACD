@@ -37,7 +37,7 @@ export const api = {
   solicitacoes: () => requisitar('GET', '/api/solicitacoes'),
   verSolicitacao: (id) => requisitar('GET', `/api/solicitacao/ver?id=${encodeURIComponent(id)}`),
   cancelarSolicitacao: (id, justificativa) =>
-    requisitar('POST', '/api/solicitacao/cancelar', justificativa ? { id, justificativa } : { id }),
+  requisitar('POST', '/api/solicitacao/cancelar', justificativa ? { id, justificativa } : { id }),
   excluirSolicitacao: (id) => requisitar('POST', '/api/solicitacao/excluir', { id }),
   editarNomeUsuario: (dados) => requisitar('POST', '/api/usuario/nome', dados),
   editarIdentificadorUsuario: (dados) => requisitar('POST', '/api/usuario/identificador', dados),

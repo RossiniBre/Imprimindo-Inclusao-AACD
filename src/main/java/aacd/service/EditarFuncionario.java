@@ -14,8 +14,8 @@ public class EditarFuncionario {
     private final FuncionarioDao funcionarioDao = new FuncionarioDao();
     private final UsuarioDao usuarioDao = new UsuarioDao();
 
-    public void executar(Usuario ator, int usuarioId, String email, String cargo, String setor)
-            throws SQLException {
+    public void executar(Usuario ator, int usuarioId, String email, String login,
+                     String cargo, String setor) throws SQLException {
 
         if (ator == null || !ator.isAtivo()) {
             throw new IllegalStateException("Usuário sem permissão para editar funcionários!");
@@ -33,10 +33,20 @@ public class EditarFuncionario {
             throw new IllegalArgumentException("Funcionário não encontrado!");
         }
 
-        funcionario.setEmail(email);
+        // Só mexe no e-mail se ele veio e é diferente do que já está salvo
+        String emailNovo = email == null ? null : email.trim();
+        boolean mudouEmail = emailNovo != null
+                && !emailNovo.isEmpty()
+                && !emailNovo.equalsIgnoreCase(funcionario.getEmail());
 
-        if (usuarioDao.existePorEmailExceto(funcionario.getEmail(), usuarioId)) {
-            throw new IllegalStateException("E-mail já em uso!");
+        if (mudouEmail) {
+            if (!ehAdmin) {
+                throw new IllegalStateException("Só a administração pode alterar o e-mail.");
+            }
+            funcionario.setEmail(emailNovo);   // aqui o EmailValidador roda (@aacd.com)
+            if (usuarioDao.existePorEmailExceto(funcionario.getEmail(), usuarioId)) {
+                throw new IllegalStateException("E-mail já em uso!");
+            }
         }
 
         funcionario.setCargo(cargo);

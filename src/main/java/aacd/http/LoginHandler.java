@@ -46,8 +46,7 @@ public class LoginHandler implements HttpHandler {
 
             Usuario usuario = resultado.get();
             String token = sessoes.criar(usuario.getId(), usuario.getPerfil());
-            ex.getResponseHeaders().add("Set-Cookie",
-                    "SESSAO=" + token + "; HttpOnly; Path=/; SameSite=Strict");
+            ex.getResponseHeaders().add("Set-Cookie", Cookies.sessao(token));
             Http.json(ex, 200, Json.objeto().campo("perfil", usuario.getPerfil()).build());
 
         } catch (SQLException e) {

@@ -1,9 +1,4 @@
 // Tela Funcionários (só o admin).
-// Lista vem de GET /api/funcionarios:
-//   { id, nome, identificador, email, perfil, cargo, setor, ativo }
-// Cadastro: POST /api/funcionarios.
-// Edição: POST /api/usuario/nome, /api/usuario/identificador e /api/funcionario/editar.
-// Status: POST /api/conta/desativar | reativar. Exclusão: POST /api/conta/excluir.
 
 import { api } from '../../shared/js/api.js';
 

@@ -24,8 +24,7 @@ public class LogoutHandler implements HttpHandler {
 
         sessoes.destruir(Http.lerCookie(ex, "SESSAO"));
 
-        ex.getResponseHeaders().add("Set-Cookie",
-                "SESSAO=; Max-Age=0; HttpOnly; Path=/; SameSite=Strict");
+        ex.getResponseHeaders().add("Set-Cookie", Cookies.expirado());
         Http.json(ex, 200, Json.objeto().campo("ok", true).build());
     }
 }

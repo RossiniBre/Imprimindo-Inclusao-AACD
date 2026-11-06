@@ -1,21 +1,12 @@
 // Painel da AACD (funcionário e admin): acompanhamento dos pedidos de impressão.
-// Lista vem de GET /api/solicitacoes:
-//   { id, titulo, status, empresa, criadoPor, impressora, criadoEm, decididoEm,
-//     finalizadoEm, justificativa, expiraEm }
-// Status do back -> seção da tela:
-//   PENDENTE -> Esperando aceite | EM_ANDAMENTO -> Imprimindo
-//   CONCLUIDA -> Prontas          | RECUSADA, CANCELADA, FALHOU -> Recusadas
-// Ações: cancelar pendente (POST /api/solicitacao/cancelar) e remover
-// pronta/recusada (POST /api/solicitacao/excluir). O prazo estimado da
-// impressão vem de GET /api/solicitacao/ver?id= (barra de progresso).
 
 import { api } from '../../shared/js/api.js';
 
 // Regras do back (PrazosSolicitacao.java)
-export const DIAS_LIMPEZA = 60;      // prontas/recusadas somem depois disso
+export const DIAS_LIMPEZA = 60;
 export const DIAS_EXPIRA_PENDENTE = 30;
 
-const CARTOES_POR_GRUPO = 4;         // "Mostrando 4 de 6 · Ver todos"
+const CARTOES_POR_GRUPO = 4;
 
 export const GRUPO_DO_STATUS = {
   PENDENTE: 'esperando',
@@ -33,7 +24,6 @@ const NOME_DO_GRUPO = {
   recusadas: 'recusadas',
 };
 
-// ---------- Funções puras (testáveis) ----------
 
 export function agrupar(lista) {
   const grupos = { esperando: [], imprimindo: [], prontas: [], recusadas: [] };
@@ -44,8 +34,6 @@ export function agrupar(lista) {
   return grupos;
 }
 
-// O back manda LocalDateTime ("2026-11-03T09:15:30") ou LocalDate ("2026-11-10"),
-// sempre sem fuso: trata como horário local. Data sem hora vale até o fim do dia.
 export function lerData(texto) {
   if (!texto) return null;
   if (/^\d{4}-\d{2}-\d{2}$/.test(texto)) {
@@ -58,21 +46,18 @@ export function lerData(texto) {
 
 const dois = (n) => String(n).padStart(2, '0');
 
-// "2026-10-14T16:30:00" -> "14/10, 16h30"
 export function formatarDataHora(texto) {
   const d = lerData(texto);
   if (!d) return '';
   return `${dois(d.getDate())}/${dois(d.getMonth() + 1)}, ${dois(d.getHours())}h${dois(d.getMinutes())}`;
 }
 
-// "2026-10-14" -> "14/10"
 export function formatarData(texto) {
   const d = lerData(texto);
   if (!d) return '';
   return `${dois(d.getDate())}/${dois(d.getMonth() + 1)}`;
 }
 
-// 1 dia e 3h | 5h10 | 40 min | menos de 1 min
 export function duracao(ms) {
   const minutos = Math.floor(Math.max(ms, 0) / 60000);
   const dias = Math.floor(minutos / 1440);
@@ -94,8 +79,6 @@ export function tempoEsperando(criadoEm, agora = new Date()) {
   return `Esperando há ${duracao(agora - d)}`;
 }
 
-// Barra do "Imprimindo": da aceitação até o prazo estimado pela empresa.
-// Devolve null se faltar uma das datas.
 export function progresso(decididoEm, prazoEstimado, agora = new Date()) {
   const inicio = lerData(decididoEm);
   const fim = lerData(prazoEstimado);
@@ -130,9 +113,9 @@ export function destruir() {
 export function iniciar(container) {
   let pedidos = [];
   let grupos = agrupar([]);
-  let prazos = {};              // id -> prazoEstimado (vem de /api/solicitacao/ver)
-  let filtro = null;            // null = todos os grupos
-  const expandidos = new Set(); // grupos com "Ver todos" aberto
+  let prazos = {};
+  let filtro = null;
+  const expandidos = new Set(); 
 
   const contadores = container.querySelectorAll('.contador');
   const secoes = container.querySelectorAll('.grupo');
@@ -152,8 +135,8 @@ export function iniciar(container) {
   const erroModal = container.querySelector('#erro-modal');
   const botaoConfirmar = container.querySelector('#botao-confirmar-modal');
   const botaoVoltar = container.querySelector('#botao-voltar-modal');
-  let acaoPendente = null;      // { acao, pedido } enquanto o modal está aberto
-  let elementoAnterior = null;  // quem tinha o foco antes do modal
+  let acaoPendente = null;
+  let elementoAnterior = null;  
 
   // ----- Avisos -----
 
@@ -191,7 +174,6 @@ export function iniciar(container) {
     const agora = new Date();
     const cartao = elemento('article', 'cartao');
 
-    // Topo: número do pedido + badge
     const topo = elemento('div', 'cartao__topo');
     topo.appendChild(elemento('span', 'cartao__id', `Pedido ${pedido.id}`));
 
@@ -318,7 +300,6 @@ export function iniciar(container) {
   }
 
   async function carregarPrazos() {
-    // O prazo estimado só vem no detalhe; busca para os que estão imprimindo.
     const imprimindo = grupos.imprimindo.filter((p) => !(p.id in prazos));
     if (imprimindo.length === 0) return;
 
@@ -456,7 +437,7 @@ export function iniciar(container) {
         await carregar();
         return;
       }
-      // 400 dados inválidos · 403 sem permissão · 409 status mudou
+
       erroModal.textContent = resposta.corpo?.erro ?? 'Não foi possível concluir. Tente de novo.';
     } catch {
       erroModal.textContent = 'Sem conexão com o servidor. Tente de novo em instantes.';
@@ -466,7 +447,6 @@ export function iniciar(container) {
     botaoConfirmar.textContent = ACOES[acao].botao;
   });
 
-  // Botões dentro dos cartões (delegação)
   container.querySelector('.painel__conteudo').addEventListener('click', (evento) => {
     const b = evento.target.closest('button[data-acao]');
     if (!b) return;

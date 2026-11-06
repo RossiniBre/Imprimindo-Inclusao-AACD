@@ -46,7 +46,7 @@ public class FuncionarioDao {
 
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return new Funcionario(
+                    return Funcionario.doBanco(
                             rs.getInt("idfuncionario"),
                             rs.getInt("usuario_id"),
                             rs.getString("email"),

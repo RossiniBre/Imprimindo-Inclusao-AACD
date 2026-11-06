@@ -1,271 +1,61 @@
 <section class="solicitacoes">
-  <div class="conteudo">
+    <div class="conteudo">
 
-    <!-- cards de estatus -->
-    <div class="resumo-cards d-flex justify-content-center flex-wrap gap-3 gap-lg-4 mb-5">
-      <div class="filtro card text-center py-3 active">
-        <small class="text-body-secondary">Recebidos</small>
-        <span class="fs-4 fw-bold lh-1 ">9</span>
-      </div>
-      <div class="filtro card text-center py-3">
-        <small class="text-body-secondary">Pendentes</small>
-        <span class="fs-4 fw-bold lh-1 pendente">6</span>
-      </div>
-      <div class="filtro card text-center py-3">
-        <small class="text-body-secondary">Aceitos</small>
-        <span class="fs-4 fw-bold lh-1 text-success">2</span>
-      </div>
-      <div class="filtro card text-center py-3">
-        <small class="text-body-secondary">Recusados</small>
-        <span class="fs-4 fw-bold lh-1 text-secondary">1</span>
-      </div>
+        <!-- Resumo dos status -->
+        <div class="resumo-cards">
+
+            <button type="button" class="filtro card active"
+                    data-status="todos">
+                <span class="filtro-titulo">Total</span>
+                <strong class="filtro-numero" id="total-recebidos">—</strong>
+            </button>
+
+            <button type="button" class="filtro card"
+                    data-status="pendente">
+                <span class="filtro-titulo">Pendentes</span>
+                <strong class="filtro-numero pendente"
+                        id="total-pendentes">—</strong>
+            </button>
+
+            <button type="button" class="filtro card"
+                    data-status="aceita">
+                <span class="filtro-titulo">Aceitos</span>
+                <strong class="filtro-numero aceito"
+                        id="total-aceitos">—</strong>
+            </button>
+
+            <button type="button" class="filtro card"
+                    data-status="recusada">
+                <span class="filtro-titulo">Recusados</span>
+                <strong class="filtro-numero recusado"
+                        id="total-recusados">—</strong>
+            </button>
+
+            <button type="button" class="filtro card"
+                    data-status="falhou">
+                <span class="filtro-titulo">Falhou</span>
+                <strong class="filtro-numero falhou"
+                        id="total-falhados">—</strong>
+            </button>
+
+        </div>
+
+        <div id="lista-solicitacoes" class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
+        </div>
+
+        <!-- Estado vazio -->
+        <div id="estado-vazio" class="estado-vazio d-none">
+            <div class="estado-icone">
+                <i class="bi bi-inbox"></i>
+            </div>
+
+            <h3>Nenhuma solicitação encontrada</h3>
+
+            <p>
+                Quando houver solicitações disponíveis,
+                elas serão exibidas aqui.
+            </p>
+        </div>
+
     </div>
-
-    <!-- pedidos -->
-    <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
-      <div class="pedido col" data-status="pendente" data-titulo="Prótese de mão" data-pedido="6502" data-material="PLA" data-tempo="6h30" data-prazo="15/10/2026" data-quem="Ana Martins">
-        <div class="card h-100 p-4 rounded-4">
-          <h3 class="fs-4 fw-bold mb-0">Prótese de mão</h3>
-          <p class="small text-body-secondary mb-2">Pedido 6502</p>
-          <ul class="list-group small mb-3">
-            <li class="list-group-item d-flex justify-content-between py-1"><span class="text-body-secondary">Material</span> <b>PLA</b></li>
-            <li class="list-group-item d-flex justify-content-between py-1"><span class="text-body-secondary">Prazo de entrega</span> <b>15/10/2026</b></li>
-            <li class="list-group-item d-flex justify-content-between py-1"><span class="text-body-secondary">Recebida em</span> <b>09/10 · 09:12</b></li>
-          </ul>
-          <p class="small border-bottom pb-3 mb-3">Enviado por <b>Ana Martins</b></p>
-          <div class="acoes">
-            <label for="imp-1" class="small fw-bold mb-1">Imprimir em</label>
-            <select id="imp-1" class="form-select form-select-sm mb-3">
-              <option>Ender 3 V2</option>
-              <option>Prusa MK4</option>
-              <option>Creality K1</option>
-            </select>
-            <div class="d-flex gap-3">
-              <button type="button" class="btn-recusar btn fw-semibold fs-5 py-3 w-50" data-bs-toggle="modal" data-bs-target="#modal-recusar">Recusar</button>
-              <button type="button" class="btn btn-aceitar fw-semibold fs-5 py-3 w-50" data-bs-toggle="modal" data-bs-target="#modal-aceitar">Aceitar</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="pedido col" data-status="pendente" data-titulo="Órtese de punho" data-pedido="6504" data-material="PETG" data-tempo="3h45" data-prazo="17/10/2026" data-quem="Bruno Cenamo">
-        <div class="card h-100 p-4 rounded-4">
-          <h3 class="fs-4 fw-bold mb-0">Órtese de punho</h3>
-          <p class="small text-body-secondary mb-2">Pedido 6504</p>
-          <ul class="list-group small mb-3">
-            <li class="list-group-item d-flex justify-content-between py-1"><span class="text-body-secondary">Material</span> <b>PETG</b></li>
-            <li class="list-group-item d-flex justify-content-between py-1"><span class="text-body-secondary">Prazo de entrega</span> <b>17/10/2026</b></li>
-            <li class="list-group-item d-flex justify-content-between py-1"><span class="text-body-secondary">Recebida em</span> <b>09/10 · 11:05</b></li>
-          </ul>
-          <p class="small border-bottom pb-3 mb-3">Enviado por <b>Bruno Cenamo</b></p>
-          <div class="acoes">
-            <label for="imp-2" class="small fw-bold mb-1">Imprimir em</label>
-            <select id="imp-2" class="form-select form-select-sm mb-3">
-              <option>Ender 3 V2</option>
-              <option>Prusa MK4</option>
-              <option>Creality K1</option>
-            </select>
-            <div class="d-flex gap-3">
-              <button type="button" class="btn-recusar btn fw-semibold fs-5 py-3 w-50" data-bs-toggle="modal" data-bs-target="#modal-recusar">Recusar</button>
-              <button type="button" class="btn btn-aceitar fw-semibold fs-5 py-3 w-50" data-bs-toggle="modal" data-bs-target="#modal-aceitar">Aceitar</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="pedido col" data-status="pendente" data-titulo="Órtese craniana" data-pedido="6503" data-material="ABS" data-tempo="9h10" data-prazo="20/10/2026" data-quem="Lara Croftchy">
-        <div class="card h-100 p-4 rounded-4">
-          <h3 class="fs-4 fw-bold mb-0">Órtese craniana</h3>
-          <p class="small text-body-secondary mb-2">Pedido 6503</p>
-          <ul class="list-group small mb-3">
-            <li class="list-group-item d-flex justify-content-between py-1"><span class="text-body-secondary">Material</span> <b>ABS</b></li>
-            <li class="list-group-item d-flex justify-content-between py-1"><span class="text-body-secondary">Prazo de entrega</span> <b>20/10/2026</b></li>
-            <li class="list-group-item d-flex justify-content-between py-1"><span class="text-body-secondary">Recebida em</span> <b>09/10 · 10:40</b></li>
-          </ul>
-          <p class="small border-bottom pb-3 mb-3">Enviado por <b>Lara Croftchy</b></p>
-          <div class="acoes">
-            <label for="imp-3" class="small fw-bold mb-1">Imprimir em</label>
-            <select id="imp-3" class="form-select form-select-sm mb-3">
-              <option>Ender 3 V2</option>
-              <option>Prusa MK4</option>
-              <option>Creality K1</option>
-            </select>
-            <div class="d-flex gap-3">
-              <button type="button" class="btn-recusar btn fw-semibold fs-5 py-3 w-50" data-bs-toggle="modal" data-bs-target="#modal-recusar">Recusar</button>
-              <button type="button" class="btn btn-aceitar fw-semibold fs-5 py-3 w-50" data-bs-toggle="modal" data-bs-target="#modal-aceitar">Aceitar</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="pedido col" data-status="aceita" data-titulo="Prótese de mão" data-pedido="6498" data-material="PLA" data-tempo="6h30" data-prazo="15/10/2026" data-quem="Diego Ramos">
-        <div class="card h-100 p-4 rounded-4">
-          <h3 class="fs-4 fw-bold mb-0">Prótese de mão</h3>
-          <p class="small text-body-secondary mb-2">Pedido 6498</p>
-          <ul class="list-group small mb-3">
-            <li class="list-group-item d-flex justify-content-between py-1"><span class="text-body-secondary">Material</span> <b>PLA</b></li>
-            <li class="list-group-item d-flex justify-content-between py-1"><span class="text-body-secondary">Prazo de entrega</span> <b>15/10/2026</b></li>
-            <li class="list-group-item d-flex justify-content-between py-1"><span class="text-body-secondary">Recebida em</span> <b>08/10 · 14:20</b></li>
-          </ul>
-          <p class="small border-bottom pb-3 mb-3">Enviado por <b>Diego Ramos</b></p>
-          <div class="acoes">
-            <label for="imp-4" class="small fw-bold mb-1">Imprimir em</label>
-            <select id="imp-4" class="form-select form-select-sm mb-3">
-              <option>Ender 3 V2</option>
-              <option>Prusa MK4</option>
-              <option>Creality K1</option>
-            </select>
-            <div class="d-flex gap-3">
-              <button type="button" class="btn-recusar btn fw-semibold fs-5 py-3 w-50" data-bs-toggle="modal" data-bs-target="#modal-recusar">Recusar</button>
-              <button type="button" class="btn btn-aceitar fw-semibold fs-5 py-3 w-50" data-bs-toggle="modal" data-bs-target="#modal-aceitar">Aceitar</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="pedido col" data-status="aceita" data-titulo="Órtese de punho" data-pedido="6499" data-material="PETG" data-tempo="3h45" data-prazo="17/10/2026" data-quem="Fernanda Lopes">
-        <div class="card h-100 p-4 rounded-4">
-          <h3 class="fs-4 fw-bold mb-0">Órtese de punho</h3>
-          <p class="small text-body-secondary mb-2">Pedido 6499</p>
-          <ul class="list-group small mb-3">
-            <li class="list-group-item d-flex justify-content-between py-1"><span class="text-body-secondary">Material</span> <b>PETG</b></li>
-            <li class="list-group-item d-flex justify-content-between py-1"><span class="text-body-secondary">Prazo de entrega</span> <b>17/10/2026</b></li>
-            <li class="list-group-item d-flex justify-content-between py-1"><span class="text-body-secondary">Recebida em</span> <b>08/10 · 16:45</b></li>
-          </ul>
-          <p class="small border-bottom pb-3 mb-3">Enviado por <b>Fernanda Lopes</b></p>
-          <div class="acoes">
-            <label for="imp-5" class="small fw-bold mb-1">Imprimir em</label>
-            <select id="imp-5" class="form-select form-select-sm mb-3">
-              <option>Ender 3 V2</option>
-              <option>Prusa MK4</option>
-              <option>Creality K1</option>
-            </select>
-            <div class="d-flex gap-3">
-              <button type="button" class="btn-recusar btn fw-semibold fs-5 py-3 w-50" data-bs-toggle="modal" data-bs-target="#modal-recusar">Recusar</button>
-              <button type="button" class="btn btn-aceitar fw-semibold fs-5 py-3 w-50" data-bs-toggle="modal" data-bs-target="#modal-aceitar">Aceitar</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="pedido col" data-status="recusada" data-titulo="Órtese craniana" data-pedido="6501" data-material="ABS" data-tempo="9h10" data-prazo="20/10/2026" data-quem="Paulo Nunes">
-        <div class="card h-100 p-4 rounded-4">
-          <h3 class="fs-4 fw-bold mb-0">Órtese craniana</h3>
-          <p class="small text-body-secondary mb-2">Pedido 6501</p>
-          <ul class="list-group small mb-3">
-            <li class="list-group-item d-flex justify-content-between py-1"><span class="text-body-secondary">Material</span> <b>ABS</b></li>
-            <li class="list-group-item d-flex justify-content-between py-1"><span class="text-body-secondary">Prazo de entrega</span> <b>20/10/2026</b></li>
-            <li class="list-group-item d-flex justify-content-between py-1"><span class="text-body-secondary">Recebida em</span> <b>09/10 · 08:30</b></li>
-          </ul>
-          <p class="small border-bottom pb-3 mb-3">Enviado por <b>Paulo Nunes</b></p>
-          <div class="acoes">
-            <label for="imp-6" class="small fw-bold mb-1">Imprimir em</label>
-            <select id="imp-6" class="form-select form-select-sm mb-3">
-              <option>Ender 3 V2</option>
-              <option>Prusa MK4</option>
-              <option>Creality K1</option>
-            </select>
-            <div class="d-flex gap-3">
-              <button type="button" class="btn-recusar btn fw-semibold fs-5 py-3 w-50" data-bs-toggle="modal" data-bs-target="#modal-recusar">Recusar</button>
-              <button type="button" class="btn btn-aceitar fw-semibold fs-5 py-3 w-50" data-bs-toggle="modal" data-bs-target="#modal-aceitar">Aceitar</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- janela: recusar -->
-  <div class="modal fade" id="modal-recusar" tabindex="-1" aria-labelledby="titulo-recusar" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content rounded-4 p-2">
-        <div class="modal-header border-0 align-items-start pb-0">
-          <div>
-            <h2 id="titulo-recusar" class="modal-title fs-4 fw-bold">Recusar solicitação</h2>
-            <p class="small text-body-secondary mb-0">A AACD vê o motivo e pode enviar o pedido para outra empresa.</p>
-          </div>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-        </div>
-
-        <form method="post" action="#">
-          <input type="hidden" name="pedido">
-          <input type="hidden" name="impressora">
-
-        <div class="modal-body">
-          <div class="caixa d-flex justify-content-between align-items-center gap-3 border rounded-3 p-3 mb-3">
-            <div>
-              <b class="fs-5" data-campo="titulo"></b><br>
-              <small class="text-body-secondary">Pedido <span data-campo="pedido"></span> · <span data-campo="material"></span> · prazo <span data-campo="prazo"></span></small>
-            </div>
-            <small class="text-nowrap">Enviado por <b data-campo="quem"></b></small>
-          </div>
-
-          <p class="small fw-bold mb-2">Motivo da recusa</p>
-          <div class="d-flex flex-wrap gap-2 mb-3">
-          <input type="radio" class="btn-check" name="motivo" id="motivo1" value="Sem capacidade no prazo" autocomplete="off">
-          <label class="motivo btn rounded-pill" for="motivo1">Sem capacidade no prazo</label>
-          <input type="radio" class="btn-check" name="motivo" id="motivo2" value="Material indisponível" autocomplete="off" checked>
-          <label class="motivo btn rounded-pill" for="motivo2">Material indisponível</label>
-          <input type="radio" class="btn-check" name="motivo" id="motivo3" value="Peça não cabe na impressora" autocomplete="off">
-          <label class="motivo btn rounded-pill" for="motivo3">Peça não cabe na impressora</label>
-          <input type="radio" class="btn-check" name="motivo" id="motivo4" value="Impressora em manutenção" autocomplete="off">
-          <label class="motivo btn rounded-pill" for="motivo4">Impressora em manutenção</label>
-          <input type="radio" class="btn-check" name="motivo" id="motivo5" value="Outro" autocomplete="off">
-          <label class="motivo btn rounded-pill" for="motivo5">Outro</label>
-          </div>
-
-          <label for="observacao" class="small fw-bold mb-1">Observação (opcional)</label>
-          <textarea id="observacao" name="observacao" class="form-control mb-3" rows="3" placeholder="Ex.: sem PETG no estoque até 20/10. Isso ajuda a AACD a escolher outra empresa."></textarea>
-
-          <div class="alert alert-warning border-0 small mb-0">O pedido vai para Recusadas. A AACD poderá reenviá-lo a outra empresa ou removê-lo. Essa ação não pode ser desfeita.</div>
-        </div>
-
-        <div class="modal-footer border-0 justify-content-between">
-          <button type="button" class="btn-voltar botao-modal btn px-4 fw-semibold" data-bs-dismiss="modal">Voltar</button>
-          <button type="submit" class="botao-modal btn btn-recusa px-4 fw-semibold">Confirmar</button>
-        </div>
-        </form>
-      </div>
-    </div>
-  </div>
-
-  <!-- janela: aceitar -->
-  <div class="modal fade" id="modal-aceitar" tabindex="-1" aria-labelledby="titulo-aceitar" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content rounded-4 p-2">
-        <div class="modal-header border-0 align-items-start pb-0">
-          <div>
-            <h2 id="titulo-aceitar" class="modal-title fs-4 fw-bold">Aceitar solicitação</h2>
-            <p class="small text-body-secondary mb-0">Confirme a impressora que vai fazer este pedido.</p>
-          </div>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-        </div>
- 
-        <form method="post" action="#">
-          <input type="hidden" name="pedido">
-          <input type="hidden" name="impressora">
-
-        <div class="modal-body">
-          <div class="caixa d-flex justify-content-between align-items-center gap-3 border rounded-3 p-3 mb-3">
-            <div>
-              <b class="fs-5" data-campo="titulo"></b><br>
-              <small class="text-body-secondary">Pedido <span data-campo="pedido"></span></small><br>
-              <small>Enviado por <b data-campo="quem"></b></small>
-            </div>
-            <div class="small">
-              <div class="d-flex justify-content-between gap-5"><span class="text-body-secondary">Tempo estimado</span> <b data-campo="tempo"></b></div>
-              <div class="d-flex justify-content-between gap-5"><span class="text-body-secondary">Prazo de entrega</span> <b data-campo="prazo"></b></div>
-            </div>
-          </div>
- 
-          <p class="small fw-bold mb-1">Imprimir em</p>
-          <p class="caixa border rounded-3 px-3 py-2 mb-2" data-campo="impressora"></p>
-          <p class="small fw-semibold text-success mb-1"><i class="bi bi-check-lg"></i> Filamento incluso: <span data-campo="material"></span></p>
-          <p class="small fw-semibold text-success mb-3"><i class="bi bi-check-lg"></i> A peça cabe nesta impressora (220 × 220 × 250 mm)</p>
-        </div>
- 
-        <div class="modal-footer border-0 justify-content-between">
-          <button type="button" class="btn-voltar botao-modal btn px-4 fw-semibold" data-bs-dismiss="modal">Voltar</button>
-          <button type="submit" class="botao-modal btn-confirm btn px-4 fw-semibold">Confirmar</button>
-        </div>
-        </form>
-
-      </div>
-    </div>
-  </div>
 </section>

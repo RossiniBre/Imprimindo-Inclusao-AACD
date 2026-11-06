@@ -47,12 +47,15 @@ public class EditarFuncionarioHandler implements HttpHandler {
             }
             int alvoId = Http.lerId(campos, "id", idSessao);
 
-            editarFuncionario.executar(ator, alvoId, campos.get("email"), campos.get("cargo"), campos.get("setor"));
+            editarFuncionario.executar(ator, alvoId,
+                campos.get("email"), campos.get("login"),
+                campos.get("cargo"), campos.get("setor"));
             Http.json(ex, 200, Json.objeto().campo("mensagem", "Funcionário atualizado.").build());
 
         } catch (IllegalStateException e) {
             Http.erro(ex, 409, e.getMessage());
         } catch (IllegalArgumentException e) {
+            e.printStackTrace();
             Http.erro(ex, 400, e.getMessage());
         } catch (SQLException e) {
             Http.erro(ex, 500, "Erro interno.");

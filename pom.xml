@@ -58,7 +58,6 @@
 
     <build>
         <plugins>
-            <!-- Permite rodar com: mvn compile exec:java -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>

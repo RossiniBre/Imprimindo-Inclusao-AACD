@@ -510,3 +510,22 @@ main:has(> .conta) {
     flex-direction: column;
   }
 }
+
+#botao-cancelar:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+#botao-cancelar:not(:disabled):hover {
+  border-color: #2B2B2B;
+}
+
+.campo__livre svg {
+  display: none !important;
+}
+
+#cartao-equipe {
+  grid-column: 1 / -1; 
+  width: 37.5rem; 
+  max-width: 100%; 
+}

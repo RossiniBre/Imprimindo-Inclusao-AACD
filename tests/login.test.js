@@ -12,9 +12,9 @@ describe('tela de login', () => {
   })
 
   it('manda cada perfil para a sua tela inicial', () => {
-    expect(destinoPorPerfil('ADMIN')).toBe('#/funcionarios')
+    expect(destinoPorPerfil('ADMIN')).toBe('#/painel-aacd')
     expect(destinoPorPerfil('FUNCIONARIO')).toBe('#/painel-aacd')
-    expect(destinoPorPerfil('EMPRESA')).toBe('#/painel-empresa')
+    expect(destinoPorPerfil('EMPRESA')).toBe('#/impressoras')
     expect(destinoPorPerfil(undefined)).toBe('#/')
   })
 })

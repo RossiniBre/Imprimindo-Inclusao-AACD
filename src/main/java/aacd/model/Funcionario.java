@@ -26,6 +26,19 @@ public class Funcionario {
         this(0, usuarioId, email, cargo, setor);
     }
 
+    private Funcionario() {}
+
+    // Reconstrói um funcionário já salvo no banco
+    public static Funcionario doBanco(int id, int usuarioId, String email, String cargo, String setor) {
+        Funcionario f = new Funcionario();
+        f.id = id;
+        f.usuarioId = usuarioId;
+        f.email = email;
+        f.cargo = cargo;
+        f.setor = setor;
+        return f;
+    }
+
     //getters
     public int getId() { return this.id; }
     public int getUsuarioId() { return this.usuarioId; }

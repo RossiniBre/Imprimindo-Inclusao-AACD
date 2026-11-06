@@ -5,24 +5,68 @@
     height: 70px;
     background-color: var(--cor-cabecalho);
 }
-.menu[hidden] { 
-    display: none; 
+.menu[hidden] {
+    display: none;
 }    /* fica sem login nas telas que não precisam */
-.menu a { 
-    color: #fff; 
-    text-decoration: none; 
+.menu a {
+    color: #fff;
+    text-decoration: none;
 }
-.menu a:hover { 
-    color: #c5c5c5; 
-}
-.logo-menu { 
-    width: 52px; 
-    height: 52px; 
+.logo-menu {
+    width: 52px;
+    height: 52px;
     padding-left: 2px;
 }
 
 @media (min-width: 992px) {
-    .menu nav { 
-        font-size: 2rem; 
+    .menu nav {
+        font-size: 1.25rem;   /* era 2rem; ajuste a gosto */
     }
+}
+
+.menu nav a {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    font-weight: 600;
+    opacity: 0.85;
+    cursor: pointer;
+    transition: opacity 0.2s, color 0.2s;
+}
+
+.menu nav {
+    position: relative;
+    height: 70px;
+}
+
+.menu nav a:hover {
+    opacity: 1;
+    color: #fff;
+}
+
+.menu nav a.ativo,
+.menu nav a.ativo:hover {
+    opacity: 1;
+    color: #EFB000;
+}
+
+.menu__indicador {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 0;
+    height: 8px;
+    border-radius: 3px 3px 0 0;
+    background: #fff;
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.3s ease, width 0.3s ease, opacity 0.2s;
+}
+
+.menu__indicador {
+    background: #EFB000;
+}
+
+#menu:not([hidden]) {
+    display: flex !important;
 }

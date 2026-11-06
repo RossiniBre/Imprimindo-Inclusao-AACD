@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Optional;
 
 public class UsuarioDao {
 
@@ -215,6 +216,37 @@ public class UsuarioDao {
             ps.setString(1, senhaHash);
             ps.setInt(2, id);
             return ps.executeUpdate() > 0;
+        }
+    }
+
+    public record DadosConta(String nome, String identificador, String perfil,
+                         String email, String cargo, String setor) {}
+
+    public Optional<DadosConta> buscarDadosConta(int id) throws SQLException {
+        String sql = "SELECT u.nome, u.identificador, u.perfil, "
+                + "COALESCE(f.email, e.email) AS email, f.cargo, f.setor "
+                + "FROM usuario u "
+                + "LEFT JOIN funcionario f ON f.usuario_id = u.idusuario "
+                + "LEFT JOIN empresa e ON e.usuario_id = u.idusuario "
+                + "WHERE u.idusuario = ?";
+
+        try (Connection conn = ConnectionFactory.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, id);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return Optional.of(new DadosConta(
+                            rs.getString("nome"),
+                            rs.getString("identificador"),
+                            rs.getString("perfil"),
+                            rs.getString("email"),
+                            rs.getString("cargo"),
+                            rs.getString("setor")));
+                }
+                return Optional.empty();
+            }
         }
     }
 }

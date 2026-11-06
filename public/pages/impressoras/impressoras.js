@@ -235,7 +235,6 @@ export function iniciar() {
     card.querySelector('.btn-outline-secondary').addEventListener('click', () => {
       cardAtual = card;
 
-      // "220 × 220 × 250" -> ["220", "220", "250"]
       const texto = card.querySelector('p').textContent;
       const medidas = texto.replace('Capacidade: ', '').replace(' mm', '').split(' × ');
 
@@ -316,7 +315,6 @@ export function iniciar() {
       adicionarTecnologia.value == 'FDM' ? document.getElementById('adicionar-tipo').value : ''
     );
 
-    // limpa os campos
     document.getElementById('adicionar-modelo').value = '';
     document.getElementById('adicionar-x').value = '';
     document.getElementById('adicionar-y').value = '';
@@ -326,13 +324,10 @@ export function iniciar() {
     modalAdicionar.hide();
   });
 
-  // ao abrir a página
   atualizarSecao('imprimindo');
   atualizarSecao('livres');
 }
 
-// o router chama quando o usuário sai da tela
-// (se sair com um modal aberto, não deixa o fundo escuro travado)
 export function destruir() {
   modais.forEach(modal => modal.dispose());
   modais = [];
