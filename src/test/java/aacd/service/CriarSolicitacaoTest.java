@@ -5,7 +5,6 @@ import aacd.dao.FuncionarioDao;
 import aacd.dao.ImpressoraDao;
 import aacd.dao.SolicitacaoDao;
 import aacd.model.*;
-import aacd.service.CriarSolicitacao;
 import aacd.storage.ArmazenamentoArquivo;
 import aacd.storage.ArmazenamentoException;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,6 +31,10 @@ class CriarSolicitacaoTest {
     private static final int COMPRIMENTO_MM = 180;
     private static final int LARGURA_MM = 60;
     private static final int ALTURA_MM = 40;
+    // volume da impressora usada nos testes (tipo Ender 3)
+    private static final int IMP_COMPRIMENTO_MM = 220;
+    private static final int IMP_LARGURA_MM = 220;
+    private static final int IMP_ALTURA_MM = 250;
     private static final String ARQUIVO_ID = "arquivo-gridfs-1";
     private static final String MONGO_ID = "6ac6a60e2cc2f73b96ef0dff";
     private static final String NOME = "peca.stl";
@@ -61,6 +64,9 @@ class CriarSolicitacaoTest {
         impressora = mock(Impressora.class);
         when(impressora.isAtivo()).thenReturn(true);
         when(impressora.getEmpresaId()).thenReturn(EMPRESA_ID);
+        when(impressora.getComprimentoMm()).thenReturn(IMP_COMPRIMENTO_MM);
+        when(impressora.getLarguraMm()).thenReturn(IMP_LARGURA_MM);
+        when(impressora.getAlturaMm()).thenReturn(IMP_ALTURA_MM);
         when(impressoraDao.buscarPorId(conn, IMPRESSORA_ID)).thenReturn(impressora);
 
         when(armazenamento.salvar(eq(NOME), any())).thenReturn(ARQUIVO_ID);
@@ -186,6 +192,47 @@ class CriarSolicitacaoTest {
 
         verifyNoInteractions(funcionarioDao, impressoraDao);
         assertNadaGravado();
+    }
+
+    // ---------- validação de volume ----------
+
+    @Test
+    void pecaMaiorQueAImpressoraEhRecusadaSemGravarNada() throws Exception {
+        // 300 > maior eixo da impressora (250), não cabe em nenhuma rotação
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+                () -> service.criar(USUARIO_ID, IMPRESSORA_ID, "Titulo", "Descricao", 1,
+                        300, 100, 100, NOME, arquivo()));
+
+        assertTrue(ex.getMessage().contains("não cabe"));
+        assertNadaGravado();
+        verify(conn, never()).commit();
+    }
+
+    @Test
+    void pecaComDuasDimensoesGrandesEhRecusada() throws Exception {
+        // 250 x 250 x 10: dois eixos acima de 220
+        assertThrows(IllegalArgumentException.class,
+                () -> service.criar(USUARIO_ID, IMPRESSORA_ID, "Titulo", "Descricao", 1,
+                        250, 250, 10, NOME, arquivo()));
+        assertNadaGravado();
+    }
+
+    @Test
+    void pecaQueSoCabeGiradaEhAceita() throws Exception {
+        // 250 x 60 x 40 só cabe com o lado de 250 na altura da impressora
+        int id = service.criar(USUARIO_ID, IMPRESSORA_ID, "Titulo", "Descricao", 1,
+                250, 60, 40, NOME, arquivo());
+
+        assertEquals(42, id);
+        verify(conn).commit();
+    }
+
+    @Test
+    void pecaIgualAoVolumeDaImpressoraEhAceita() throws Exception {
+        int id = service.criar(USUARIO_ID, IMPRESSORA_ID, "Titulo", "Descricao", 1,
+                IMP_COMPRIMENTO_MM, IMP_LARGURA_MM, IMP_ALTURA_MM, NOME, arquivo());
+
+        assertEquals(42, id);
     }
 
     // ---------- falhas durante a gravação (compensação) ----------
@@ -389,6 +436,16 @@ class CriarSolicitacaoTest {
 
         assertThrows(IllegalArgumentException.class,
                 () -> criarComoAdmin(usuario("ADMIN", true), IMPRESSORA_ID, "Titulo", 1, NOME));
+        assertNadaGravado();
+    }
+
+    @Test
+    void adminComPecaMaiorQueAImpressoraEhRecusadoSemGravarNada() throws Exception {
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+                () -> service.criarComoAdmin(usuario("ADMIN", true), IMPRESSORA_ID,
+                        "Titulo", "Descricao", 1, 300, 100, 100, NOME, arquivo()));
+
+        assertTrue(ex.getMessage().contains("não cabe"));
         assertNadaGravado();
     }
 
