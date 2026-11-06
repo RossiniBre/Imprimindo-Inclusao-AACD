@@ -1,7 +1,6 @@
 package aacd.service;
 
 import aacd.config.ConnectionFactory;
-import aacd.dao.EmpresaDao;
 import aacd.dao.ImpressoraDao;
 import aacd.model.Impressora;
 import aacd.model.Usuario;
@@ -11,7 +10,6 @@ import java.sql.SQLException;
 
 public class DesativarImpressora {
 
-    private final EmpresaDao empresaDao = new EmpresaDao();
     private final ImpressoraDao impressoraDao = new ImpressoraDao();
     private final PermissaoImpressora permissao = new PermissaoImpressora();
 

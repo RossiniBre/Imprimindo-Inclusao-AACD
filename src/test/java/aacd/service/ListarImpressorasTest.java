@@ -33,7 +33,7 @@ class ListarImpressorasTest {
 
     private ImpressoraDao.ItemPainel painel(int id, int empresaId, String empresa) {
         return new ImpressoraDao.ItemPainel(id, empresaId, empresa, "Modelo " + id,
-                Disponibilidade.OCIOSA, true);
+                Disponibilidade.OCIOSA, true, 220, 220, 250);
     }
 
     @Test

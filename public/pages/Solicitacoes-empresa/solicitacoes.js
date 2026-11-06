@@ -118,9 +118,9 @@ function renderizarSolicitacoes(solicitacoes) {
         const status = normalizarStatus(statusOriginal);
         const criador = s.criadoPor || 'Não informado';
         const impressora = s.impressora || '';
-        const capacidade = (s.comprimentoMm && s.larguraMm && s.alturaMm)
-            ? `${s.comprimentoMm} x ${s.larguraMm} x ${s.alturaMm}`
-            : 'Não informada';
+        const dimensoes = (s.comprimentoMm && s.larguraMm && s.alturaMm)
+            ? `${s.comprimentoMm} x ${s.larguraMm} x ${s.alturaMm} mm`
+            : 'Não informadas';
         const data = s.criadoEm
             ? new Date(s.criadoEm).toLocaleString('pt-BR')
             : 'Não informada';
@@ -175,8 +175,8 @@ function renderizarSolicitacoes(solicitacoes) {
                         </p>
 
                         <p class="card-text">
-                            <strong>Capacidade:</strong>
-                            <span>${escaparHTML(capacidade)}</span>
+                            <strong>Dimensões da peça:</strong>
+                            <span>${escaparHTML(dimensoes)}</span>
                         </p>
 
                         <p class="card-text">

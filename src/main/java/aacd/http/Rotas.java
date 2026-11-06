@@ -67,7 +67,9 @@ public final class Rotas {
 
         // Solicitações
         rota(servidor, "/api/solicitacoes",
-                new SolicitacaoHandler(sessoes, new CriarSolicitacao(conteudoDao, armazenamento)));
+        new SolicitacaoHandler(sessoes,
+                new CriarSolicitacao(conteudoDao, armazenamento),
+                conteudoDao));
         rota(servidor, "/api/solicitacao/ver", new VerSolicitacaoHandler(sessoes));
         rota(servidor, "/api/solicitacao/responder", new ResponderSolicitacaoHandler(sessoes));
         rota(servidor, "/api/solicitacao/arquivo",

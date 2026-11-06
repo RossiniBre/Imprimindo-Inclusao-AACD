@@ -8,6 +8,7 @@ import aacd.dao.SolicitacaoDao;
 import aacd.model.*;
 import aacd.storage.ArmazenamentoArquivo;
 import aacd.storage.ArmazenamentoException;
+import aacd.util.ValidadorVolume;
 
 import java.io.InputStream;
 import java.sql.Connection;
@@ -77,15 +78,24 @@ public class CriarSolicitacao {
     }
 
     private int gravar(Integer funcionarioId, String nomeCriador, int impressoraId,
-                       String titulo, String descricao, int quantidade,
-                       int comprimentoMm, int larguraMm, int alturaMm,
-                       String nomeArquivo, InputStream arquivo)
+                    String titulo, String descricao, int quantidade,
+                    int comprimentoMm, int larguraMm, int alturaMm,
+                    String nomeArquivo, InputStream arquivo)
             throws SQLException, ArmazenamentoException {
 
         try (Connection conn = conexoes.abrir()) {
             Impressora impressora = impressoraDao.buscarPorId(conn, impressoraId);
             if (impressora == null || !impressora.isAtivo()) {
                 throw new IllegalArgumentException("Impressora inexistente ou inativa");
+            }
+
+            if (!ValidadorVolume.cabe(comprimentoMm, larguraMm, alturaMm,
+                    impressora.getComprimentoMm(), impressora.getLarguraMm(), impressora.getAlturaMm())) {
+                throw new IllegalArgumentException(
+                        "A peça (" + comprimentoMm + " x " + larguraMm + " x " + alturaMm + " mm) "
+                                + "não cabe no volume da impressora ("
+                                + impressora.getComprimentoMm() + " x " + impressora.getLarguraMm()
+                                + " x " + impressora.getAlturaMm() + " mm)");
             }
 
             String arquivoId = armazenamento.salvar(nomeArquivo, arquivo);

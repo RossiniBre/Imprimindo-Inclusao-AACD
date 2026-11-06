@@ -204,11 +204,11 @@ public class SolicitacaoDao {
     public record ItemLista(int id, String titulo, String status, String empresa,
                             String criadoPor, String impressora, String criadoEm,
                             String decididoEm, String finalizadoEm, String justificativa,
-                            String expiraEm) {}
+                            String expiraEm, String mongoId) {}
 
     public List<ItemLista> listar(Integer empresaId) throws SQLException {
         String sql = """
-                SELECT s.idsolicitacao_impressao AS id, s.titulo, s.status,
+                SELECT s.idsolicitacao_impressao AS id, s.titulo, s.status, s.mongo_id,
                        COALESCE(s.criado_por_nome, uc.nome) AS criado_por_nome,
                        s.data_criacao, s.data_decisao, s.data_finalizacao,
                        s.justificativa,
@@ -246,7 +246,8 @@ public class SolicitacaoDao {
                             data(rs, "data_decisao"),
                             data(rs, "data_finalizacao"),
                             rs.getString("justificativa"),
-                            expiraEm));
+                            expiraEm,
+                            rs.getString("mongo_id")));
                 }
             }
         }

@@ -1,5 +1,6 @@
 package aacd.http;
 
+import aacd.dao.ConteudoSolicitacaoDao;
 import aacd.dao.EmpresaDao;
 import aacd.dao.SolicitacaoDao;
 import aacd.dao.UsuarioDao;
@@ -31,13 +32,16 @@ public class SolicitacaoHandler implements HttpHandler {
 
     private final GerenciadorSessoes sessoes;
     private final CriarSolicitacao criarSolicitacao;
+    private final ConteudoSolicitacaoDao conteudoDao;
     private final EmpresaDao empresaDao = new EmpresaDao();
     private final SolicitacaoDao solicitacaoDao = new SolicitacaoDao();
     private final UsuarioDao usuarioDao = new UsuarioDao();
 
-    public SolicitacaoHandler(GerenciadorSessoes sessoes, CriarSolicitacao criarSolicitacao) {
+    public SolicitacaoHandler(GerenciadorSessoes sessoes, CriarSolicitacao criarSolicitacao,
+                              ConteudoSolicitacaoDao conteudoDao) {
         this.sessoes = sessoes;
         this.criarSolicitacao = criarSolicitacao;
+        this.conteudoDao = conteudoDao;
     }
 
     @Override
@@ -180,9 +184,13 @@ public class SolicitacaoHandler implements HttpHandler {
                 empresaId = empresa.getId();
             }
 
+            List<SolicitacaoDao.ItemLista> lista = solicitacaoDao.listar(empresaId);
+            Map<String, ConteudoSolicitacaoDao.Medidas> medidas = conteudoDao.buscarMedidas(
+                    lista.stream().map(SolicitacaoDao.ItemLista::mongoId).toList());
+
             List<String> itens = new ArrayList<>();
-            for (SolicitacaoDao.ItemLista s : solicitacaoDao.listar(empresaId)) {
-                itens.add(Json.objeto()
+            for (SolicitacaoDao.ItemLista s : lista) {
+                var obj = Json.objeto()
                         .campo("id", s.id())
                         .campo("titulo", s.titulo())
                         .campo("status", s.status())
@@ -193,12 +201,19 @@ public class SolicitacaoHandler implements HttpHandler {
                         .campo("decididoEm", s.decididoEm())
                         .campo("finalizadoEm", s.finalizadoEm())
                         .campo("justificativa", s.justificativa())
-                        .campo("expiraEm", s.expiraEm())
-                        .build());
+                        .campo("expiraEm", s.expiraEm());
+
+                ConteudoSolicitacaoDao.Medidas m = medidas.get(s.mongoId());
+                if (m != null) {
+                    obj = obj.campo("comprimentoMm", m.comprimentoMm())
+                            .campo("larguraMm", m.larguraMm())
+                            .campo("alturaMm", m.alturaMm());
+                }
+                itens.add(obj.build());
             }
             Http.json(ex, 200, Json.lista(itens));
 
-        } catch (SQLException e) {
+        } catch (SQLException | RuntimeException e) {
             Http.erro(ex, 500, "Erro interno.");
         }
     }

@@ -1,0 +1,34 @@
+package aacd.util;
+
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+class ValidadorVolumeTest {
+
+    @Test
+    void pecaMenorQueAImpressoraCabe() {
+        assertTrue(ValidadorVolume.cabe(100, 100, 100, 220, 220, 250));
+    }
+
+    @Test
+    void pecaIgualAoVolumeCabe() {
+        assertTrue(ValidadorVolume.cabe(220, 220, 250, 220, 220, 250));
+    }
+
+    @Test
+    void pecaQueSoCabeGirada() {
+        assertTrue(ValidadorVolume.cabe(250, 100, 100, 220, 220, 250));
+        assertTrue(ValidadorVolume.cabe(100, 250, 100, 220, 220, 250));
+    }
+
+    @Test
+    void pecaMaiorEmUmaDimensaoNaoCabe() {
+        assertFalse(ValidadorVolume.cabe(251, 100, 100, 220, 220, 250));
+    }
+
+    @Test
+    void pecaComDuasDimensoesGrandesNaoCabe() {
+        assertFalse(ValidadorVolume.cabe(250, 250, 10, 220, 220, 250));
+    }
+}

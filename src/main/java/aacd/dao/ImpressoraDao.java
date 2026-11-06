@@ -119,7 +119,8 @@ public class ImpressoraDao {
     }
 
     public record ItemPainel(int id, int empresaId, String empresa, String modelo,
-                             Disponibilidade disponibilidade, boolean ativo) {}
+                             Disponibilidade disponibilidade, boolean ativo,
+                             int comprimentoMm, int larguraMm, int alturaMm) {}
 
     public List<ItemPainel> listarPainel(Integer empresaId, Disponibilidade disponibilidade,
                                          Collection<Integer> ids) throws SQLException {
@@ -129,7 +130,8 @@ public class ImpressoraDao {
 
         StringBuilder sql = new StringBuilder("""
             SELECT i.idimpressora, i.empresa_id, ue.nome AS empresa_nome,
-                   i.modelo, i.disponibilidade, i.ativo
+                   i.modelo, i.disponibilidade, i.ativo,
+                   i.comprimento_mm, i.largura_mm, i.altura_mm
             FROM impressora i
             JOIN empresa e ON e.idempresa = i.empresa_id
             JOIN usuario ue ON ue.idusuario = e.usuario_id
@@ -167,7 +169,10 @@ public class ImpressoraDao {
                             rs.getString("empresa_nome"),
                             rs.getString("modelo"),
                             Disponibilidade.valueOf(rs.getString("disponibilidade")),
-                            rs.getBoolean("ativo")));
+                            rs.getBoolean("ativo"),
+                            rs.getInt("comprimento_mm"),
+                            rs.getInt("largura_mm"),
+                            rs.getInt("altura_mm")));
                 }
             }
         }
