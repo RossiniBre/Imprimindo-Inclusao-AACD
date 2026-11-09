@@ -50,6 +50,7 @@ public class EmpresaPerfilHandler implements HttpHandler {
                     .campo("cep", end.getCep())
                     .campo("rua", end.getRua())
                     .campo("numero", end.getNumero())
+                    .campo("complemento", end.getComplemento())   // novo
                     .campo("bairro", end.getBairro())
                     .campo("cidade", end.getCidade())
                     .campo("uf", end.getUf())
@@ -58,6 +59,7 @@ public class EmpresaPerfilHandler implements HttpHandler {
             String json = Json.objeto()
                     .campo("nome", usuario.getNome())
                     .campo("email", empresa.getEmail())
+                    .campo("responsavel", empresa.getResponsavel())  // novo
                     .campo("telefone", empresa.getTelefone())
                     .campo("cnpj", empresa.getCnpj())
                     .campoJson("endereco", endereco)

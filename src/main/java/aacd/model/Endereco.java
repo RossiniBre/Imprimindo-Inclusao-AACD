@@ -10,15 +10,22 @@ public class Endereco {
     private final String bairro;
     private final String cidade;
     private final String uf;
+    private final String complemento;
 
-    public Endereco(String cep, String rua, String numero,
+    public Endereco(String cep, String rua, String numero, String complemento,
                     String bairro, String cidade, String uf) {
         this.cep = normalizarCep(cep);
         this.rua = obrigatorio(rua, "Rua");
         this.numero = obrigatorio(numero, "Número");
+        this.complemento = complemento == null ? "" : complemento.trim();
         this.bairro = obrigatorio(bairro, "Bairro");
         this.cidade = obrigatorio(cidade, "Cidade");
         this.uf = validarUf(uf);
+    }
+
+    public Endereco(String cep, String rua, String numero,
+                    String bairro, String cidade, String uf) {
+        this(cep, rua, numero, "", bairro, cidade, uf);
     }
 
     private static String normalizarCep(String cep) {
@@ -55,4 +62,5 @@ public class Endereco {
     public String getBairro() { return bairro; }
     public String getCidade() { return cidade; }
     public String getUf() { return uf; }
+    public String getComplemento() { return complemento; }
 }

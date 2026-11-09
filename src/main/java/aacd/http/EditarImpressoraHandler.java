@@ -1,6 +1,7 @@
 package aacd.http;
 
 import aacd.dao.UsuarioDao;
+import aacd.model.Disponibilidade;
 import aacd.model.Material;
 import aacd.model.Sessao;
 import aacd.model.Usuario;
@@ -12,6 +13,7 @@ import com.sun.net.httpserver.HttpHandler;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -48,12 +50,18 @@ public class EditarImpressoraHandler implements HttpHandler {
                 return;
             }
             int impressoraId = Http.lerId(campos, "id", 0);
-            
+
+            // null = "não alterar"
             Set<Material> materiais = campos.containsKey("materiais")
                     ? Http.lerMateriais(campos.get("materiais"))
                     : null;
+            Integer comprimentoMm = lerMedidaOpcional(campos, "comprimentoMm");
+            Integer larguraMm = lerMedidaOpcional(campos, "larguraMm");
+            Integer alturaMm = lerMedidaOpcional(campos, "alturaMm");
+            Disponibilidade disponibilidade = lerDisponibilidadeOpcional(campos.get("disponibilidade"));
 
-            editarImpressora.executar(ator, impressoraId, campos.get("modelo"), materiais);
+            editarImpressora.executar(ator, impressoraId, campos.get("modelo"), materiais,
+                    comprimentoMm, larguraMm, alturaMm, disponibilidade);
             Http.json(ex, 200, Json.objeto().campo("mensagem", "Impressora atualizada.").build());
 
         } catch (IllegalStateException e) {
@@ -63,5 +71,31 @@ public class EditarImpressoraHandler implements HttpHandler {
         } catch (SQLException | MongoException e) {
             Http.erro(ex, 500, "Erro interno.");
         }
+    }
+
+    /** Ausente ou vazio -> null (não alterar). */
+    private static Disponibilidade lerDisponibilidadeOpcional(String texto) {
+        if (texto == null || texto.isBlank()) return null;
+        try {
+            return Disponibilidade.valueOf(texto.trim().toUpperCase(Locale.ROOT));
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Disponibilidade inválida: " + texto.trim());
+        }
+    }
+
+    /** Ausente ou vazio -> null (não alterar). Presente -> inteiro maior que zero. */
+    private static Integer lerMedidaOpcional(Map<String, String> campos, String nome) {
+        String texto = campos.get(nome);
+        if (texto == null || texto.isBlank()) return null;
+        int valor;
+        try {
+            valor = Integer.parseInt(texto.trim());
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Valor inválido em " + nome + ".");
+        }
+        if (valor <= 0) {
+            throw new IllegalArgumentException("O campo " + nome + " deve ser maior que zero.");
+        }
+        return valor;
     }
 }

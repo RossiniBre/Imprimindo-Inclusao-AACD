@@ -100,3 +100,14 @@ main {
 .card .d-flex.gap-2 {
     flex-wrap: wrap;
 }
+
+.ponto-cinza {
+    width: 14px;
+    height: 14px;
+    background-color: var(--cinza);
+}
+
+.card-desativada {
+    border-color: var(--cinza);
+    opacity: .75;
+}

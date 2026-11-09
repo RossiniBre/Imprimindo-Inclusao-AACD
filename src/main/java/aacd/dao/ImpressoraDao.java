@@ -82,15 +82,33 @@ public class ImpressoraDao {
     }
 
     public List<Impressora> listarPorEmpresa(int empresaId) throws SQLException {
-        String sql = "SELECT idimpressora, empresa_id, modelo, disponibilidade, ativo, "
-                + "comprimento_mm, largura_mm, altura_mm "
-                + "FROM impressora WHERE empresa_id = ? ORDER BY idimpressora";
-
+        String sql = "SELECT * FROM impressora WHERE empresa_id = ? AND ativo = TRUE";
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-
             ps.setInt(1, empresaId);
+            try (ResultSet rs = ps.executeQuery()) {
+                List<Impressora> lista = new ArrayList<>();
+                while (rs.next()) {
+                    lista.add(new Impressora(
+                            rs.getInt("idimpressora"),
+                            rs.getInt("empresa_id"),
+                            rs.getString("modelo"),
+                            Disponibilidade.valueOf(rs.getString("disponibilidade")),
+                            rs.getBoolean("ativo"),
+                            rs.getInt("comprimento_mm"),
+                            rs.getInt("largura_mm"),
+                            rs.getInt("altura_mm")));
+                }
+                return lista;
+            }
+        }
+    }
 
+    public List<Impressora> listarTodasPorEmpresa(int empresaId) throws SQLException {
+        String sql = "SELECT * FROM impressora WHERE empresa_id = ? ORDER BY modelo, idimpressora";
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, empresaId);
             try (ResultSet rs = ps.executeQuery()) {
                 List<Impressora> lista = new ArrayList<>();
                 while (rs.next()) {
@@ -177,5 +195,32 @@ public class ImpressoraDao {
             }
         }
         return lista;
+    }
+
+        public void atualizarDados(Connection conn, int id, String modelo,
+                               int comprimentoMm, int larguraMm, int alturaMm,
+                               Disponibilidade disponibilidade) throws SQLException {
+        String sql = "UPDATE impressora SET modelo = ?, comprimento_mm = ?, largura_mm = ?, "
+                + "altura_mm = ?, disponibilidade = ? WHERE idimpressora = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, modelo);
+            ps.setInt(2, comprimentoMm);
+            ps.setInt(3, larguraMm);
+            ps.setInt(4, alturaMm);
+            ps.setString(5, disponibilidade.name());
+            ps.setInt(6, id);
+            ps.executeUpdate();
+        }
+    }
+
+    public boolean desativar(int id, int empresaId) throws SQLException {
+        String sql = "UPDATE impressora SET ativo = FALSE "
+                + "WHERE idimpressora = ? AND empresa_id = ? AND ativo = TRUE";
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ps.setInt(2, empresaId);
+            return ps.executeUpdate() > 0;
+        }
     }
 }

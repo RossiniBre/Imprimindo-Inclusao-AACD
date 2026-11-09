@@ -3,7 +3,9 @@ package aacd.http;
 import aacd.dao.EmpresaDao;
 import aacd.dao.ImpressoraDao;
 import aacd.dao.ImpressoraMateriaisDao;
+import aacd.dao.SolicitacaoAtivaDao;
 import aacd.dao.UsuarioDao;
+import aacd.model.Disponibilidade;
 import aacd.model.Empresa;
 import aacd.model.Impressora;
 import aacd.model.Sessao;
@@ -34,6 +36,7 @@ public class ImpressoraHandler implements HttpHandler {
     private final EmpresaDao empresaDao = new EmpresaDao();
     private final ImpressoraDao impressoraDao = new ImpressoraDao();
     private final ImpressoraMateriaisDao materiaisDao = new ImpressoraMateriaisDao();
+    private final SolicitacaoAtivaDao solicitacaoDao = new SolicitacaoAtivaDao();
 
     public ImpressoraHandler(GerenciadorSessoes sessoes, UsuarioDao usuarioDao,
                              CadastrarImpressora cadastro) {
@@ -56,6 +59,32 @@ public class ImpressoraHandler implements HttpHandler {
         }
     }
 
+    static int lerInteiro(Map<String, String> campos, String nome) {
+        String texto = campos.get(nome);
+        if (texto == null || texto.isBlank()) {
+            throw new IllegalArgumentException("Campo obrigatório: " + nome + ".");
+        }
+        int valor;
+        try {
+            valor = Integer.parseInt(texto.trim());
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Valor inválido em " + nome + ".");
+        }
+        if (valor <= 0) {
+            throw new IllegalArgumentException("O campo " + nome + " deve ser maior que zero.");
+        }
+        return valor;
+    }
+
+    static Disponibilidade lerDisponibilidadeOpcional(String texto) {
+        if (texto == null || texto.isBlank()) return null;   // null = OCIOSA
+        try {
+            return Disponibilidade.valueOf(texto.trim().toUpperCase(Locale.ROOT));
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Disponibilidade inválida: " + texto.trim());
+        }
+    }
+
     private void cadastrar(HttpExchange ex) throws IOException {
         Optional<Sessao> sessao = Http.exigirPerfil(ex, sessoes, "EMPRESA");
         if (sessao.isEmpty()) {
@@ -75,9 +104,14 @@ public class ImpressoraHandler implements HttpHandler {
                 return;
             }
 
+            Disponibilidade disponibilidade = lerDisponibilidadeOpcional(campos.get("disponibilidade"));
+
             int id = cadastro.executar(ator, campos.get("modelo"),
                     lerMateriais(campos.get("materiais")),
-                    220, 220, 250);
+                    lerInteiro(campos, "comprimentoMm"),
+                    lerInteiro(campos, "larguraMm"),
+                    lerInteiro(campos, "alturaMm"),
+                    disponibilidade);
             Http.json(ex, 201, Json.objeto().campo("id", id).build());
 
         } catch (IllegalStateException e) {
@@ -85,6 +119,7 @@ public class ImpressoraHandler implements HttpHandler {
         } catch (IllegalArgumentException e) {
             Http.erro(ex, 400, e.getMessage());
         } catch (SQLException e) {
+            e.printStackTrace();
             Http.erro(ex, 500, "Erro interno.");
         } catch (MongoException e) {
             e.printStackTrace();
@@ -105,17 +140,22 @@ public class ImpressoraHandler implements HttpHandler {
                 return;
             }
 
-            List<Impressora> impressoras = impressoraDao.listarPorEmpresa(empresa.getId());
+            List<Impressora> impressoras = impressoraDao.listarTodasPorEmpresa(empresa.getId());
             List<Integer> ids = impressoras.stream().map(Impressora::getId).toList();
             Map<Integer, Set<Material>> materiais = materiaisDao.buscarVarias(ids);
+            Map<Integer, List<SolicitacaoAtivaDao.PedidoAtivo>> pedidos =
+                    solicitacaoDao.buscarPorImpressoras(ids);
 
             List<String> itens = new ArrayList<>();
             for (Impressora i : impressoras) {
-                itens.add(paraJson(i, materiais.getOrDefault(i.getId(), Set.of())));
+                itens.add(paraJson(i,
+                        materiais.getOrDefault(i.getId(), Set.of()),
+                        pedidos.getOrDefault(i.getId(), List.of())));
             }
             Http.json(ex, 200, Json.lista(itens));
 
         } catch (SQLException | MongoException e) {
+            e.printStackTrace();
             Http.erro(ex, 500, "Erro interno.");
         }
     }
@@ -138,17 +178,31 @@ public class ImpressoraHandler implements HttpHandler {
     }
 
     public static String paraJson(Impressora i, Set<Material> materiais) {
-        List<String> itensMateriais = new ArrayList<>();
-        for (Material m : materiais) {
-            itensMateriais.add(Json.objeto()
-                    .campo("codigo", m.name())
-                    .campo("rotulo", m.getRotulo())
-                    .build());
-        }
+        return paraJson(i, materiais, List.of());
+    }
 
-        String base = Json.objeto()
-                .campo("id", i.getId())
-                .campo("modelo", i.getModelo())
+    public static String paraJson(Impressora i, Set<Material> materiais,
+                List<SolicitacaoAtivaDao.PedidoAtivo> pedidos) {
+            List<String> itensMateriais = new ArrayList<>();
+            for (Material m : materiais) {
+                itensMateriais.add(Json.objeto()
+                        .campo("codigo", m.name())
+                        .campo("rotulo", m.getRotulo())
+                        .build());
+            }
+
+            List<String> itensPedidos = new ArrayList<>();
+            for (SolicitacaoAtivaDao.PedidoAtivo p : pedidos) {
+                itensPedidos.add(Json.objeto()
+                        .campo("id", p.id())
+                        .campo("titulo", p.titulo())
+                        .campo("solicitante", p.solicitante() == null ? "" : p.solicitante())
+                        .build());
+            }
+
+            String base = Json.objeto()
+                    .campo("id", i.getId())
+                    .campo("modelo", i.getModelo())
                 .campo("disponibilidade", i.getDisponibilidade().name())
                 .campo("ativo", i.isAtivo())
                 .campo("comprimentoMm", i.getComprimentoMm())
@@ -157,6 +211,7 @@ public class ImpressoraHandler implements HttpHandler {
                 .build();
 
         return base.substring(0, base.lastIndexOf('}'))
-                + ",\"materiais\":" + Json.lista(itensMateriais) + "}";
+                + ",\"materiais\":" + Json.lista(itensMateriais)
+                + ",\"solicitacoesAtivas\":" + Json.lista(itensPedidos) + "}";
     }
 }

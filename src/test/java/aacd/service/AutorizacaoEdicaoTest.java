@@ -21,10 +21,10 @@ class AutorizacaoEdicaoTest {
         );
     }
 
-    private void editarEmpresa(Usuario ator) throws SQLException {
+        private void editarEmpresa(Usuario ator) throws SQLException {
         new EditarEmpresa().executar(
-                ator, "N", "a@b.com", "11999999999",
-                "01310100", "Avenida Paulista", "1000",
+                ator, "N", "a@b.com", "Responsável", "11999999999",
+                "01310100", "Avenida Paulista", "1000", "Sala 1",
                 "Bela Vista", "São Paulo", "SP"
         );
     }

@@ -40,10 +40,17 @@ export const api = {
   login:   (identificador, senha) => requisitar('POST', '/api/login', { identificador, senha }),
   logout:  () => requisitar('POST', '/api/logout'),
   eu:      () => requisitar('GET', '/api/me'),
+  perfilEmpresa: () => requisitar('GET', '/api/empresa/perfil'),
+  editarEmpresa: ({ logradouro, ...resto }) =>
+    requisitar('POST', '/api/empresa/editar', { ...resto, rua: logradouro }),
   editarNome: (nome) => requisitar('POST', '/api/usuario/nome', { nome }),
   esqueciSenha: (email) => requisitar('POST', '/api/esqueci-senha', { email }),
   cadastrarEmpresa:  (dados) => requisitar('POST', '/api/empresas', dados),
   cadastrarImpressora: (dados) => requisitar('POST', '/api/impressoras', dados),
+  impressoras: () => requisitar('GET', '/api/impressoras'),
+  editarImpressora: (dados) => requisitar('POST', '/api/impressora/editar', dados),
+  removerImpressora: (id) => requisitar('POST', '/api/impressora/remover', { id }),
+  alterarAtivoImpressora: (id, ativo) => requisitar('POST', '/api/impressora/ativo', { id, ativo }),
 
   // Funcionários (só o admin)
   funcionarios: () => requisitar('GET', '/api/funcionarios'),
@@ -56,7 +63,7 @@ export const api = {
   solicitacoes: () => requisitar('GET', '/api/solicitacoes'),
   verSolicitacao: (id) => requisitar('GET', `/api/solicitacao/ver?id=${encodeURIComponent(id)}`),
   cancelarSolicitacao: (id, justificativa) =>
-  requisitar('POST', '/api/solicitacao/cancelar', justificativa ? { id, justificativa } : { id }),
+    requisitar('POST', '/api/solicitacao/cancelar', justificativa ? { id, justificativa } : { id }),
   excluirSolicitacao: (id) => requisitar('POST', '/api/solicitacao/excluir', { id }),
   editarNomeUsuario: (dados) => requisitar('POST', '/api/usuario/nome', dados),
   editarIdentificadorUsuario: (dados) => requisitar('POST', '/api/usuario/identificador', dados),

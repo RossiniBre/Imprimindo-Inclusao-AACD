@@ -11,6 +11,7 @@ import { estatisticas, recentes } from '../public/pages/minha-conta/minha-conta.
 
 const valido = {
   responsavel: 'Carla Souza',
+  email: 'contato@acme.com',
   telefone: '(11) 98765-4321',
   cep: '01310-100',
   uf: 'SP',
@@ -100,13 +101,13 @@ describe('minha conta (empresa): validação do formulário', () => {
     expect(validar({ ...valido, cep: '' })).toHaveProperty('cep')
   })
 
-  it('aponta cada campo obrigatório vazio', () => {
+    it('aponta cada campo obrigatório vazio', () => {
     const erros = validar({
-      responsavel: '', telefone: '', cep: '', uf: 'SP',
+      responsavel: '', email: '', telefone: '', cep: '', uf: 'SP',
       cidade: '', bairro: '', logradouro: '', numero: '', complemento: '',
     })
     expect(Object.keys(erros).sort()).toEqual([
-      'bairro', 'cep', 'cidade', 'logradouro', 'numero', 'responsavel', 'telefone',
+      'bairro', 'cep', 'cidade', 'email', 'logradouro', 'numero', 'responsavel', 'telefone',
     ])
   })
 
@@ -141,3 +142,8 @@ describe('minha conta (empresa): pedidos', () => {
     expect(recentes([])).toEqual([])
   })
 })
+
+  it('recusa e-mail inválido', () => {
+    expect(validar({ ...valido, email: '' })).toHaveProperty('email')
+    expect(validar({ ...valido, email: 'sem-arroba' })).toHaveProperty('email')
+  })

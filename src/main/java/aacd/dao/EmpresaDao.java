@@ -16,22 +16,24 @@ import java.util.List;
 public class EmpresaDao {
 
     public int inserir(Connection conn, Empresa empresa) throws SQLException {
-        String sql = "INSERT INTO empresa (usuario_id, email, cnpj, telefone, cep, rua, numero, bairro, cidade, uf) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO empresa (usuario_id, email, responsavel, cnpj, telefone, "
+                + "cep, rua, numero, complemento, bairro, cidade, uf) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, empresa.getUsuarioId());
             ps.setString(2, empresa.getEmail());
-            ps.setString(3, empresa.getCnpj());
-            ps.setString(4, empresa.getTelefone());
+            ps.setString(3, empresa.getResponsavel());
+            ps.setString(4, empresa.getCnpj());
+            ps.setString(5, empresa.getTelefone());
             Endereco endereco = empresa.getEndereco();
-            ps.setString(5, endereco.getCep());
-            ps.setString(6, endereco.getRua());
-            ps.setString(7, endereco.getNumero());
-            ps.setString(8, endereco.getBairro());
-            ps.setString(9, endereco.getCidade());
-            ps.setString(10, endereco.getUf());
-            ps.executeUpdate();
+            ps.setString(6, endereco.getCep());
+            ps.setString(7, endereco.getRua());
+            ps.setString(8, endereco.getNumero());
+            ps.setString(9, endereco.getComplemento());
+            ps.setString(10, endereco.getBairro());
+            ps.setString(11, endereco.getCidade());
+            ps.setString(12, endereco.getUf());
 
             try (ResultSet rs = ps.getGeneratedKeys()) {
                 if (rs.next()) {
@@ -59,7 +61,8 @@ public class EmpresaDao {
     }
 
     public Empresa buscarPorUsuarioId(int usuarioId) throws SQLException {
-        String sql = "SELECT idempresa, usuario_id, email, telefone, cnpj, cep, rua, numero, bairro, cidade, uf "
+        String sql = "SELECT idempresa, usuario_id, email, responsavel, telefone, cnpj, "
+                + "cep, rua, numero, complemento, bairro, cidade, uf "
                 + "FROM empresa WHERE usuario_id = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -73,6 +76,7 @@ public class EmpresaDao {
                             rs.getString("cep"),
                             rs.getString("rua"),
                             rs.getString("numero"),
+                            rs.getString("complemento"),
                             rs.getString("bairro"),
                             rs.getString("cidade"),
                             rs.getString("uf"));
@@ -81,6 +85,7 @@ public class EmpresaDao {
                             rs.getInt("idempresa"),
                             rs.getInt("usuario_id"),
                             rs.getString("email"),
+                            rs.getString("responsavel"),
                             rs.getString("telefone"),
                             rs.getString("cnpj"),
                             endereco);
@@ -106,27 +111,30 @@ public class EmpresaDao {
     }
 
     public boolean atualizar(Connection conn, Empresa empresa) throws SQLException {
-        String sql = "UPDATE empresa SET email = ?, telefone = ?, cep = ?, rua = ?, numero = ?, bairro = ?, cidade = ?, uf = ? "
+        String sql = "UPDATE empresa SET email = ?, responsavel = ?, telefone = ?, cep = ?, rua = ?, "
+                + "numero = ?, complemento = ?, bairro = ?, cidade = ?, uf = ? "
                 + "WHERE usuario_id = ?";
 
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, empresa.getEmail());
-            ps.setString(2, empresa.getTelefone());
+            ps.setString(2, empresa.getResponsavel());
+            ps.setString(3, empresa.getTelefone());
             Endereco endereco = empresa.getEndereco();
-            ps.setString(3, endereco.getCep());
-            ps.setString(4, endereco.getRua());
-            ps.setString(5, endereco.getNumero());
-            ps.setString(6, endereco.getBairro());
-            ps.setString(7, endereco.getCidade());
-            ps.setString(8, endereco.getUf());
-            ps.setInt(9, empresa.getUsuarioId());
+            ps.setString(4, endereco.getCep());
+            ps.setString(5, endereco.getRua());
+            ps.setString(6, endereco.getNumero());
+            ps.setString(7, endereco.getComplemento());
+            ps.setString(8, endereco.getBairro());
+            ps.setString(9, endereco.getCidade());
+            ps.setString(10, endereco.getUf());
+            ps.setInt(11, empresa.getUsuarioId());
             return ps.executeUpdate() > 0;
         }
     }
 
     public List<EmpresaResumo> listarAtivas() throws SQLException {
         String sql = "SELECT e.idempresa, u.nome, e.email, e.telefone, "
-                + "e.cep, e.rua, e.numero, e.bairro, e.cidade, e.uf "
+                + "e.cep, e.rua, e.numero, e.complemento, e.bairro, e.cidade, e.uf "
                 + "FROM empresa e JOIN usuario u ON u.idusuario = e.usuario_id "
                 + "WHERE u.ativo = TRUE ORDER BY u.nome";
 
@@ -140,6 +148,7 @@ public class EmpresaDao {
                         rs.getString("cep"),
                         rs.getString("rua"),
                         rs.getString("numero"),
+                        rs.getString("complemento"),
                         rs.getString("bairro"),
                         rs.getString("cidade"),
                         rs.getString("uf"));

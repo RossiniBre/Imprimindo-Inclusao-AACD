@@ -56,19 +56,13 @@
           <!-- ===== Dados da empresa ===== -->
           <div class="cartao">
             <h2 class="cartao__titulo">Dados da empresa</h2>
-            <p class="cartao__nota cartao__nota--abaixo" id="nota-dados">A razão social, o CNPJ e o e-mail são validados pela AACD no cadastro e não podem ser alterados aqui.</p>
+            <p class="cartao__nota cartao__nota--abaixo" id="nota-dados">O CNPJ é validado pela AACD no cadastro e não pode ser alterado aqui.</p>
 
             <div class="campo__linha">
               <div class="campo">
-                <label for="dado-razao">Razão social</label>
-                <div class="campo__travado">
-                  <input type="text" id="dado-razao" disabled>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <rect x="4" y="10" width="16" height="11" rx="2"/>
-                    <path d="M8 10V7a4 4 0 0 1 8 0v3"/>
-                  </svg>
-                </div>
-                <p class="campo__erro" aria-hidden="true"></p>
+                <label for="dado-nome">Razão social</label>
+                <input type="text" id="dado-nome" name="nome" maxlength="100" autocomplete="organization">
+                <p class="campo__erro" id="erro-nome" aria-live="polite"></p>
               </div>
               <div class="campo">
                 <label for="dado-cnpj">CNPJ</label>
@@ -85,14 +79,8 @@
 
             <div class="campo">
               <label for="dado-email">E-mail corporativo</label>
-              <div class="campo__travado">
-                <input type="email" id="dado-email" disabled>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <rect x="4" y="10" width="16" height="11" rx="2"/>
-                  <path d="M8 10V7a4 4 0 0 1 8 0v3"/>
-                </svg>
-              </div>
-              <p class="campo__erro" aria-hidden="true"></p>
+              <input type="email" id="dado-email" name="email" autocomplete="email">
+              <p class="campo__erro" id="erro-email" aria-live="polite"></p>
             </div>
 
             <div class="campo__linha">

@@ -46,9 +46,9 @@ public class EditarEmpresaHandler implements HttpHandler {
             }
 
             editarEmpresa.executar(ator,
-                    campos.get("nome"), campos.get("email"), campos.get("telefone"),
-                    campos.get("cep"), campos.get("rua"), campos.get("numero"),
-                    campos.get("bairro"), campos.get("cidade"), campos.get("uf"));
+                campos.get("nome"), campos.get("email"), campos.get("responsavel"), campos.get("telefone"),
+                campos.get("cep"), campos.get("rua"), campos.get("numero"), campos.get("complemento"),
+                campos.get("bairro"), campos.get("cidade"), campos.get("uf"));
 
             Http.json(ex, 200, Json.objeto().campo("mensagem", "Dados atualizados.").build());
 

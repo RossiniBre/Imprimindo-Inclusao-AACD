@@ -83,6 +83,13 @@ public class Impressora {
         materiais.addAll(novos);
     }
 
+    public void setDisponibilidade(Disponibilidade disponibilidade) {
+        if (disponibilidade == null) {
+            throw new IllegalArgumentException("Disponibilidade não pode ser nula");
+        }
+        this.disponibilidade = disponibilidade;
+    }
+
     public void setComprimentoMm(int valor) { this.comprimentoMm = medidaValida(valor, "Comprimento"); }
     public void setLarguraMm(int valor) { this.larguraMm = medidaValida(valor, "Largura"); }
     public void setAlturaMm(int valor) { this.alturaMm = medidaValida(valor, "Altura"); }

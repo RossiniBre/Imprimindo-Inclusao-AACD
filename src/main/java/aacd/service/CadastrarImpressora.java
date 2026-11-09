@@ -3,6 +3,7 @@ package aacd.service;
 import aacd.config.ConnectionFactory;
 import aacd.dao.EmpresaDao;
 import aacd.dao.ImpressoraDao;
+import aacd.model.Disponibilidade;
 import aacd.model.Empresa;
 import aacd.model.Impressora;
 import aacd.model.Usuario;
@@ -37,6 +38,12 @@ public class CadastrarImpressora {
 
     public int executar(Usuario ator, String modelo, Set<Material> materiais,
                         int comprimentoMm, int larguraMm, int alturaMm) throws SQLException {
+        return executar(ator, modelo, materiais, comprimentoMm, larguraMm, alturaMm, null);
+    }
+
+    public int executar(Usuario ator, String modelo, Set<Material> materiais,
+                        int comprimentoMm, int larguraMm, int alturaMm,
+                        Disponibilidade disponibilidade) throws SQLException {
         if (ator == null || !"EMPRESA".equals(ator.getPerfil()) || !ator.isAtivo()) {
             throw new IllegalStateException("Apenas empresas podem cadastrar impressoras!");
         }
@@ -47,6 +54,9 @@ public class CadastrarImpressora {
         }
 
         Impressora impressora = new Impressora(empresa.getId(), modelo, comprimentoMm, larguraMm, alturaMm);
+        if (disponibilidade != null) {
+            impressora.setDisponibilidade(disponibilidade);
+        }
         impressora.setMateriais(materiais);   // recusa nulo e vazio antes de tocar no banco
 
         int id;

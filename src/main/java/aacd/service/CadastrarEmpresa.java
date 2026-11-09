@@ -18,9 +18,9 @@ public class CadastrarEmpresa {
     private final EmpresaDao empresaDao = new EmpresaDao();
 
     public void executar(String nome, String cnpj, String senha,
-                         String email, String telefone,
-                         String cep, String rua, String numero,
-                         String bairro, String cidade, String uf) throws SQLException{
+                     String email, String responsavel, String telefone,
+                     String cep, String rua, String numero, String complemento,
+                     String bairro, String cidade, String uf) throws SQLException {
         if (senha == null || senha.isBlank()) {
             throw new IllegalArgumentException("Senha não pode estar vazia");
         }
@@ -32,7 +32,7 @@ public class CadastrarEmpresa {
         String emailNormalizado = EmailValidador.normalizar(email);
 
         Usuario novo = new Usuario(nome, cnpj, Senha.gerarHash(senha), "EMPRESA");
-        Endereco endereco = new Endereco(cep, rua, numero, bairro, cidade, uf);
+        Endereco endereco = new Endereco(cep, rua, numero, complemento, bairro, cidade, uf);
 
         if (usuarioDao.buscarPorIdentificador(novo.getIdentificador()) != null) {
             throw new IllegalStateException("CNPJ já cadastrado!");
@@ -45,7 +45,7 @@ public class CadastrarEmpresa {
             conn.setAutoCommit(false);
             try {
                 int usuarioId = usuarioDao.inserir(conn, novo);
-                empresaDao.inserir(conn, new Empresa(usuarioId, emailNormalizado, telefone, cnpj, endereco));
+                empresaDao.inserir(conn, new Empresa(usuarioId, emailNormalizado, responsavel, telefone, cnpj, endereco));
                 conn.commit();
             } catch (SQLException | RuntimeException e) {
                 conn.rollback();

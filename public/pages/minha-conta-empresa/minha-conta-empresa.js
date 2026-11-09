@@ -50,13 +50,12 @@ export function rotuloCadastro(status) {
   }
 }
 
-// Campos que a empresa edita: chave no formulário -> chave no back-end.
+// Campos que a empresa edita
 const EDITAVEIS = [
-  'responsavel', 'telefone',
+  'nome', 'email', 'responsavel', 'telefone',
   'cep', 'uf', 'cidade', 'bairro', 'logradouro', 'numero', 'complemento',
 ];
 
-// Lê do objeto "eu" aceitando mais de um nome possível para o campo.
 function valorDe(eu, ...chaves) {
   for (const c of chaves) if (eu?.[c] != null) return String(eu[c]);
   return '';
@@ -72,6 +71,8 @@ export function validar(v) {
   if (v.bairro === '') erros.bairro = 'Digite o bairro.';
   if (v.logradouro === '') erros.logradouro = 'Digite o logradouro.';
   if (v.numero === '') erros.numero = 'Digite o número.';
+  if (v.nome === '') erros.nome = 'Digite a razão social.';
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.email)) erros.email = 'Digite um e-mail válido.';
   return erros;
 }
 
@@ -98,9 +99,7 @@ export function iniciar(container) {
 
   const form = q('#form-dados');
   const travados = {
-    razao: q('#dado-razao'),
     cnpj: q('#dado-cnpj'),
-    email: q('#dado-email'),
   };
   const campos = {};
   for (const nome of EDITAVEIS) campos[nome] = q(`#dado-${nome}`);
@@ -131,6 +130,8 @@ export function iniciar(container) {
 
   function valoresSalvos() {
     return {
+      nome: valorDe(eu, 'razaoSocial', 'razao', 'nome'),
+      email: valorDe(eu, 'email'),
       responsavel: valorDe(eu, 'responsavel', 'nomeResponsavel'),
       telefone: mascaraTelefone(valorDe(eu, 'telefone')),
       cep: mascaraCep(valorDe(eu, 'cep')),
@@ -155,7 +156,7 @@ export function iniciar(container) {
 
   function limparErros() {
     for (const nome of EDITAVEIS) {
-      erros[nome].textContent = '';
+      if (erros[nome]) erros[nome].textContent = '';
       campos[nome].classList.remove('com-erro');
     }
     erroForm.hidden = true;
@@ -176,10 +177,7 @@ export function iniciar(container) {
   }
 
   function preencherFormulario() {
-    travados.razao.value = valorDe(eu, 'razaoSocial', 'razao', 'nome');
     travados.cnpj.value = formatarCnpj(valorDe(eu, 'cnpj'));
-    travados.email.value = valorDe(eu, 'email');
-
     const salvo = valoresSalvos();
     for (const nome of EDITAVEIS) campos[nome].value = salvo[nome];
 
@@ -253,6 +251,20 @@ export function iniciar(container) {
       mostrarAviso('Não foi possível carregar os pedidos. Os dados da empresa continuam disponíveis.');
     }
 
+    try {
+      const p = await api.perfilEmpresa();
+      if (p.status === 401) { location.hash = '#/login'; return; }
+      if (!p.ok) {
+        mostrarAviso(p.corpo?.erro ?? 'Não foi possível carregar os dados da empresa.');
+      } else {
+        // O back devolve o endereço aninhado e usa "rua"; o form usa "logradouro".
+        const { endereco = {}, ...resto } = p.corpo ?? {};
+        eu = { ...eu, ...resto, ...endereco, logradouro: endereco.rua };
+      }
+    } catch {
+      mostrarAviso('Sem conexão com o servidor. Recarregue a página para tentar de novo.');
+    }
+
     preencherResumo();
     preencherFormulario();
     preencherPedidos();
@@ -317,6 +329,7 @@ export function iniciar(container) {
       if (!r.ok) throw r;
 
       eu = { ...eu, ...v };
+      preencherResumo(); 
       preencherFormulario();
       sucessoForm.textContent = 'Alterações salvas.';
       sucessoForm.hidden = false;

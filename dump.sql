@@ -42,11 +42,13 @@ CREATE TABLE IF NOT EXISTS `imprimindo_inclusao`.`empresa` (
   `idempresa` INT NOT NULL AUTO_INCREMENT,
   `usuario_id` INT NOT NULL,
   `email` VARCHAR(50) UNIQUE NOT NULL,
+  `responsavel` VARCHAR(45) NOT NULL,
   `cnpj` CHAR(14) NOT NULL,
   `telefone` VARCHAR(11) NOT NULL,
     `cep` char(8) NOT NULL,
     `rua` varchar(150) NOT NULL,
     `numero` varchar(10) NOT NULL,
+    `complemento` VARCHAR(100) NOT NULL,
     `bairro` varchar(100) NOT NULL,
     `cidade` varchar(100) NOT NULL,
     `uf` char(2) NOT NULL,
@@ -147,6 +149,7 @@ CREATE TABLE IF NOT EXISTS `imprimindo_inclusao`.`solicitacao_impressao` (
     INDEX `fk_solicitacao_criado_por` (`criado_por` ASC) VISIBLE,
     INDEX `fk_solicitacao_impressora` (`impressora_id` ASC) VISIBLE,
     INDEX `fk_solicitacao_cancelado_por` (`cancelado_por` ASC) VISIBLE,
+    INDEX `idx_solicitacao_impressora_status` (`impressora_id`, `status`),
     CONSTRAINT `fk_solicitacao_empresa`
     FOREIGN KEY (`empresa_id`) REFERENCES `imprimindo_inclusao`.`empresa` (`idempresa`),
     CONSTRAINT `fk_solicitacao_criado_por`

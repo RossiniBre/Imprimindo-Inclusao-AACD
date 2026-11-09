@@ -54,6 +54,8 @@ public final class Rotas {
                 new ImpressoraHandler(sessoes, usuarioDao, new CadastrarImpressora()));
         rota(servidor, "/api/impressora/editar", new EditarImpressoraHandler(sessoes));
         rota(servidor, "/api/impressoras/painel", new ImpressoraPainelHandler(sessoes));
+        rota(servidor, "/api/impressora/remover", new RemoverImpressoraHandler(sessoes));
+        rota(servidor, "/api/impressora/ativo", new AlterarAtivoImpressoraHandler(sessoes));
 
         // Usuários e funcionários
         rota(servidor, "/api/usuario/nome", new EditarNomeHandler(sessoes));

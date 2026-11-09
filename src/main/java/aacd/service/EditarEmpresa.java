@@ -17,8 +17,8 @@ public class EditarEmpresa {
     private final UsuarioDao usuarioDao = new UsuarioDao();
     private final EmpresaDao empresaDao = new EmpresaDao();
 
-    public void executar(Usuario ator, String nome, String email, String telefone,
-                         String cep, String rua, String numero,
+    public void executar(Usuario ator, String nome, String email, String responsavel, String telefone,
+                         String cep, String rua, String numero, String complemento,
                          String bairro, String cidade, String uf)
             throws SQLException {
 
@@ -33,7 +33,7 @@ public class EditarEmpresa {
             throw new IllegalArgumentException("Empresa não encontrada!");
         }
 
-        String erroEmail = EmailValidador.validar(email);
+        String erroEmail = EmailValidador.validarLivre(email);
         if (erroEmail != null) {
             throw new IllegalArgumentException(erroEmail);
         }
@@ -41,8 +41,9 @@ public class EditarEmpresa {
 
         ator.setNome(nome);
         empresa.setEmail(emailNormalizado);
+        empresa.setResponsavel(responsavel);
         empresa.setTelefone(telefone);
-        empresa.setEndereco(new Endereco(cep, rua, numero, bairro, cidade, uf));
+        empresa.setEndereco(new Endereco(cep, rua, numero, complemento, bairro, cidade, uf));
 
         if (usuarioDao.existePorEmailExceto(emailNormalizado, usuarioId)) {
             throw new IllegalArgumentException("Email já cadastrado!");
@@ -62,6 +63,7 @@ public class EditarEmpresa {
                 conn.commit();
             } catch (SQLIntegrityConstraintViolationException e) {
                 conn.rollback();
+                e.printStackTrace();
                 throw new IllegalArgumentException("Email já cadastrado!");
             } catch (SQLException | RuntimeException e) {
                 conn.rollback();

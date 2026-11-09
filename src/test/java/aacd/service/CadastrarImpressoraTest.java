@@ -18,6 +18,9 @@ import java.sql.SQLException;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 class CadastrarImpressoraTest {
@@ -38,27 +41,31 @@ class CadastrarImpressoraTest {
         conexoes = mock(ExcluirConta.FornecedorConexao.class);
         when(conexoes.abrir()).thenReturn(conn);
 
-        Empresa empresa = empresa();
-        when(empresaDao.buscarPorUsuarioId(5)).thenReturn(empresa);
+        when(empresaDao.buscarPorUsuarioId(5)).thenReturn(empresa());
         when(impressoraDao.inserir(eq(conn), any(Impressora.class))).thenReturn(30);
 
         servico = new CadastrarImpressora(empresaDao, impressoraDao, materiaisDao, conexoes);
     }
 
     private Empresa empresa() {
-        Endereco endereco = new Endereco("01001000", "Rua A", "10", "Centro", "São Paulo", "SP");
-        return new Empresa(10, 5, "contato@acme.com", "11999999999", "11222333000181", endereco);
+        Endereco endereco = new Endereco("01001000", "Rua A", "10", "Sala 1", "Centro", "São Paulo", "SP");
+        return new Empresa(10, 5, "contato@acme.com", "Responsável", "11999999999", "11222333000181", endereco);
     }
 
     private Usuario usuario(int id, String perfil, boolean ativo) {
         return new Usuario(id, "Conta " + id, "login" + id, "hash", perfil, ativo);
     }
 
+    // Único ponto que conhece a assinatura do service (disponibilidade null = OCIOSA).
+    private int executar(Usuario ator, String modelo, Set<Material> materiais) throws Exception {
+        return servico.executar(ator, modelo, materiais, 220, 220, 250, null);
+    }
+
     @Test
     void cadastro_inserePrimeiroNoMysqlEDepoisGravaMateriaisNoMongo() throws Exception {
         Set<Material> materiais = Set.of(Material.PLA, Material.ABS);
 
-        int id = servico.executar(usuario(5, "EMPRESA", true), "  Ender 3 ", materiais, 220, 220, 250);
+        int id = executar(usuario(5, "EMPRESA", true), "  Ender 3 ", materiais);
 
         assertEquals(30, id);
         InOrder ordem = inOrder(impressoraDao, materiaisDao);
@@ -69,23 +76,21 @@ class CadastrarImpressoraTest {
 
     @Test
     void cadastro_donoVemDaEmpresaDoUsuarioLogado() throws Exception {
-        servico.executar(usuario(5, "EMPRESA", true), "  Ender 3 ", Set.of(Material.PLA), 220, 220, 250);
+        executar(usuario(5, "EMPRESA", true), "  Ender 3 ", Set.of(Material.PLA));
 
         ArgumentCaptor<Impressora> captor = ArgumentCaptor.forClass(Impressora.class);
         verify(impressoraDao).inserir(eq(conn), captor.capture());
         assertEquals(10, captor.getValue().getEmpresaId());
         assertEquals("Ender 3", captor.getValue().getModelo());
-        assertEquals(Set.of(Material.PLA), captor.getValue().getMateriais());
+        verify(materiaisDao).salvar(30, Set.of(Material.PLA));
     }
 
     @Test
     void semMateriais_recusaSemTocarNosBancos() throws Exception {
         Usuario ator = usuario(5, "EMPRESA", true);
 
-        assertThrows(IllegalArgumentException.class,
-                () -> servico.executar(ator, "Ender 3", Set.of(), 220, 220, 250));
-        assertThrows(IllegalArgumentException.class,
-                () -> servico.executar(ator, "Ender 3", null, 220, 220, 250));
+        assertThrows(IllegalArgumentException.class, () -> executar(ator, "Ender 3", Set.of()));
+        assertThrows(IllegalArgumentException.class, () -> executar(ator, "Ender 3", null));
 
         verifyNoInteractions(impressoraDao, materiaisDao);
         verify(conexoes, never()).abrir();
@@ -94,7 +99,7 @@ class CadastrarImpressoraTest {
     @Test
     void modeloVazio_recusaSemTocarNosBancos() throws Exception {
         assertThrows(IllegalArgumentException.class,
-                () -> servico.executar(usuario(5, "EMPRESA", true), "  ", Set.of(Material.PLA), 220, 220, 250));
+                () -> executar(usuario(5, "EMPRESA", true), "  ", Set.of(Material.PLA)));
 
         verifyNoInteractions(impressoraDao, materiaisDao);
     }
@@ -104,11 +109,11 @@ class CadastrarImpressoraTest {
         Set<Material> materiais = Set.of(Material.PLA);
 
         assertThrows(IllegalStateException.class,
-                () -> servico.executar(usuario(7, "FUNCIONARIO", true), "Ender 3", materiais, 220, 220, 250));
+                () -> executar(usuario(7, "FUNCIONARIO", true), "Ender 3", materiais));
         assertThrows(IllegalStateException.class,
-                () -> servico.executar(usuario(5, "EMPRESA", false), "Ender 3", materiais, 220, 220, 250));
+                () -> executar(usuario(5, "EMPRESA", false), "Ender 3", materiais));
         assertThrows(IllegalStateException.class,
-                () -> servico.executar(null, "Ender 3", materiais, 220, 220, 250));
+                () -> executar(null, "Ender 3", materiais));
 
         verifyNoInteractions(empresaDao, impressoraDao, materiaisDao);
     }
@@ -118,7 +123,7 @@ class CadastrarImpressoraTest {
         when(empresaDao.buscarPorUsuarioId(5)).thenReturn(null);
 
         assertThrows(IllegalStateException.class,
-                () -> servico.executar(usuario(5, "EMPRESA", true), "Ender 3", Set.of(Material.PLA), 220, 220, 250));
+                () -> executar(usuario(5, "EMPRESA", true), "Ender 3", Set.of(Material.PLA)));
 
         verifyNoInteractions(impressoraDao, materiaisDao);
     }
@@ -128,7 +133,7 @@ class CadastrarImpressoraTest {
         doThrow(new RuntimeException("mongo fora")).when(materiaisDao).salvar(anyInt(), any());
 
         RuntimeException erro = assertThrows(RuntimeException.class,
-                () -> servico.executar(usuario(5, "EMPRESA", true), "Ender 3", Set.of(Material.PLA), 220, 220, 250));
+                () -> executar(usuario(5, "EMPRESA", true), "Ender 3", Set.of(Material.PLA)));
 
         assertEquals("mongo fora", erro.getMessage());
         verify(impressoraDao).apagar(conn, 30);
@@ -140,7 +145,7 @@ class CadastrarImpressoraTest {
         doThrow(new SQLException("sem conexão")).when(impressoraDao).apagar(conn, 30);
 
         RuntimeException erro = assertThrows(RuntimeException.class,
-                () -> servico.executar(usuario(5, "EMPRESA", true), "Ender 3", Set.of(Material.PLA), 220, 220, 250));
+                () -> executar(usuario(5, "EMPRESA", true), "Ender 3", Set.of(Material.PLA)));
 
         assertEquals("mongo fora", erro.getMessage());
     }
