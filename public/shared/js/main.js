@@ -8,7 +8,8 @@ rota('/login',         { pagina: 'login',          publica: true,  titulo: 'Entr
 rota('/esqueci-senha', { pagina: 'esqueci-senha',  publica: true,  titulo: 'Recuperar senha' });
 rota('/funcionarios',  { pagina: 'funcionarios',   publica: false, titulo: 'Funcionários' });
 rota('/painel-aacd',   { pagina: 'painel-aacd',    publica: false, titulo: 'Acompanhamento' });
-rota('/minha-conta',   { pagina: 'minha-conta',    publica: false, titulo: 'Meu perfil' });
+rota('/minha-conta',         { pagina: 'minha-conta',         publica: false, titulo: 'Meu perfil' });
+rota('/minha-conta-empresa', { pagina: 'minha-conta-empresa', publica: false, titulo: 'Minha conta' });
 rota('/404',           { pagina: 'nao-encontrada', publica: true,  titulo: 'Não encontrada' });
 rota('/impressoras',   { pagina: 'impressoras',    publica: true,  titulo: 'Minhas impressoras' });
 rota('/cadastro-empresa/cadastro1', { pagina: 'cadastro1', pasta: 'cadastro-empresa/cadastro1', publica: true, titulo: 'Cadastro 1/2' });

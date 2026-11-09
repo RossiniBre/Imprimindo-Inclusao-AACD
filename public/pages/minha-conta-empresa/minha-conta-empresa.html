@@ -1,0 +1,209 @@
+<section class="conta conta--empresa">
+
+  <div class="conta__conteudo">
+
+    <div class="conta__cabecalho">
+      <h1>Minha conta</h1>
+      <p class="conta__descricao" id="descricao">Os dados da sua empresa e os pedidos que ela enviou para a AACD.</p>
+    </div>
+
+    <p class="conta__aviso-geral" id="aviso-geral" role="alert" hidden></p>
+
+    <div class="conta__grade">
+
+      <aside class="conta__lateral">
+
+        <div class="cartao cartao--perfil">
+          <span class="avatar" id="avatar" aria-hidden="true">?</span>
+          <h2 class="cartao__nome" id="resumo-nome">Carregando...</h2>
+          <p class="cartao__cargo" id="resumo-cnpj"></p>
+          <p class="cartao__email" id="resumo-email"></p>
+          <span class="chip chip--neutro" id="resumo-status"></span>
+
+          <hr class="cartao__divisor">
+
+          <div id="bloco-pedidos">
+            <h3 class="cartao__rotulo">Pedidos da empresa</h3>
+            <dl class="estatisticas">
+              <div><dt>Enviados no total</dt><dd id="total-enviados">0</dd></div>
+              <div><dt>Imprimindo agora</dt><dd id="total-imprimindo">0</dd></div>
+              <div><dt>Aguardando resposta</dt><dd id="total-aguardando">0</dd></div>
+              <div><dt>Recusados</dt><dd id="total-recusados">0</dd></div>
+            </dl>
+          </div>
+        </div>
+
+        <div class="cartao">
+          <h2 class="cartao__titulo">Segurança e acesso</h2>
+
+          <div class="seguranca">
+            <div>
+              <strong>Senha</strong>
+              <p class="cartao__nota">A troca é feita com um código enviado ao e-mail corporativo.</p>
+            </div>
+            <a class="botao-linha" href="#/esqueci-senha?perfil=empresa">Alterar senha</a>
+          </div>
+        </div>
+
+        <button type="button" class="conta__sair" id="botao-sair">Sair da conta</button>
+
+      </aside>
+
+      <div class="conta__principal">
+
+        <form id="form-dados" class="conta__form" novalidate>
+
+          <!-- ===== Dados da empresa ===== -->
+          <div class="cartao">
+            <h2 class="cartao__titulo">Dados da empresa</h2>
+            <p class="cartao__nota cartao__nota--abaixo" id="nota-dados">A razão social, o CNPJ e o e-mail são validados pela AACD no cadastro e não podem ser alterados aqui.</p>
+
+            <div class="campo__linha">
+              <div class="campo">
+                <label for="dado-razao">Razão social</label>
+                <div class="campo__travado">
+                  <input type="text" id="dado-razao" disabled>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <rect x="4" y="10" width="16" height="11" rx="2"/>
+                    <path d="M8 10V7a4 4 0 0 1 8 0v3"/>
+                  </svg>
+                </div>
+                <p class="campo__erro" aria-hidden="true"></p>
+              </div>
+              <div class="campo">
+                <label for="dado-cnpj">CNPJ</label>
+                <div class="campo__travado">
+                  <input type="text" id="dado-cnpj" disabled>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <rect x="4" y="10" width="16" height="11" rx="2"/>
+                    <path d="M8 10V7a4 4 0 0 1 8 0v3"/>
+                  </svg>
+                </div>
+                <p class="campo__erro" aria-hidden="true"></p>
+              </div>
+            </div>
+
+            <div class="campo">
+              <label for="dado-email">E-mail corporativo</label>
+              <div class="campo__travado">
+                <input type="email" id="dado-email" disabled>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect x="4" y="10" width="16" height="11" rx="2"/>
+                  <path d="M8 10V7a4 4 0 0 1 8 0v3"/>
+                </svg>
+              </div>
+              <p class="campo__erro" aria-hidden="true"></p>
+            </div>
+
+            <div class="campo__linha">
+              <div class="campo">
+                <label for="dado-responsavel">Nome do responsável</label>
+                <input type="text" id="dado-responsavel" name="responsavel" maxlength="45" autocomplete="name">
+                <p class="campo__erro" id="erro-responsavel" aria-live="polite"></p>
+              </div>
+              <div class="campo">
+                <label for="dado-telefone">Telefone</label>
+                <input type="tel" id="dado-telefone" name="telefone" maxlength="15" placeholder="(11) 00000-0000" autocomplete="tel-national">
+                <p class="campo__erro" id="erro-telefone" aria-live="polite"></p>
+              </div>
+            </div>
+          </div>
+
+          <!-- ===== Endereço ===== -->
+          <div class="cartao">
+            <h2 class="cartao__titulo">Endereço</h2>
+            <p class="cartao__nota cartao__nota--abaixo">Usado pela AACD para combinar a entrega das peças impressas.</p>
+
+            <div class="campo__linha">
+              <div class="campo">
+                <label for="dado-cep">CEP</label>
+                <input type="text" id="dado-cep" name="cep" maxlength="9" inputmode="numeric" placeholder="00000-000" autocomplete="postal-code">
+                <p class="campo__erro" id="erro-cep" aria-live="polite"></p>
+              </div>
+              <div class="campo">
+                <label for="dado-uf">Estado (UF)</label>
+                <select id="dado-uf" name="uf" autocomplete="address-level1">
+                  <option>AC</option><option>AL</option><option>AP</option><option>AM</option>
+                  <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
+                  <option>GO</option><option>MA</option><option>MT</option><option>MS</option>
+                  <option>MG</option><option>PA</option><option>PB</option><option>PR</option>
+                  <option>PE</option><option>PI</option><option>RJ</option><option>RN</option>
+                  <option>RS</option><option>RO</option><option>RR</option><option>SC</option>
+                  <option selected>SP</option><option>SE</option><option>TO</option>
+                </select>
+                <p class="campo__erro" aria-hidden="true"></p>
+              </div>
+            </div>
+
+            <div class="campo__linha">
+              <div class="campo">
+                <label for="dado-cidade">Cidade</label>
+                <input type="text" id="dado-cidade" name="cidade" placeholder="São Paulo" autocomplete="address-level2">
+                <p class="campo__erro" id="erro-cidade" aria-live="polite"></p>
+              </div>
+              <div class="campo">
+                <label for="dado-bairro">Bairro</label>
+                <input type="text" id="dado-bairro" name="bairro" placeholder="Vila Mariana">
+                <p class="campo__erro" id="erro-bairro" aria-live="polite"></p>
+              </div>
+            </div>
+
+            <div class="campo__linha campo__linha--numero">
+              <div class="campo">
+                <label for="dado-logradouro">Logradouro</label>
+                <input type="text" id="dado-logradouro" name="logradouro" placeholder="Rua, avenida, travessa..." autocomplete="address-line1">
+                <p class="campo__erro" id="erro-logradouro" aria-live="polite"></p>
+              </div>
+              <div class="campo">
+                <label for="dado-numero">Número</label>
+                <input type="text" id="dado-numero" name="numero" placeholder="135">
+                <p class="campo__erro" id="erro-numero" aria-live="polite"></p>
+              </div>
+            </div>
+
+            <div class="campo">
+              <label for="dado-complemento">Complemento</label>
+              <input type="text" id="dado-complemento" name="complemento" placeholder="Portão preto, prédio rosa, Apto. 135A" autocomplete="address-line2">
+              <p class="campo__erro" aria-hidden="true"></p>
+            </div>
+
+            <p class="conta__erro-form" id="erro-form" role="alert" hidden></p>
+            <p class="conta__sucesso" id="sucesso-form" role="status" hidden>Alterações salvas.</p>
+
+            <div class="form__rodape">
+              <button type="submit" class="conta__principal-botao" id="botao-salvar">Salvar alterações</button>
+              <button type="button" class="botao-linha botao-linha--grande" id="botao-cancelar">Cancelar</button>
+            </div>
+          </div>
+
+        </form>
+
+        <!-- ===== Pedidos recentes ===== -->
+        <div class="cartao" id="cartao-pedidos">
+          <h2 class="cartao__titulo">Pedidos recentes</h2>
+          <p class="cartao__nota cartao__nota--abaixo">Os pedidos prontos e recusados somem depois de <span id="dias-limpeza">60</span> dias.</p>
+
+          <div class="tabela-envolto">
+            <table class="tabela">
+              <thead>
+                <tr>
+                  <th>Pedido</th>
+                  <th>Peça</th>
+                  <th>Status</th>
+                  <th>Enviado em</th>
+                </tr>
+              </thead>
+              <tbody id="corpo-pedidos"></tbody>
+            </table>
+          </div>
+          <p class="tabela__vazia" id="pedidos-vazio" hidden>Sua empresa ainda não enviou pedidos.</p>
+          <p class="tabela__rodape" id="pedidos-rodape" hidden>
+            <a href="#/solicitacoes">Ver todos no Acompanhamento</a>
+            </p>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</section>
