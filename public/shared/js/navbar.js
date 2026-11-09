@@ -9,6 +9,13 @@ const MENUS = {
 // telas em que o menu nunca aparece, mesmo com sessão ativa
 const SEM_MENU = ['/', '/login', '/esqueci-senha', '/vire-apoiador', '/cadastro-empresa/cadastro1', '/cadastro-empresa/cadastro2'];
 
+// para onde o ícone de perfil leva, conforme quem está logado
+const PERFIL_ROTA = {
+  EMPRESA:     '/minha-conta-empresa',
+  FUNCIONARIO: '/minha-conta',
+  ADMIN:       '/minha-conta',
+};
+
 function rotaAtual() {
   return location.hash.slice(1).split('?')[0].replace(/\/$/, '') || '/';
 }
@@ -35,9 +42,11 @@ export function desenharMenu() {
     marcarAtivo();
     return;
   }
+
   perfilDesenhado = perfil;
 
-  // ... o resto continua igual (const nav = ..., innerHTML, listeners)
+  header.querySelector('a[aria-label="Minha conta"]').href = `#${PERFIL_ROTA[perfil]}`;
+  header.querySelector('.logo-menu').href = `#${itens[0][0]}`;
 
   const nav = header.querySelector('nav');
   indicador = null;
