@@ -1,0 +1,22 @@
+TELA: Solicitações de doação (lado AACD) + modal de detalhes
+Quem acessa: funcionários da AACD e admin. Rota: #/doacoes (aba "Doações" da navbar).
+O que faz: lista as doações que as empresas parceiras manifestaram (impressora, filamento ou os dois),
+mais recentes primeiro, com filtro por tipo (Todas / Impressora / Filamento / Impressora + Filamento).
+Cada cartão mostra a empresa (iniciais e nome), "recebida há X", o chip do tipo e a caixa com
+"N unidades · tipo" e a descrição. "Ver detalhes" abre o modal do Figma ("Doação - Modal da ação card"):
+itens a serem doados, texto da empresa, contatos clicáveis que copiam (telefone, e-mail, endereço) e os
+botões Fechar / Aceitar. Aceitar pede confirmação e então tira a doação da lista.
+
+Rotas do back usadas (via shared/js/api.js):
+  GET  /api/doacoes          -> id, tipo (IMPRESSORA|FILAMENTO|AMBOS), descricao, quantidade,
+                                dataManifestacao, empresa{id,nome,ativa,email,telefone}
+  GET  /api/parceiros        -> endereço da empresa, mostrado nos contatos do modal
+  POST /api/doacoes/excluir  -> { id } (usado pelo "Aceitar")
+Sem sessão (401) a tela redireciona para #/login.
+
+Decisões por causa do back:
+  - Não existe status de doação (aceita/recusada) nem aviso à empresa: "Aceitar" exclui a doação,
+    por isso o modal avisa para combinar a entrega com a empresa antes de confirmar.
+  - A quantidade é um número único por doação (o Figma mostra vários itens com cor/kg): a lista de
+    itens virou "N unidades · tipo" + a descrição livre.
+  - Empresa inativa aparece com o chip "Empresa inativa" (campo empresa.ativa).

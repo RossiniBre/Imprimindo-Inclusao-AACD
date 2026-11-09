@@ -1,0 +1,83 @@
+<section class="tela doacoes">
+
+  <div class="tela__conteudo">
+
+    <div class="tela__cabecalho">
+      <div>
+        <h1>Solicitações de doação</h1>
+        <p class="tela__descricao">Aqui estão todos os pedidos de doação enviados pelas empresas parceiras: impressoras, filamento ou os dois.</p>
+      </div>
+    </div>
+
+    <div class="filtros" role="group" aria-label="Filtrar por tipo de doação">
+      <button type="button" class="filtro" data-tipo="" aria-pressed="true">Todas <span class="filtro__total" data-total=""></span></button>
+      <button type="button" class="filtro" data-tipo="IMPRESSORA" aria-pressed="false">Impressora <span class="filtro__total" data-total="IMPRESSORA"></span></button>
+      <button type="button" class="filtro" data-tipo="FILAMENTO" aria-pressed="false">Filamento <span class="filtro__total" data-total="FILAMENTO"></span></button>
+      <button type="button" class="filtro" data-tipo="AMBOS" aria-pressed="false">Impressora + Filamento <span class="filtro__total" data-total="AMBOS"></span></button>
+    </div>
+
+    <p class="tela__aviso-geral" id="aviso-geral" role="alert" hidden></p>
+    <p class="tela__sucesso" id="aviso-sucesso" role="status" hidden></p>
+    <p class="tela__vazio" id="lista-carregando">Carregando doações...</p>
+    <p class="tela__vazio" id="lista-vazia" hidden>Nenhuma doação por aqui. Quando uma empresa manifestar uma doação, ela aparece nesta lista.</p>
+
+    <div class="cartoes" id="cartoes"></div>
+
+  </div>
+
+  <!-- Modal: detalhes da doação -->
+  <div class="modal-fundo" id="modal-doacao" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-titulo">
+
+      <div class="modal__cabecalho">
+        <div class="modal__identidade">
+          <span class="avatar" id="modal-avatar" aria-hidden="true"></span>
+          <div>
+            <h2 id="modal-titulo"></h2>
+            <p class="modal__subtitulo" id="modal-subtitulo"></p>
+          </div>
+        </div>
+        <button type="button" class="modal__fechar" data-fechar aria-label="Fechar">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="6" y1="6" x2="18" y2="18"/>
+            <line x1="18" y1="6" x2="6" y2="18"/>
+          </svg>
+        </button>
+      </div>
+
+      <p class="modal__chips" id="modal-chips"></p>
+
+      <div id="modal-detalhes">
+        <h3 class="modal__secao">Itens a serem doados</h3>
+        <p class="item" id="modal-itens"></p>
+
+        <h3 class="modal__secao">Sobre a doação</h3>
+        <p class="citacao" id="modal-descricao"></p>
+
+        <h3 class="modal__secao">Detalhes da empresa <span class="modal__secao-dica">(clique para copiar)</span></h3>
+        <ul class="contatos" id="modal-contatos"></ul>
+
+        <p class="modal__erro-geral" id="erro-modal" role="alert" hidden></p>
+
+        <div class="modal__rodape">
+          <button type="button" class="modal__secundario" data-fechar>Fechar</button>
+          <button type="button" class="botao-confirmar" id="botao-aceitar">Aceitar</button>
+        </div>
+      </div>
+
+      <div id="modal-confirmar" hidden>
+        <p class="modal__aviso">
+          Ao aceitar, a doação <strong>sai desta lista</strong>. Combine a retirada ou a entrega com a empresa
+          pelos contatos acima antes de confirmar.
+        </p>
+        <p class="modal__erro-geral" id="erro-confirmar" role="alert" hidden></p>
+        <div class="modal__rodape">
+          <button type="button" class="modal__secundario" id="botao-voltar">Voltar</button>
+          <button type="button" class="botao-confirmar" id="botao-confirmar">Confirmar aceite</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</section>

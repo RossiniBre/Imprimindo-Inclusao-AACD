@@ -12,11 +12,8 @@ const rotas = [...main.matchAll(/rota\('([^']+)',\s*\{([^}]*)\}/g)].map(([, cami
   pasta: cfg.match(/pasta:\s*'([^']+)'/)?.[1],
 }))
 
-const ROTAS_SEM_TELA = new Set([
-  '/impressoras-aacd',
-  '/parceiros',
-  '/doacoes',
-])
+// Rotas registradas no main.js cuja tela ainda não foi feita (hoje nenhuma)
+const ROTAS_SEM_TELA = new Set([])
 
 const arquivoDa = ({ pagina, pasta }, ext) =>
   resolve(RAIZ, 'pages', pasta ?? pagina, `${pagina}.${ext}`)

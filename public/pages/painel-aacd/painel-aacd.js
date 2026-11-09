@@ -248,7 +248,7 @@ export function iniciar(container) {
       acoes.appendChild(botao('Remover', 'remover', pedido));
     } else {
       const outra = elemento('a', 'botao-linha botao-linha--principal', 'Escolher outra empresa');
-      outra.href = '#/parceiros';
+      outra.href = `#/reescolher-empresa?pedido=${pedido.id}`;
       acoes.appendChild(outra);
       acoes.appendChild(botao('Remover', 'remover', pedido));
     }
@@ -394,6 +394,7 @@ export function iniciar(container) {
     modalTexto.textContent = cfg.texto;
     modalPedido.textContent = `Pedido ${pedido.id} · ${pedido.titulo}`;
     modalAlternativa.hidden = !(acao === 'remover' && GRUPO_DO_STATUS[pedido.status] === 'recusadas');
+    modalAlternativa.querySelector('a').href = `#/reescolher-empresa?pedido=${pedido.id}`;
     botaoConfirmar.textContent = cfg.botao;
     botaoVoltar.textContent = cfg.voltar;
     botaoConfirmar.disabled = false;

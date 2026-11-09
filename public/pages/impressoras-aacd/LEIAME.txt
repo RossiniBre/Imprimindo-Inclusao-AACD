@@ -1,0 +1,29 @@
+TELA: Impressoras da rede (lado AACD) + modal "Nova solicitação de impressão"
+Quem acessa: funcionários da AACD e admin. Rota: #/impressoras-aacd (aba "Impressoras" da navbar).
+O que faz: lista as impressoras ativas de todas as empresas parceiras, com busca (modelo, empresa,
+cidade ou material), filtro por material e o interruptor "Só impressoras livres" (ligado por padrão).
+Cada cartão mostra empresa, modelo, cidade/UF, chip Livre/Em uso e os materiais aceitos.
+"Ver detalhes" abre o modal que cria a solicitação (frame "Impresoras - Modal de ação card" do Figma,
+que ainda não tem desenho: o conteúdo veio do wizard "Nova solicitação de impressão", em um passo só):
+arquivo 3D, nome da peça, quantidade, material (só os que a impressora aceita), medidas C×L×A em mm,
+prazo desejado (opcional) e observação. Enquanto preenche, a lista "Material / Tamanho / Disponibilidade"
+confere a peça com a impressora (mesa e materiais). Ao enviar, mostra o número do pedido e o link para
+o Acompanhamento.
+
+Parâmetros da URL:
+  #/impressoras-aacd?impressora=12 -> já abre o modal para a impressora 12 (vem da tela Parceiros)
+  #/impressoras-aacd?empresa=3     -> preenche a busca com o nome da empresa 3
+
+Rotas do back usadas (via shared/js/api.js):
+  GET  /api/impressoras/painel        -> lista da rede (id, modelo, disponibilidade, empresa{id,nome}, materiais)
+  GET  /api/parceiros                 -> endereço de cada empresa (cidade/UF dos cartões)
+  GET  /api/parceiros/{id}/impressoras-> medidas da mesa (comprimentoMm, larguraMm, alturaMm), só ao abrir o modal
+  POST /api/solicitacoes (multipart)  -> titulo, descricao, quantidade, comprimentoMm, larguraMm, alturaMm,
+                                         impressoraId e arquivo (.stl/.obj/.3mf até 50 MB)
+Sem sessão (401) a tela redireciona para #/login.
+
+Decisões por causa do back:
+  - O back não tem campo de material nem de prazo na solicitação: os dois vão no começo da descrição
+    ("Material: PLA. Prazo desejado: 20/11/2026. <observação>"). A descrição nunca fica vazia.
+  - "Filamento incluso / Sem filamento · AACD envia" do Figma não existe no back; o chip mostra Livre/Em uso.
+  - A rota do painel não traz as medidas da mesa: elas são buscadas por empresa quando o modal abre.

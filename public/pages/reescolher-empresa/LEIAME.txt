@@ -1,0 +1,31 @@
+TELA: Reescolher empresa (pedido recusado)
+Quem acessa: funcionários da AACD e admin. Rota: #/reescolher-empresa?pedido=ID
+(o botão "Escolher outra empresa" do Acompanhamento leva para cá).
+O que faz: mostra, à esquerda, o pedido recusado/cancelado/com falha (número, título, quando foi
+enviado, impressora anterior, quem recusou e o motivo, quem está reenviando e quem enviou
+originalmente) e, à direita, as impressoras da rede com busca e "Só livres". Ao selecionar uma,
+o rodapé fixo mostra "Reenviando para EMPRESA · MODELO · A empresa recebe um novo pedido" e libera
+"Reenviar pedido". Impressoras da empresa que recusou ganham o chip "Recusou este pedido".
+
+Como o reenvio funciona (o back não tem rota de reenviar):
+  1. baixa o arquivo 3D do pedido antigo (GET /api/solicitacao/arquivo?id=);
+  2. cria um pedido novo para a impressora escolhida (POST /api/solicitacoes multipart) com o mesmo
+     título, a descrição "Material: X. Reenvio do pedido N. <observação>" e os dados da peça;
+  3. remove o pedido antigo da lista (POST /api/solicitacao/excluir). Se essa etapa falhar, a tela
+     avisa que o antigo continua em Recusadas.
+Só pedidos RECUSADA, CANCELADA ou FALHOU podem ser reenviados; os outros caem em um aviso com link
+para o Acompanhamento.
+
+Rotas do back usadas (via shared/js/api.js):
+  GET  /api/solicitacoes, GET /api/solicitacao/ver?id=   -> dados e motivo do pedido
+  GET  /api/impressoras/painel, GET /api/parceiros        -> impressoras da rede e cidade/UF
+  GET  /api/parceiros/{id}/impressoras                    -> medidas da mesa da escolhida
+  GET  /api/me                                            -> perfil (e nome, quando o back incluir)
+  GET  /api/solicitacao/arquivo?id=, POST /api/solicitacoes, POST /api/solicitacao/excluir
+Sem sessão (401) a tela redireciona para #/login.
+
+Depende do back (PEDIDO AO BACK):
+  - GET /api/solicitacao/ver não devolve descrição, quantidade, medidas nem nome do arquivo:
+    por isso a coluna da esquerda pede quantidade, material e medidas de novo ("Dados da peça").
+  - "Livre até dd/mm" dos cartões do Figma não existe (o back só diz OCIOSA/EM_USO).
+  - GET /api/me devolve só o perfil: "Quem está reenviando" mostra "Você" até vir o nome.

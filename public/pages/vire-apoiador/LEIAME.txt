@@ -1,0 +1,13 @@
+TELA: Aba "Vire Apoiador" (banner do site institucional da AACD)
+Quem acessa: qualquer pessoa (página pública, sem login). Rota: #/vire-apoiador.
+O que faz: imita a aba do site da AACD que apresenta o projeto. Tem a barra branca do site
+(logo, Institucional, Nossa Atuação, Para pacientes, Unidades, Como ajudar a AACD,
+Fale com a AACD e o link "Portal do Apoiador", que leva ao #/login) e o banner com a foto
+e a chamada em vermelho ("Nos ajude a imprimir próteses e órteses para quem mais precisa!").
+A pedido do grupo, os dois botões vermelhos do Figma (Vire Membro / Membro AACD) NÃO entraram.
+A barra vermelha do sistema não aparece nesta tela (está em SEM_MENU, shared/js/navbar.js),
+porque a página tem o próprio cabeçalho.
+
+Os itens do menu do site apontam para https://aacd.org.br/ (abrem em nova aba): o site real
+não faz parte do projeto. A foto fica em pages/vire-apoiador/img/apoio.jpg.
+Não usa o back.

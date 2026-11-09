@@ -8,7 +8,8 @@ Cada seção mostra até 4 cartões e o botão "Ver todos (n)" abre o resto.
 Cada cartão mostra o número do pedido, título, empresa, impressora e quem enviou.
 Imprimindo: barra de progresso da aceitação até o prazo estimado pela empresa.
 Ações: Cancelar pedido (só pendente) e Remover (pronta ou recusada), com modal de confirmação.
-"+ Nova solicitação" e "Escolher outra empresa" levam para #/parceiros (criação é lá).
+"+ Nova solicitação" leva para #/impressoras-aacd (a criação do pedido é no modal de lá) e
+"Escolher outra empresa" leva para #/reescolher-empresa?pedido=ID (reenvio do pedido recusado).
 
 Rotas do back usadas (via shared/js/api.js):
   GET  /api/solicitacoes          -> lista (todos os pedidos para AACD)
@@ -19,6 +20,5 @@ Sem sessão (401) a tela redireciona para #/login.
 Regras do back usadas nos textos: pendente expira em 30 dias; prontas/recusadas somem em 60 dias.
 
 Pendente / fora do back:
-  - "Reenviar pedido" e "Marcar como retirada" do Figma não existem no back; ficaram de fora.
-  - Abas Contato (#/contato) e perfil (#/minha-conta) ainda não têm tela do lado da AACD.
+  - "Reenviar pedido" (pendente) e "Marcar como retirada" do Figma não existem no back; ficaram de fora.
   - Cancelar pedido em andamento (só admin, com justificativa) não está na tela.

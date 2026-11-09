@@ -1,0 +1,497 @@
+/* Parceiros da AACD: números da rede, cartões de empresa e o modal de detalhes.
+   As classes .tela__*, .cartao, .chip e .modal* seguem o mesmo padrão do painel-aacd. */
+
+.tela [hidden] {
+  display: none !important;
+}
+
+/* ---------- Estrutura ---------- */
+
+.tela__conteudo {
+  max-width: 73.75rem;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 2rem;
+}
+
+.tela__cabecalho {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.tela h1 {
+  margin-bottom: 0.375rem;
+  font-size: 1.875rem;
+}
+
+.tela__descricao {
+  max-width: 44rem;
+  font-size: 0.875rem;
+  color: var(--cor-texto-suave);
+}
+
+.tela__aviso-geral {
+  margin-bottom: 1rem;
+  padding: 0.75rem 0.875rem;
+  border-left: 4px solid var(--cor-erro);
+  border-radius: 0.375rem;
+  background: var(--cor-erro-claro);
+  font-size: 0.875rem;
+  color: var(--cor-erro);
+}
+
+.tela__vazio {
+  padding: 2.5rem 1rem;
+  border: 1px dashed var(--cor-borda);
+  border-radius: 0.625rem;
+  font-size: 0.875rem;
+  text-align: center;
+  color: var(--cor-texto-suave);
+}
+
+/* ---------- Números da rede ---------- */
+
+.numeros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 2.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.numero {
+  display: flex;
+  flex-direction: column;
+  padding: 0.25rem 0;
+}
+
+.numero + .numero {
+  padding-left: 2.5rem;
+  border-left: 1px solid var(--cor-borda);
+}
+
+.numero strong {
+  font-size: 1.75rem;
+  line-height: 1.1;
+}
+
+.numero span {
+  font-size: 0.8125rem;
+  color: var(--cor-texto-suave);
+}
+
+/* ---------- Busca ---------- */
+
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.busca {
+  display: flex;
+  flex: 1 1 18rem;
+  max-width: 28rem;
+  align-items: center;
+  gap: 0.5rem;
+  height: 2.75rem;
+  padding: 0 0.875rem;
+  border: 1px solid var(--cor-borda);
+  border-radius: 999px;
+  background: var(--cor-superficie);
+  color: var(--cor-texto-suave);
+}
+
+.busca:focus-within {
+  border-color: var(--cor-botao-principal);
+  box-shadow: 0 0 0 3px var(--cor-destaque-claro);
+}
+
+.busca input {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  font-size: 0.875rem;
+  color: var(--cor-texto);
+  outline: none;
+}
+
+/* ---------- Cartões ---------- */
+
+.cartoes {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+  gap: 1rem;
+}
+
+.cartao {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem 1.125rem;
+  border: 1px solid var(--cor-borda);
+  border-radius: 0.625rem;
+  background: var(--cor-superficie);
+  transition: box-shadow 0.2s;
+}
+
+.cartao:hover {
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+}
+
+.cartao__topo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.avatar {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 2px solid var(--cor-cabecalho);
+  border-radius: 50%;
+  background: var(--cor-superficie);
+  color: var(--cor-cabecalho);
+  font-size: 0.8125rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.cartao__titulo {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.cartao__detalhe {
+  font-size: 0.75rem;
+  color: var(--cor-texto-suave);
+}
+
+/* Caixa amarela com os números do parceiro */
+.cartao__caixa {
+  padding: 0.625rem 0.75rem;
+  border-left: 3px solid var(--cor-botao-principal);
+  border-radius: 0.375rem;
+  background: var(--cor-destaque-claro);
+}
+
+.cartao__caixa strong {
+  display: block;
+  font-size: 0.875rem;
+}
+
+.cartao__caixa span {
+  font-size: 0.75rem;
+  color: var(--cor-destaque-texto);
+}
+
+.cartao__rodape {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: auto;
+}
+
+/* ---------- Chips e botões ---------- */
+
+.chip {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.chip--sucesso { background: var(--cor-sucesso-claro); color: var(--cor-sucesso); }
+.chip--neutro  { background: var(--cor-neutra-claro);  color: var(--cor-texto-suave); }
+
+.chip--contorno {
+  border: 1px solid var(--cor-borda);
+  background: var(--cor-superficie);
+  color: var(--cor-texto);
+}
+
+.botao-principal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 2.25rem;
+  padding: 0 1.125rem;
+  border: 1px solid transparent;
+  border-radius: 0.375rem;
+  background: var(--cor-botao-principal);
+  color: var(--cor-texto);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.botao-principal:hover {
+  background: var(--cor-botao-principal-hover);
+}
+
+.botao-principal--alto {
+  height: 2.75rem;
+  padding: 0 1.5rem;
+  font-size: 0.875rem;
+}
+
+.botao-linha {
+  display: inline-flex;
+  align-items: center;
+  height: 2rem;
+  padding: 0 0.875rem;
+  border: 1px solid var(--cor-texto);
+  border-radius: 0.375rem;
+  background: var(--cor-superficie);
+  color: var(--cor-texto);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.2s;
+}
+
+.botao-linha:hover {
+  background: var(--cor-neutra-claro);
+}
+
+/* ---------- Modal ---------- */
+
+.modal-fundo {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background: rgba(43, 43, 43, 0.55);
+}
+
+.modal-fundo .modal {
+  position: relative;
+  display: block;
+  width: 100%;
+  max-width: 28rem;
+  height: auto;
+  max-height: calc(100vh - 3rem);
+  overflow-y: auto;
+  padding: 1.75rem;
+  border-radius: 0.75rem;
+  background: var(--cor-superficie);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+  text-align: left;
+  z-index: auto;
+}
+
+.modal-fundo .modal--larga {
+  max-width: 38rem;
+}
+
+.modal__cabecalho {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.modal__identidade {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.modal h2 {
+  margin-bottom: 0.125rem;
+  font-size: 1.25rem;
+}
+
+.modal__subtitulo {
+  font-size: 0.8125rem;
+  color: var(--cor-texto-suave);
+}
+
+.modal__fechar {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  border: none;
+  border-radius: 0.375rem;
+  background: transparent;
+  color: var(--cor-texto-suave);
+}
+
+.modal__fechar:hover {
+  background: var(--cor-neutra-claro);
+  color: var(--cor-texto);
+}
+
+.modal__secao {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 1rem 0 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--cor-texto-suave);
+}
+
+.modal__contagem {
+  padding: 0.125rem 0.5rem;
+  border-radius: 999px;
+  background: var(--cor-neutra-claro);
+  font-size: 0.6875rem;
+}
+
+.modal__dica {
+  font-size: 0.75rem;
+  color: var(--cor-texto-suave);
+}
+
+/* Grade de rótulo/valor em caixa bege */
+.dados {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: 0.75rem 1rem;
+  margin: 0;
+  padding: 0.75rem 0.875rem;
+  border-radius: 0.5rem;
+  background: var(--cor-fundo);
+}
+
+.dados div {
+  min-width: 0;
+}
+
+.dados dt {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--cor-texto-suave);
+}
+
+.dados dd {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.dados a {
+  color: var(--cor-cabecalho);
+}
+
+/* Lista de impressoras do parceiro */
+.impressoras {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: 1px solid var(--cor-borda);
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.impressoras:empty {
+  display: none;
+}
+
+.impressoras li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+  padding: 0.625rem 0.875rem;
+}
+
+.impressoras li + li {
+  border-top: 1px solid var(--cor-borda);
+}
+
+.impressoras__nome {
+  flex: 1 1 10rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.impressoras__nome small {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--cor-texto-suave);
+}
+
+.impressoras__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.modal__rodape {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+.modal__secundario {
+  height: 2.75rem;
+  padding: 0 1.5rem;
+  border: 1px solid var(--cor-borda);
+  border-radius: 0.375rem;
+  background: var(--cor-superficie);
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.modal__secundario:hover {
+  background: var(--cor-neutra-claro);
+}
+
+/* ---------- Responsivo ---------- */
+
+@media (max-width: 37.5rem) {
+  .tela__cabecalho {
+    flex-direction: column;
+  }
+
+  .numeros {
+    gap: 0.75rem 1.5rem;
+  }
+
+  .numero + .numero {
+    padding-left: 1.5rem;
+  }
+
+  .modal-fundo .modal {
+    padding: 1.375rem 1.125rem;
+  }
+
+  .modal__rodape {
+    flex-direction: column-reverse;
+  }
+
+  .modal__rodape > * {
+    width: 100%;
+  }
+}

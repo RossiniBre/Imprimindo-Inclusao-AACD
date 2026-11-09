@@ -7,7 +7,7 @@ const MENUS = {
 };
 
 // telas em que o menu nunca aparece, mesmo com sessão ativa
-const SEM_MENU = ['/', '/login', '/esqueci-senha', '/cadastro-empresa/cadastro1', '/cadastro-empresa/cadastro2'];
+const SEM_MENU = ['/', '/login', '/esqueci-senha', '/vire-apoiador', '/cadastro-empresa/cadastro1', '/cadastro-empresa/cadastro2'];
 
 function rotaAtual() {
   return location.hash.slice(1).split('?')[0].replace(/\/$/, '') || '/';

@@ -1,0 +1,123 @@
+<section class="tela reescolher">
+
+  <div class="tela__conteudo">
+
+    <a class="voltar" href="#/painel-aacd">‹ Voltar para o acompanhamento</a>
+    <h1>Escolher empresa</h1>
+    <p class="tela__descricao" id="descricao">Carregando pedido...</p>
+
+    <p class="tela__aviso-geral" id="aviso-geral" role="alert" hidden></p>
+
+    <div class="colunas" id="colunas" hidden>
+
+      <!-- Coluna esquerda: o pedido recusado e os dados da peça para o reenvio -->
+      <aside class="pedido" aria-labelledby="pedido-titulo">
+        <p class="pedido__rotulo">PEDIDO <span id="pedido-id"></span> · <span id="pedido-status"></span></p>
+        <h2 id="pedido-titulo"></h2>
+
+        <dl class="pedido__dados">
+          <div><dt>Arquivo</dt><dd id="pedido-arquivo">Será reaproveitado do pedido</dd></div>
+          <div><dt>Enviado em</dt><dd id="pedido-enviado"></dd></div>
+          <div><dt>Impressora anterior</dt><dd id="pedido-impressora"></dd></div>
+        </dl>
+
+        <h3 class="pedido__secao">Recusado por</h3>
+        <div class="pedido__motivo">
+          <strong id="recusa-empresa"></strong>
+          <p id="recusa-motivo"></p>
+        </div>
+
+        <h3 class="pedido__secao">Dados da peça</h3>
+        <p class="pedido__dica">O servidor não guarda estes dados para reenvio. Confirme-os de novo.</p>
+
+        <form id="form-peca" novalidate>
+          <div class="campo">
+            <label for="campo-quantidade">Quantidade</label>
+            <input type="number" id="campo-quantidade" name="quantidade" value="1" min="1" max="1000" inputmode="numeric">
+            <p class="campo__erro" id="erro-quantidade" aria-live="polite"></p>
+          </div>
+
+          <fieldset class="campo">
+            <legend>Material necessário</legend>
+            <div class="escolha" id="escolha-material"></div>
+            <p class="campo__erro" id="erro-material" aria-live="polite"></p>
+          </fieldset>
+
+          <fieldset class="campo">
+            <legend>Tamanho da peça (C × L × A)</legend>
+            <div class="medidas">
+              <label><input type="number" id="campo-comprimento" name="comprimentoMm" min="1" placeholder="120" inputmode="numeric" aria-label="Comprimento em milímetros"><span>mm</span></label>
+              <label><input type="number" id="campo-largura" name="larguraMm" min="1" placeholder="80" inputmode="numeric" aria-label="Largura em milímetros"><span>mm</span></label>
+              <label><input type="number" id="campo-altura" name="alturaMm" min="1" placeholder="60" inputmode="numeric" aria-label="Altura em milímetros"><span>mm</span></label>
+            </div>
+            <p class="campo__erro" id="erro-medidas" aria-live="polite"></p>
+          </fieldset>
+
+          <div class="campo">
+            <label for="campo-observacao">Observação para a nova empresa (opcional)</label>
+            <textarea id="campo-observacao" name="observacao" rows="3" maxlength="1800"></textarea>
+          </div>
+        </form>
+
+        <h3 class="pedido__secao">Quem está reenviando</h3>
+        <div class="pessoa">
+          <span class="avatar" id="eu-avatar" aria-hidden="true">?</span>
+          <div>
+            <strong id="eu-nome">Você</strong>
+            <small id="eu-perfil"></small>
+          </div>
+        </div>
+        <p class="pedido__origem" id="pedido-origem"></p>
+      </aside>
+
+      <!-- Coluna direita: impressoras da rede para escolher -->
+      <div class="empresas">
+        <div class="filtros" role="search" aria-label="Filtrar impressoras">
+          <label class="busca">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+              <circle cx="11" cy="11" r="7"/>
+              <line x1="16.5" y1="16.5" x2="21" y2="21"/>
+            </svg>
+            <input type="search" id="busca" placeholder="Buscar empresa, impressora ou cidade" autocomplete="off" aria-label="Buscar impressora">
+          </label>
+          <label class="alternar">
+            <input type="checkbox" id="so-livres" checked>
+            <span>Só livres</span>
+          </label>
+        </div>
+
+        <p class="tela__resumo" id="resumo" aria-live="polite"></p>
+        <p class="tela__vazio" id="empresas-vazio" hidden>Nenhuma impressora encontrada com esses filtros.</p>
+        <div class="cartoes" id="cartoes" role="radiogroup" aria-label="Impressora para o reenvio"></div>
+      </div>
+
+    </div>
+
+    <!-- Estado final: pedido reenviado -->
+    <div class="sucesso" id="sucesso" hidden>
+      <div class="sucesso__icone" aria-hidden="true">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+      </div>
+      <h2>Pedido reenviado!</h2>
+      <p id="sucesso-texto"></p>
+      <p class="pedido__dica" id="sucesso-nota" hidden></p>
+      <a class="botao-confirmar" href="#/painel-aacd">Ir para o acompanhamento</a>
+    </div>
+
+  </div>
+
+  <!-- Rodapé fixo com o resumo da escolha -->
+  <div class="rodape" id="rodape" hidden>
+    <div class="rodape__conteudo">
+      <p class="rodape__texto" id="rodape-texto">Escolha uma impressora para reenviar o pedido.</p>
+      <p class="rodape__erro" id="erro-reenvio" role="alert" hidden></p>
+      <div class="rodape__acoes">
+        <a class="botao-secundario" href="#/painel-aacd">Cancelar</a>
+        <button type="button" class="botao-confirmar" id="botao-reenviar" disabled>Reenviar pedido</button>
+      </div>
+    </div>
+  </div>
+
+</section>

@@ -1,7 +1,22 @@
-TELA: Lista de parceiros
-Quem acessa: funcionários da AACD e admin.
-O que faz: mostra as empresas parceiras em cards.
-Ao clicar no card, abre um modal para escolher a impressora e criar a solicitação,
-com filtro de impressoras por material e outras especificações.
-O envio do arquivo 3D faz parte da criação da solicitação.
-Rotas do back: a definir com quem cuida das solicitações.
+TELA: Parceiros da AACD + modal de detalhes
+Quem acessa: funcionários da AACD e admin. Rota: #/parceiros (aba "Parceiros" da navbar).
+O que faz: mostra as empresas parceiras ativas em cartões (iniciais, nome, e-mail, quantas impressoras
+cadastrou, quantas peças já imprimiu para a AACD e a cidade/UF), com busca por nome ou cidade.
+No topo, os números da rede: parceiros, impressoras da rede e peças impressas para a AACD.
+"Ver detalhes" abre o modal do Figma ("Parceiros - Modal de ação card"): dados da empresa, endereço
+(estado, cidade, bairro, CEP, logradouro, número), contato (e-mail e telefone) e a lista de impressoras
+da empresa, cada uma com Livre/Em uso, mesa e materiais e o botão "Solicitar", que leva ao modal de nova
+solicitação em #/impressoras-aacd?impressora=ID. "Solicitar impressão" filtra as impressoras da empresa.
+"+ Nova solicitação" no cabeçalho vai para #/impressoras-aacd (a criação do pedido é lá).
+
+Rotas do back usadas (via shared/js/api.js):
+  GET /api/parceiros                  -> id, nome, email, telefone, endereco{cep,rua,numero,bairro,cidade,uf}
+  GET /api/impressoras/painel         -> conta impressoras por empresa (empresa.id)
+  GET /api/solicitacoes               -> conta pedidos CONCLUIDA por nome da empresa
+  GET /api/parceiros/{id}/impressoras -> impressoras da empresa, só ao abrir o modal
+Sem sessão (401) a tela redireciona para #/login.
+
+Fora do back (não dá para fazer no front):
+  - "Parceira desde mês/ano", CNPJ, nome do responsável e complemento do endereço do Figma: a rota
+    /api/parceiros não devolve esses campos.
+  - A contagem de peças usa o nome da empresa (a lista de pedidos não traz o id da empresa).

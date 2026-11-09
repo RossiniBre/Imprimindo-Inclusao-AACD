@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "node scripts/servidor.js",
+    "dev:falso": "node scripts/back-falso.js",
     "lint": "eslint public tests",
     "test": "vitest run"
   },
