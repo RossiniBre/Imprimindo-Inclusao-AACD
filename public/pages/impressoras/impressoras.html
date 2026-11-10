@@ -7,7 +7,7 @@
         <p class="fs-6 text-body-secondary">Gerencie as impressoras que sua empresa disponibiliza para a AACD. Clique em um grupo para ir direto à seção.</p>
       </div>
       <div class="d-flex justify-content-end flex-wrap gap-3 mb-3">
-        <button type="button" class="btn-doacao-adicionar btn btn-warning fw-semibold">Doação</button>
+        <button type="button" id="btn-doacao" class="btn-doacao-adicionar btn btn-warning fw-semibold">Doação</button>
         <button type="button" id="btn-adicionar" class="btn-doacao-adicionar btn btn-warning fw-semibold">
           + Adicionar impressora
         </button>
@@ -250,4 +250,92 @@
       </div>
     </div>
   </div>
+
+  <!-- Doação -->
+<div class="modal fade" id="modal-doacao" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content rounded-4 p-3">
+      <div class="modal-header border-0 pb-0">
+        <div>
+          <h2 class="modal-title fs-4 fw-bold">Manifestar doação</h2>
+          <p class="small text-body-secondary mb-0">Escolha o que a empresa deseja doar à AACD.</p>
+        </div>
+        <button type="button" class="btn-close align-self-start" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body">
+        <p class="form-label small fw-semibold mb-2">O que deseja doar?</p>
+        <div class="row g-3 mb-4 pb-2">
+          <div class="col-12 col-md-4">
+            <label class="opcao-doacao d-flex align-items-start gap-2 p-3 h-100">
+              <input type="radio" class="form-check-input mt-1" name="doacao-tipo" value="FILAMENTO">
+              <span>
+                <span class="fw-bold d-block">Só filamento</span>
+                <small class="text-body-secondary">Doa rolos de filamento</small>
+              </span>
+            </label>
+          </div>
+          <div class="col-12 col-md-4">
+            <label class="opcao-doacao d-flex align-items-start gap-2 p-3 h-100">
+              <input type="radio" class="form-check-input mt-1" name="doacao-tipo" value="IMPRESSORA">
+              <span>
+                <span class="fw-bold d-block">Só impressora</span>
+                <small class="text-body-secondary">Cede uma impressora 3D</small>
+              </span>
+            </label>
+          </div>
+          <div class="col-12 col-md-4">
+            <label class="opcao-doacao d-flex align-items-start gap-2 p-3 h-100">
+              <input type="radio" class="form-check-input mt-1" name="doacao-tipo" value="AMBOS">
+              <span>
+                <span class="fw-bold d-block">Impressora + filamento</span>
+                <small class="text-body-secondary">Cede e doa os dois itens</small>
+              </span>
+            </label>
+          </div>
+        </div>
+
+                <div class="row g-3">
+          <!-- Quantidades (aparecem conforme a opção) -->
+          <div id="doacao-quantidades" class="col-12 col-md-6 d-none">
+            <div class="d-flex flex-wrap gap-4">
+              <div id="doacao-grupo-impressoras" style="width: 12rem;">
+                <label for="doacao-qtd-impressoras" class="form-label small fw-semibold">Qtd. de impressoras</label>
+                <div class="input-group input-group-lg">
+                  <button type="button" class="btn btn-outline-secondary" data-alvo="doacao-qtd-impressoras" data-passo="-1" aria-label="Diminuir"><i class="bi bi-dash-lg"></i></button>
+                  <input type="number" id="doacao-qtd-impressoras" class="form-control text-center" min="1" value="1" readonly>
+                  <button type="button" class="btn btn-outline-secondary" data-alvo="doacao-qtd-impressoras" data-passo="1" aria-label="Aumentar"><i class="bi bi-plus-lg"></i></button>
+                </div>
+              </div>
+              <div id="doacao-grupo-filamento" style="width: 12rem;">
+                <label for="doacao-qtd-filamento" class="form-label small fw-semibold">Qtd. de rolos de filamento</label>
+                <div class="input-group input-group-lg">
+                  <button type="button" class="btn btn-outline-secondary" data-alvo="doacao-qtd-filamento" data-passo="-1" aria-label="Diminuir"><i class="bi bi-dash-lg"></i></button>
+                  <input type="number" id="doacao-qtd-filamento" class="form-control text-center" min="1" value="1" readonly>
+                  <button type="button" class="btn btn-outline-secondary" data-alvo="doacao-qtd-filamento" data-passo="1" aria-label="Aumentar"><i class="bi bi-plus-lg"></i></button>
+                </div>
+              </div>
+            </div>
+            <p class="small text-body-secondary mt-3 mb-0">
+              Informe a quantidade de cada item. Ao escolher só um item, aparece apenas o campo dele.
+            </p>
+          </div>
+
+          <!-- Descrição -->
+          <div class="col-12 col-md-6 ms-md-auto">
+            <label for="doacao-descricao" class="form-label small fw-semibold">Descrição</label>
+            <textarea id="doacao-descricao" class="form-control" rows="5" maxlength="300"
+          placeholder="Ex.: Ender 3 V2 em bom estado e 5 rolos de PLA."></textarea>
+            <div id="doacao-contador" class="small text-body-secondary text-end">0/300</div>
+          </div>
+        </div>
+
+        <div id="doacao-erro" class="small text-danger mt-3 d-none"></div>
+      </div>
+            <div class="modal-footer border-0 pt-0">
+        <button type="button" class="btn btn-outline-secondary border-2 fw-semibold flex-fill" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" id="doacao-enviar" class="btn btn-warning fw-semibold flex-fill">Manifestar doação</button>
+      </div>
+    </div>
+  </div>
+</div>
 </section>

@@ -24,9 +24,18 @@ public class ManifestarDoacao {
         this.doacaoDao = doacaoDao;
     }
 
-    public int executar(int usuarioId, String tipoTexto, String descricao, String quantidadeTexto) throws SQLException {
+    public int executar(int usuarioId, String tipoTexto, String descricao,
+                        String qtdImpressorasTexto, String qtdFilamentoTexto) throws SQLException {
         TipoDoacao tipo = lerTipo(tipoTexto);
-        int quantidade = lerQuantidade(quantidadeTexto);
+
+        int qtdImpressoras = 0;
+        int qtdFilamento = 0;
+        if (tipo != TipoDoacao.FILAMENTO) {
+            qtdImpressoras = lerQuantidade(qtdImpressorasTexto, "impressoras");
+        }
+        if (tipo != TipoDoacao.IMPRESSORA) {
+            qtdFilamento = lerQuantidade(qtdFilamentoTexto, "filamento");
+        }
 
         String texto = descricao == null ? "" : descricao.trim();
         if (texto.isEmpty()) {
@@ -41,7 +50,22 @@ public class ManifestarDoacao {
             throw new IllegalStateException("Empresa não encontrada!");
         }
 
-        return doacaoDao.inserir(empresa.getId(), tipo, texto, quantidade);
+        return doacaoDao.inserir(empresa.getId(), tipo, texto, qtdImpressoras, qtdFilamento);
+    }
+
+    private int lerQuantidade(String texto, String campo) {
+        if (texto == null || texto.isBlank()) return 1;
+        int q;
+        try {
+            q = Integer.parseInt(texto.trim());
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Quantidade de " + campo + " inválida!");
+        }
+        if (q < 1 || q > QUANTIDADE_MAX) {
+            throw new IllegalArgumentException(
+                    "Quantidade de " + campo + " deve ficar entre 1 e " + QUANTIDADE_MAX + "!");
+        }
+        return q;
     }
 
     private TipoDoacao lerTipo(String texto) {

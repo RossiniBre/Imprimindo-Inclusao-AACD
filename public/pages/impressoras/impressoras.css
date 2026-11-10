@@ -92,7 +92,6 @@ main {
     color: black;
 }
 
-/* telas grandes (o modelo é 1920px) */
 @media (min-width: 992px) {
     .conteudo { padding: 52px 100px 30px; }
 }
@@ -110,4 +109,71 @@ main {
 .card-desativada {
     border-color: var(--cinza);
     opacity: .75;
+}
+
+#modal-doacao .modal-dialog {
+  max-width: 700px;
+}
+
+.opcao-doacao {
+  border: 2px solid #CAC9C6;
+  border-radius: 12px;
+  cursor: pointer;
+  background: #FFFFFF;
+  padding: 1.25rem !important;
+  min-height: 6.5rem;
+}
+.opcao-doacao:has(input:checked) {
+  border-color: #EFB000;
+  background: #FFF3C7;
+}
+
+.opcao-doacao .form-check-input {
+  flex-shrink: 0;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-top: 0.15rem;
+  border: 2px solid #CAC9C6;
+  border-radius: 0.3rem;
+  background-color: #FFFFFF;
+}
+.opcao-doacao .form-check-input:checked[type="radio"] {
+  background-color: #EFB000;
+  border-color: #EFB000;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='none' stroke='%232B2B2B' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3E%3C/svg%3E");
+}
+.opcao-doacao .form-check-input:focus {
+  border-color: #EFB000;
+  box-shadow: 0 0 0 0.2rem rgba(239, 176, 0, 0.25);
+}
+
+#modal-doacao .input-group .btn,
+#modal-doacao .input-group .form-control {
+  border: 2px solid #2B2B2B;
+  color: #2B2B2B;
+}
+#modal-doacao .input-group .form-control {
+  border-left: 0;
+  border-right: 0;
+  padding-left: 0;
+  padding-right: 0;
+  text-align: center;
+  font-weight: 600;
+  background-color: #FFFFFF;
+  cursor: default;
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+#modal-doacao .input-group .form-control::-webkit-outer-spin-button,
+#modal-doacao .input-group .form-control::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+#modal-doacao .input-group .form-control:focus {
+  box-shadow: none;
+}
+#modal-doacao .input-group .btn:hover {
+  background-color: #FFF3C7;
+  border-color: #2B2B2B;
+  color: #2B2B2B;
 }

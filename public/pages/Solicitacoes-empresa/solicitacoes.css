@@ -542,3 +542,1414 @@ body {
     min-height: 46px;                 /* era 39px */
     font-size: 1rem;                  /* era .9rem */
 }
+
+/* ===== Modal de solicitação (ajustado ao protótipo) ===== */
+#modalSolicitacao .modal-content {
+  background: var(--cor-superficie);
+  color: var(--cor-texto);
+  border: 0;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+}
+
+/* ---------- Cabeçalho: título + subtítulo, X no canto direito ---------- */
+#modalSolicitacao .modal-header {
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.75rem 1.75rem 0.75rem;
+  border-bottom: 0;
+}
+
+#modalSolicitacao .modal-title {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--cor-texto);
+}
+
+#modalSolicitacao .modal-subtitulo {
+  margin: 0.35rem 0 0;
+  font-size: 0.95rem;
+  color: var(--cor-texto-suave);
+}
+
+/* O X sumia para o meio porque o margin:0 anulava o margin-left:auto do Bootstrap */
+#modalSolicitacao .btn-close {
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  margin: 0 0 0 auto;
+  border-radius: 50%;
+  background-color: var(--cor-neutra-claro);
+  background-size: 0.7rem;
+  opacity: 1;
+}
+
+#modalSolicitacao .btn-close:hover {
+  background-color: var(--cor-borda);
+}
+
+#modalSolicitacao .btn-close:focus {
+  box-shadow: 0 0 0 3px var(--cor-destaque-claro);
+}
+
+/* ---------- Corpo ---------- */
+#modalSolicitacao .modal-body {
+  padding: 0.75rem 1.75rem 1rem;
+}
+
+/* ---------- Cartão-resumo (pedido à esquerda, dados à direita) ---------- */
+#modalSolicitacao .modal-resumo {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 1rem 2.5rem;
+  margin-bottom: 1.5rem;
+  padding: 1.1rem 1.25rem;
+  background: var(--cor-fundo);
+  border: 1px solid var(--cor-borda);
+  border-radius: 14px;
+}
+
+#modalSolicitacao .modal-resumo__nome {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--cor-texto);
+}
+
+#modalSolicitacao .modal-resumo__pedido {
+  margin: 0.2rem 0 0.9rem;
+  font-size: 0.8rem;
+  color: var(--cor-texto-suave);
+}
+
+#modalSolicitacao .modal-resumo__autor {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--cor-texto-suave);
+}
+
+#modalSolicitacao .modal-resumo__autor strong {
+  color: var(--cor-texto);
+}
+
+#modalSolicitacao .modal-resumo__dados {
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: 0.55rem 2rem;
+  margin: 0;
+  min-width: 15rem;
+  font-size: 0.9rem;
+}
+
+#modalSolicitacao .modal-resumo__dados dt {
+  font-weight: 400;
+  color: var(--cor-texto-suave);
+}
+
+#modalSolicitacao .modal-resumo__dados dd {
+  margin: 0;
+  font-weight: 700;
+  text-align: right;
+  color: var(--cor-texto);
+}
+
+/* ---------- Lista de detalhes (painel "detalhes") ---------- */
+#modalSolicitacao dl.row {
+  display: grid;
+  grid-template-columns: 10.5rem 1fr;
+  gap: 0.6rem 1rem;
+  margin: 0;
+  padding: 1rem 1.1rem;
+  background: var(--cor-fundo);
+  border: 1px solid var(--cor-neutra-claro);
+  border-radius: 14px;
+}
+
+#modalSolicitacao dl.row > * {
+  width: auto;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
+#modalSolicitacao dl.row dt {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--cor-texto-suave);
+}
+
+#modalSolicitacao dl.row dd {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--cor-texto);
+  overflow-wrap: anywhere;
+}
+
+/* Histórico */
+#modalSolicitacao [data-linha="historico"] h6 {
+  margin: 1.1rem 0 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--cor-texto);
+}
+
+#modalSolicitacao [data-detalhe="historico"] li {
+  padding: 0.45rem 0.75rem;
+  margin-bottom: 0.4rem;
+  background: var(--cor-neutra-claro);
+  border-radius: 10px;
+  color: var(--cor-texto-suave);
+}
+
+/* ---------- Campos ---------- */
+#modalSolicitacao .form-label {
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--cor-texto);
+}
+
+#modalSolicitacao .form-control,
+#modalSolicitacao .form-select {
+  padding: 0.8rem 1rem;
+  font-size: 0.95rem;
+  color: var(--cor-texto);
+  background-color: var(--cor-superficie);
+  border: 1px solid var(--cor-borda);
+  border-radius: 12px;
+}
+
+#modalSolicitacao .form-control::placeholder {
+  color: var(--cor-placeholder);
+}
+
+#modalSolicitacao .form-control:focus,
+#modalSolicitacao .form-select:focus {
+  border-color: var(--cor-botao-principal);
+  box-shadow: 0 0 0 3px var(--cor-destaque-claro);
+}
+
+#modalSolicitacao .form-text {
+  margin-top: 0.4rem;
+  font-size: 0.8rem;
+  color: var(--cor-texto-suave);
+}
+
+/* ---------- Checklist de compatibilidade ---------- */
+#modalSolicitacao .modal-checks {
+  display: grid;
+  gap: 0.5rem;
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+#modalSolicitacao .modal-checks li {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--cor-sucesso-texto, #14612f);
+}
+
+#modalSolicitacao .modal-checks li::before {
+  content: "\F26E"; /* bi-check-lg (Bootstrap Icons) */
+  font-family: "bootstrap-icons";
+  font-size: 1rem;
+  line-height: 1;
+  color: var(--cor-sucesso);
+}
+
+/* Variante de alerta (ex.: "A peça não cabe") */
+#modalSolicitacao .modal-checks li.erro {
+  color: var(--cor-erro);
+}
+
+#modalSolicitacao .modal-checks li.erro::before {
+  content: "\F62A"; /* bi-x-lg */
+  color: var(--cor-erro);
+}
+
+/* Variante informativa (sem confirmar nem negar) */
+#modalSolicitacao .modal-checks li.info {
+  font-weight: 500;
+  color: var(--cor-texto-suave);
+}
+
+#modalSolicitacao .modal-checks li.info::before {
+  content: "\F431"; /* bi-info-circle */
+  color: var(--cor-texto-suave);
+}
+
+/* ---------- Erro dentro do modal ---------- */
+#modalSolicitacao .alert-danger {
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  color: var(--cor-erro);
+  background: var(--cor-erro-claro);
+  border: 1px solid var(--cor-erro);
+  border-radius: 12px;
+}
+
+/* ---------- Avisos ---------- */
+#modalSolicitacao .modal-aviso {
+  margin-top: 1.1rem;
+  padding: 1rem 1.25rem;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--cor-destaque-texto);
+  background: var(--cor-destaque-claro);
+  border-radius: 12px;
+}
+
+#modalSolicitacao .modal-aviso.sucesso {
+  color: var(--cor-sucesso-texto, #14612f);
+  background: var(--cor-sucesso-claro);
+}
+
+/* ---------- Rodapé ---------- */
+#modalSolicitacao .modal-footer {
+  padding: 0.75rem 1.75rem 1.75rem;
+  border-top: 0;
+}
+
+#modalSolicitacao .modal-footer [data-rodape] {
+  width: 100%;
+  margin: 0 !important;      /* anula o ms-auto, quem manda aqui é o justify-content */
+  justify-content: flex-end;
+}
+
+/* Prazo / justificativa: Voltar na esquerda, confirmar largo na direita */
+#modalSolicitacao .modal-footer [data-rodape="prazo"],
+#modalSolicitacao .modal-footer [data-rodape="justificativa"] {
+  justify-content: space-between;
+}
+
+#modalSolicitacao .modal-footer [data-rodape="prazo"] .btn:last-child,
+#modalSolicitacao .modal-footer [data-rodape="justificativa"] .btn:last-child {
+  flex: 0 1 13.5rem;
+}
+
+#modalSolicitacao .modal-footer .btn {
+  padding: 0.7rem 1.5rem;
+  font-weight: 700;
+  border-radius: 12px;
+  transition: background-color 0.15s, border-color 0.15s;
+}
+
+#modalSolicitacao .modal-footer .btn:focus-visible {
+  box-shadow: 0 0 0 3px var(--cor-destaque-claro);
+}
+
+#modalSolicitacao .modal-footer .btn:disabled {
+  opacity: 0.6;
+}
+
+/* Cancelar / Voltar */
+#modalSolicitacao .btn-outline-secondary {
+  color: var(--cor-texto);
+  background: var(--cor-superficie);
+  border: 1.5px solid var(--cor-texto);
+}
+
+#modalSolicitacao .btn-outline-secondary:hover {
+  color: var(--cor-texto);
+  background: var(--cor-neutra-claro);
+  border-color: var(--cor-texto);
+}
+
+/* Aceitar / Concluir / Confirmar */
+#modalSolicitacao .btn-success {
+  color: #fff;
+  background: var(--cor-sucesso);
+  border: 1.5px solid var(--cor-sucesso);
+}
+
+#modalSolicitacao .btn-success:hover {
+  background: #258a4d;
+  border-color: #258a4d;
+}
+
+/* Recusar / Falhou */
+#modalSolicitacao .btn-danger {
+  color: #fff;
+  background: var(--cor-erro);
+  border: 1.5px solid var(--cor-erro);
+}
+
+#modalSolicitacao .btn-danger:hover {
+  background: #a60d26;
+  border-color: #a60d26;
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 575.98px) {
+  #modalSolicitacao .modal-header,
+  #modalSolicitacao .modal-body {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+
+  #modalSolicitacao .modal-footer {
+    padding: 0.5rem 1.25rem 1.25rem;
+  }
+
+  #modalSolicitacao .modal-resumo {
+    grid-template-columns: 1fr;
+  }
+
+  #modalSolicitacao .modal-resumo__dados {
+    min-width: 0;
+    grid-template-columns: 1fr auto;
+  }
+
+  #modalSolicitacao dl.row {
+    grid-template-columns: 1fr;
+    gap: 0.15rem;
+  }
+
+  #modalSolicitacao dl.row dd {
+    margin-bottom: 0.5rem;
+  }
+
+  #modalSolicitacao .modal-footer [data-rodape] {
+    flex-direction: column-reverse;
+  }
+
+  #modalSolicitacao .modal-footer .btn,
+  #modalSolicitacao .modal-footer [data-rodape="prazo"] .btn:last-child,
+  #modalSolicitacao .modal-footer [data-rodape="justificativa"] .btn:last-child {
+    width: 100%;
+    flex: 0 0 auto;
+  }
+}
+
+/* ===== Modal de solicitação (ajustado ao protótipo) ===== */
+#modalSolicitacao .modal-content {
+  background: var(--cor-superficie);
+  color: var(--cor-texto);
+  border: 0;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+}
+
+/* ---------- Cabeçalho: título + subtítulo, X no canto direito ---------- */
+#modalSolicitacao .modal-header {
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.75rem 1.75rem 0.75rem;
+  border-bottom: 0;
+}
+
+#modalSolicitacao .modal-title {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--cor-texto);
+}
+
+#modalSolicitacao .modal-subtitulo {
+  margin: 0.35rem 0 0;
+  font-size: 0.95rem;
+  color: var(--cor-texto-suave);
+}
+
+/* O X sumia para o meio porque o margin:0 anulava o margin-left:auto do Bootstrap */
+#modalSolicitacao .btn-close {
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  margin: 0 0 0 auto;
+  border-radius: 50%;
+  background-color: var(--cor-neutra-claro);
+  background-size: 0.7rem;
+  opacity: 1;
+}
+
+#modalSolicitacao .btn-close:hover {
+  background-color: var(--cor-borda);
+}
+
+#modalSolicitacao .btn-close:focus {
+  box-shadow: 0 0 0 3px var(--cor-destaque-claro);
+}
+
+/* ---------- Corpo ---------- */
+#modalSolicitacao .modal-body {
+  padding: 0.75rem 1.75rem 1rem;
+}
+
+/* ---------- Cartão-resumo (pedido à esquerda, dados à direita) ---------- */
+#modalSolicitacao .modal-resumo {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 1rem 2.5rem;
+  margin-bottom: 1.5rem;
+  padding: 1.1rem 1.25rem;
+  background: var(--cor-fundo);
+  border: 1px solid var(--cor-borda);
+  border-radius: 14px;
+}
+
+#modalSolicitacao .modal-resumo__nome {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--cor-texto);
+}
+
+#modalSolicitacao .modal-resumo__pedido {
+  margin: 0.2rem 0 0.9rem;
+  font-size: 0.8rem;
+  color: var(--cor-texto-suave);
+}
+
+#modalSolicitacao .modal-resumo__autor {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--cor-texto-suave);
+}
+
+#modalSolicitacao .modal-resumo__autor strong {
+  color: var(--cor-texto);
+}
+
+#modalSolicitacao .modal-resumo__dados {
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: 0.55rem 2rem;
+  margin: 0;
+  min-width: 15rem;
+  font-size: 0.9rem;
+}
+
+#modalSolicitacao .modal-resumo__dados dt {
+  font-weight: 400;
+  color: var(--cor-texto-suave);
+}
+
+#modalSolicitacao .modal-resumo__dados dd {
+  margin: 0;
+  font-weight: 700;
+  text-align: right;
+  color: var(--cor-texto);
+}
+
+/* ---------- Lista de detalhes (painel "detalhes") ---------- */
+#modalSolicitacao dl.row {
+  display: grid;
+  grid-template-columns: 10.5rem 1fr;
+  gap: 0.6rem 1rem;
+  margin: 0;
+  padding: 1rem 1.1rem;
+  background: var(--cor-fundo);
+  border: 1px solid var(--cor-neutra-claro);
+  border-radius: 14px;
+}
+
+#modalSolicitacao dl.row > * {
+  width: auto;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
+#modalSolicitacao dl.row dt {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--cor-texto-suave);
+}
+
+#modalSolicitacao dl.row dd {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--cor-texto);
+  overflow-wrap: anywhere;
+}
+
+/* Histórico */
+#modalSolicitacao [data-linha="historico"] h6 {
+  margin: 1.1rem 0 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--cor-texto);
+}
+
+#modalSolicitacao [data-detalhe="historico"] li {
+  padding: 0.45rem 0.75rem;
+  margin-bottom: 0.4rem;
+  background: var(--cor-neutra-claro);
+  border-radius: 10px;
+  color: var(--cor-texto-suave);
+}
+
+/* ---------- Campos ---------- */
+#modalSolicitacao .form-label {
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--cor-texto);
+}
+
+#modalSolicitacao .form-control,
+#modalSolicitacao .form-select {
+  padding: 0.8rem 1rem;
+  font-size: 0.95rem;
+  color: var(--cor-texto);
+  background-color: var(--cor-superficie);
+  border: 1px solid var(--cor-borda);
+  border-radius: 12px;
+}
+
+#modalSolicitacao .form-control::placeholder {
+  color: var(--cor-placeholder);
+}
+
+#modalSolicitacao .form-control:focus,
+#modalSolicitacao .form-select:focus {
+  border-color: var(--cor-botao-principal);
+  box-shadow: 0 0 0 3px var(--cor-destaque-claro);
+}
+
+#modalSolicitacao .form-text {
+  margin-top: 0.4rem;
+  font-size: 0.8rem;
+  color: var(--cor-texto-suave);
+}
+
+/* ---------- Resumo simples (painel de recusa / falha) ---------- */
+#modalSolicitacao .modal-resumo--simples {
+  gap: 0.5rem 1.5rem;
+  margin-bottom: 1.25rem;
+  padding: 1rem 1.25rem;
+}
+
+#modalSolicitacao .modal-resumo--simples .modal-resumo__nome {
+  font-size: 1.1rem;
+}
+
+#modalSolicitacao .modal-resumo--simples .modal-resumo__pedido {
+  margin: 0.25rem 0 0;
+}
+
+#modalSolicitacao .modal-resumo--simples .modal-resumo__autor {
+  text-align: right;
+}
+
+/* ---------- Opções de motivo (chips) ---------- */
+#modalSolicitacao .modal-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+#modalSolicitacao .modal-chip {
+  padding: 0.5rem 1.1rem;
+  font-size: 0.9rem;
+  color: var(--cor-texto);
+  background: var(--cor-superficie);
+  border: 1px solid var(--cor-borda);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background-color 0.15s, border-color 0.15s;
+}
+
+#modalSolicitacao .modal-chip:hover {
+  background: var(--cor-neutra-claro);
+}
+
+#modalSolicitacao .modal-chip:focus-visible {
+  outline: 0;
+  box-shadow: 0 0 0 3px var(--cor-destaque-claro);
+}
+
+#modalSolicitacao .modal-chip.ativo {
+  font-weight: 700;
+  background: var(--cor-destaque-claro);
+  border-color: var(--cor-botao-principal);
+}
+
+/* Texto de ajuda vazio não ocupa espaço */
+#modalSolicitacao .form-text:empty {
+  display: none;
+}
+
+/* ---------- Checklist de compatibilidade ---------- */
+#modalSolicitacao .modal-checks {
+  display: grid;
+  gap: 0.5rem;
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+#modalSolicitacao .modal-checks li {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--cor-sucesso-texto, #14612f);
+}
+
+#modalSolicitacao .modal-checks li::before {
+  content: "\F26E"; /* bi-check-lg (Bootstrap Icons) */
+  font-family: "bootstrap-icons";
+  font-size: 1rem;
+  line-height: 1;
+  color: var(--cor-sucesso);
+}
+
+/* Variante de alerta (ex.: "A peça não cabe") */
+#modalSolicitacao .modal-checks li.erro {
+  color: var(--cor-erro);
+}
+
+#modalSolicitacao .modal-checks li.erro::before {
+  content: "\F62A"; /* bi-x-lg */
+  color: var(--cor-erro);
+}
+
+/* Variante informativa (sem confirmar nem negar) */
+#modalSolicitacao .modal-checks li.info {
+  font-weight: 500;
+  color: var(--cor-texto-suave);
+}
+
+#modalSolicitacao .modal-checks li.info::before {
+  content: "\F431"; /* bi-info-circle */
+  color: var(--cor-texto-suave);
+}
+
+/* ---------- Erro dentro do modal ---------- */
+#modalSolicitacao .alert-danger {
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  color: var(--cor-erro);
+  background: var(--cor-erro-claro);
+  border: 1px solid var(--cor-erro);
+  border-radius: 12px;
+}
+
+/* ---------- Avisos ---------- */
+#modalSolicitacao .modal-aviso {
+  margin-top: 1.1rem;
+  padding: 1rem 1.25rem;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--cor-destaque-texto);
+  background: var(--cor-destaque-claro);
+  border-radius: 12px;
+}
+
+#modalSolicitacao .modal-aviso.sucesso {
+  color: var(--cor-sucesso-texto, #14612f);
+  background: var(--cor-sucesso-claro);
+}
+
+/* ---------- Rodapé ---------- */
+#modalSolicitacao .modal-footer {
+  padding: 0.75rem 1.75rem 1.75rem;
+  border-top: 0;
+}
+
+#modalSolicitacao .modal-footer [data-rodape] {
+  width: 100%;
+  margin: 0 !important;      /* anula o ms-auto, quem manda aqui é o justify-content */
+  justify-content: flex-end;
+}
+
+/* Prazo / justificativa: Voltar na esquerda, confirmar largo na direita */
+#modalSolicitacao .modal-footer [data-rodape="prazo"],
+#modalSolicitacao .modal-footer [data-rodape="justificativa"] {
+  justify-content: space-between;
+}
+
+#modalSolicitacao .modal-footer [data-rodape="prazo"] .btn:last-child,
+#modalSolicitacao .modal-footer [data-rodape="justificativa"] .btn:last-child {
+  flex: 0 1 13.5rem;
+}
+
+#modalSolicitacao .modal-footer .btn {
+  padding: 0.7rem 1.5rem;
+  font-weight: 700;
+  border-radius: 12px;
+  transition: background-color 0.15s, border-color 0.15s;
+}
+
+#modalSolicitacao .modal-footer .btn:focus-visible {
+  box-shadow: 0 0 0 3px var(--cor-destaque-claro);
+}
+
+#modalSolicitacao .modal-footer .btn:disabled {
+  opacity: 0.6;
+}
+
+/* Cancelar / Voltar */
+#modalSolicitacao .btn-outline-secondary {
+  color: var(--cor-texto);
+  background: var(--cor-superficie);
+  border: 1.5px solid var(--cor-texto);
+}
+
+#modalSolicitacao .btn-outline-secondary:hover {
+  color: var(--cor-texto);
+  background: var(--cor-neutra-claro);
+  border-color: var(--cor-texto);
+}
+
+/* Aceitar / Concluir / Confirmar */
+#modalSolicitacao .btn-success {
+  color: #fff;
+  background: var(--cor-sucesso);
+  border: 1.5px solid var(--cor-sucesso);
+}
+
+#modalSolicitacao .btn-success:hover {
+  background: #258a4d;
+  border-color: #258a4d;
+}
+
+/* Recusar / Falhou */
+#modalSolicitacao .btn-danger {
+  color: #fff;
+  background: var(--cor-erro);
+  border: 1.5px solid var(--cor-erro);
+}
+
+#modalSolicitacao .btn-danger:hover {
+  background: #a60d26;
+  border-color: #a60d26;
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 575.98px) {
+  #modalSolicitacao .modal-header,
+  #modalSolicitacao .modal-body {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+
+  #modalSolicitacao .modal-footer {
+    padding: 0.5rem 1.25rem 1.25rem;
+  }
+
+  #modalSolicitacao .modal-resumo {
+    grid-template-columns: 1fr;
+  }
+
+  #modalSolicitacao .modal-resumo--simples .modal-resumo__autor {
+    text-align: left;
+  }
+
+  #modalSolicitacao .modal-resumo__dados {
+    min-width: 0;
+    grid-template-columns: 1fr auto;
+  }
+
+  #modalSolicitacao dl.row {
+    grid-template-columns: 1fr;
+    gap: 0.15rem;
+  }
+
+  #modalSolicitacao dl.row dd {
+    margin-bottom: 0.5rem;
+  }
+
+  #modalSolicitacao .modal-footer [data-rodape] {
+    flex-direction: column-reverse;
+  }
+
+  #modalSolicitacao .modal-footer .btn,
+  #modalSolicitacao .modal-footer [data-rodape="prazo"] .btn:last-child,
+  #modalSolicitacao .modal-footer [data-rodape="justificativa"] .btn:last-child {
+    width: 100%;
+    flex: 0 0 auto;
+  }
+}
+
+/* ===== Modal de solicitação (ajustado ao protótipo) ===== */
+#modalSolicitacao .modal-content {
+  background: var(--cor-superficie);
+  color: var(--cor-texto);
+  border: 0;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+}
+
+/* ---------- Cabeçalho: título + subtítulo, X no canto direito ---------- */
+#modalSolicitacao .modal-header {
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.75rem 1.75rem 0.75rem;
+  border-bottom: 0;
+}
+
+#modalSolicitacao .modal-title {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--cor-texto);
+}
+
+#modalSolicitacao .modal-subtitulo {
+  margin: 0.35rem 0 0;
+  font-size: 0.95rem;
+  color: var(--cor-texto-suave);
+}
+
+/* O X sumia para o meio porque o margin:0 anulava o margin-left:auto do Bootstrap */
+#modalSolicitacao .btn-close {
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  margin: 0 0 0 auto;
+  border-radius: 50%;
+  background-color: var(--cor-neutra-claro);
+  background-size: 0.7rem;
+  opacity: 1;
+}
+
+#modalSolicitacao .btn-close:hover {
+  background-color: var(--cor-borda);
+}
+
+#modalSolicitacao .btn-close:focus {
+  box-shadow: 0 0 0 3px var(--cor-destaque-claro);
+}
+
+/* ---------- Corpo ---------- */
+#modalSolicitacao .modal-body {
+  padding: 0.75rem 1.75rem 1rem;
+}
+
+/* ---------- Cartão-resumo (pedido à esquerda, dados à direita) ---------- */
+#modalSolicitacao .modal-resumo {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 1rem 2.5rem;
+  margin-bottom: 1.5rem;
+  padding: 1.1rem 1.25rem;
+  background: var(--cor-fundo);
+  border: 1px solid var(--cor-borda);
+  border-radius: 14px;
+}
+
+#modalSolicitacao .modal-resumo__nome {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--cor-texto);
+}
+
+#modalSolicitacao .modal-resumo__pedido {
+  margin: 0.2rem 0 0.9rem;
+  font-size: 0.8rem;
+  color: var(--cor-texto-suave);
+}
+
+#modalSolicitacao .modal-resumo__autor {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--cor-texto-suave);
+}
+
+#modalSolicitacao .modal-resumo__autor strong {
+  color: var(--cor-texto);
+}
+
+#modalSolicitacao .modal-resumo__dados {
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: 0.55rem 2rem;
+  margin: 0;
+  min-width: 15rem;
+  font-size: 0.9rem;
+}
+
+#modalSolicitacao .modal-resumo__dados dt {
+  font-weight: 400;
+  color: var(--cor-texto-suave);
+}
+
+#modalSolicitacao .modal-resumo__dados dd {
+  margin: 0;
+  font-weight: 700;
+  text-align: right;
+  color: var(--cor-texto);
+}
+
+/* ---------- Lista de detalhes (painel "detalhes") ---------- */
+#modalSolicitacao dl.row {
+  display: grid;
+  grid-template-columns: 10.5rem 1fr;
+  gap: 0.6rem 1rem;
+  margin: 0;
+  padding: 1rem 1.1rem;
+  background: var(--cor-fundo);
+  border: 1px solid var(--cor-neutra-claro);
+  border-radius: 14px;
+}
+
+#modalSolicitacao dl.row > * {
+  width: auto;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
+#modalSolicitacao dl.row dt {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--cor-texto-suave);
+}
+
+#modalSolicitacao dl.row dd {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--cor-texto);
+  overflow-wrap: anywhere;
+}
+
+/* ---------- Detalhes: status, seções, arquivo, histórico ---------- */
+#modalSolicitacao .modal-resumo__pedido strong {
+  color: var(--cor-texto);
+}
+
+/* Status neutro: fundo cinza e só um ponto colorido */
+#modalSolicitacao .modal-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.3rem 0.8rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--cor-texto);
+  background: var(--cor-neutra-claro);
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+#modalSolicitacao .modal-status::before {
+  content: "";
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--cor-texto-suave);
+}
+
+#modalSolicitacao .modal-status[data-status="pendente"]::before { background: var(--cor-botao-principal); }
+#modalSolicitacao .modal-status[data-status="aceita"]::before,
+#modalSolicitacao .modal-status[data-status="concluida"]::before { background: var(--cor-sucesso); }
+#modalSolicitacao .modal-status[data-status="recusada"]::before,
+#modalSolicitacao .modal-status[data-status="falhou"]::before { background: var(--cor-erro); }
+
+#modalSolicitacao .modal-secao {
+  margin-top: 1.25rem;
+}
+
+#modalSolicitacao .modal-secao__titulo {
+  margin: 0 0 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--cor-texto);
+}
+
+#modalSolicitacao .modal-texto {
+  max-height: 9rem;
+  margin: 0;
+  padding: 0.85rem 1.1rem;
+  overflow-y: auto;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  color: var(--cor-texto);
+  background: var(--cor-superficie);
+  border: 1px solid var(--cor-neutra-claro);
+  border-radius: 12px;
+}
+
+#modalSolicitacao .modal-texto--nota {
+  background: var(--cor-neutra-claro);
+  border-color: transparent;
+}
+
+/* Arquivo enviado */
+#modalSolicitacao .modal-arquivo {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.75rem 1rem;
+  background: var(--cor-superficie);
+  border: 1px solid var(--cor-neutra-claro);
+  border-radius: 12px;
+}
+
+#modalSolicitacao .modal-arquivo__icone {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  font-size: 1.15rem;
+  color: var(--cor-texto-suave);
+  background: var(--cor-neutra-claro);
+  border-radius: 10px;
+}
+
+#modalSolicitacao .modal-arquivo__info {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+#modalSolicitacao .modal-arquivo__info strong {
+  font-size: 0.95rem;
+  overflow-wrap: anywhere;
+  color: var(--cor-texto);
+}
+
+#modalSolicitacao .modal-arquivo__info small {
+  font-size: 0.8rem;
+  color: var(--cor-texto-suave);
+}
+
+#modalSolicitacao .modal-arquivo .btn {
+  flex-shrink: 0;
+  padding: 0.45rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  border-radius: 12px;
+}
+
+/* Histórico */
+#modalSolicitacao .modal-historico li {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0.7rem;
+  padding-left: 0.9rem;
+  border-left: 2px solid var(--cor-borda);
+}
+
+#modalSolicitacao .modal-historico li:last-child {
+  margin-bottom: 0;
+}
+
+#modalSolicitacao .hist-texto {
+  font-size: 0.9rem;
+  color: var(--cor-texto);
+}
+
+#modalSolicitacao .hist-data {
+  font-size: 0.78rem;
+  color: var(--cor-texto-suave);
+}
+
+/* ---------- Campos ---------- */
+#modalSolicitacao .form-label {
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--cor-texto);
+}
+
+#modalSolicitacao .form-control,
+#modalSolicitacao .form-select {
+  padding: 0.8rem 1rem;
+  font-size: 0.95rem;
+  color: var(--cor-texto);
+  background-color: var(--cor-superficie);
+  border: 1px solid var(--cor-borda);
+  border-radius: 12px;
+}
+
+#modalSolicitacao .form-control::placeholder {
+  color: var(--cor-placeholder);
+}
+
+#modalSolicitacao .form-control:focus,
+#modalSolicitacao .form-select:focus {
+  border-color: var(--cor-botao-principal);
+  box-shadow: 0 0 0 3px var(--cor-destaque-claro);
+}
+
+#modalSolicitacao .form-text {
+  margin-top: 0.4rem;
+  font-size: 0.8rem;
+  color: var(--cor-texto-suave);
+}
+
+/* ---------- Resumo simples (painel de recusa / falha) ---------- */
+#modalSolicitacao .modal-resumo--simples {
+  gap: 0.5rem 1.5rem;
+  margin-bottom: 1.25rem;
+  padding: 1rem 1.25rem;
+}
+
+#modalSolicitacao .modal-resumo--simples .modal-resumo__nome {
+  font-size: 1.1rem;
+}
+
+#modalSolicitacao .modal-resumo--simples .modal-resumo__pedido {
+  margin: 0.25rem 0 0;
+}
+
+#modalSolicitacao .modal-resumo--simples .modal-resumo__autor {
+  text-align: right;
+}
+
+/* ---------- Opções de motivo (chips) ---------- */
+#modalSolicitacao .modal-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+#modalSolicitacao .modal-chip {
+  padding: 0.5rem 1.1rem;
+  font-size: 0.9rem;
+  color: var(--cor-texto);
+  background: var(--cor-superficie);
+  border: 1px solid var(--cor-borda);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background-color 0.15s, border-color 0.15s;
+}
+
+#modalSolicitacao .modal-chip:hover {
+  background: var(--cor-neutra-claro);
+}
+
+#modalSolicitacao .modal-chip:focus-visible {
+  outline: 0;
+  box-shadow: 0 0 0 3px var(--cor-destaque-claro);
+}
+
+#modalSolicitacao .modal-chip.ativo {
+  font-weight: 700;
+  background: var(--cor-destaque-claro);
+  border-color: var(--cor-botao-principal);
+}
+
+/* Texto de ajuda vazio não ocupa espaço */
+#modalSolicitacao .form-text:empty {
+  display: none;
+}
+
+/* ---------- Checklist de compatibilidade ---------- */
+#modalSolicitacao .modal-checks {
+  display: grid;
+  gap: 0.5rem;
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+#modalSolicitacao .modal-checks li {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--cor-sucesso-texto, #14612f);
+}
+
+#modalSolicitacao .modal-checks li::before {
+  content: "\F26E"; /* bi-check-lg (Bootstrap Icons) */
+  font-family: "bootstrap-icons";
+  font-size: 1rem;
+  line-height: 1;
+  color: var(--cor-sucesso);
+}
+
+/* Variante de alerta (ex.: "A peça não cabe") */
+#modalSolicitacao .modal-checks li.erro {
+  color: var(--cor-erro);
+}
+
+#modalSolicitacao .modal-checks li.erro::before {
+  content: "\F62A"; /* bi-x-lg */
+  color: var(--cor-erro);
+}
+
+/* Variante informativa (sem confirmar nem negar) */
+#modalSolicitacao .modal-checks li.info {
+  font-weight: 500;
+  color: var(--cor-texto-suave);
+}
+
+#modalSolicitacao .modal-checks li.info::before {
+  content: "\F431"; /* bi-info-circle */
+  color: var(--cor-texto-suave);
+}
+
+/* ---------- Erro dentro do modal ---------- */
+#modalSolicitacao .alert-danger {
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  color: var(--cor-erro);
+  background: var(--cor-erro-claro);
+  border: 1px solid var(--cor-erro);
+  border-radius: 12px;
+}
+
+/* ---------- Avisos ---------- */
+#modalSolicitacao .modal-aviso {
+  margin-top: 1.1rem;
+  padding: 1rem 1.25rem;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--cor-destaque-texto);
+  background: var(--cor-destaque-claro);
+  border-radius: 12px;
+}
+
+#modalSolicitacao .modal-aviso.sucesso {
+  color: var(--cor-sucesso-texto, #14612f);
+  background: var(--cor-sucesso-claro);
+}
+
+/* ---------- Rodapé ---------- */
+#modalSolicitacao .modal-footer {
+  padding: 0.75rem 1.75rem 1.75rem;
+  border-top: 0;
+}
+
+#modalSolicitacao .modal-footer [data-rodape] {
+  width: 100%;
+  margin: 0 !important;      /* anula o ms-auto, quem manda aqui é o justify-content */
+  justify-content: flex-end;
+}
+
+/* Prazo / justificativa: Voltar na esquerda, confirmar largo na direita */
+#modalSolicitacao .modal-footer [data-rodape="prazo"],
+#modalSolicitacao .modal-footer [data-rodape="justificativa"] {
+  justify-content: space-between;
+}
+
+#modalSolicitacao .modal-footer [data-rodape="prazo"] .btn:last-child,
+#modalSolicitacao .modal-footer [data-rodape="justificativa"] .btn:last-child {
+  flex: 0 1 13.5rem;
+}
+
+#modalSolicitacao .modal-footer .btn {
+  padding: 0.7rem 1.5rem;
+  font-weight: 700;
+  border-radius: 12px;
+  transition: background-color 0.15s, border-color 0.15s;
+}
+
+#modalSolicitacao .modal-footer .btn:focus-visible {
+  box-shadow: 0 0 0 3px var(--cor-destaque-claro);
+}
+
+#modalSolicitacao .modal-footer .btn:disabled {
+  opacity: 0.6;
+}
+
+/* Cancelar / Voltar */
+#modalSolicitacao .btn-outline-secondary {
+  color: var(--cor-texto);
+  background: var(--cor-superficie);
+  border: 1.5px solid var(--cor-texto);
+}
+
+#modalSolicitacao .btn-outline-secondary:hover {
+  color: var(--cor-texto);
+  background: var(--cor-neutra-claro);
+  border-color: var(--cor-texto);
+}
+
+/* Aceitar / Concluir / Confirmar */
+#modalSolicitacao .btn-success {
+  color: #fff;
+  background: var(--cor-sucesso);
+  border: 1.5px solid var(--cor-sucesso);
+}
+
+#modalSolicitacao .btn-success:hover {
+  background: #258a4d;
+  border-color: #258a4d;
+}
+
+/* Recusar / Falhou */
+#modalSolicitacao .btn-danger {
+  color: #fff;
+  background: var(--cor-erro);
+  border: 1.5px solid var(--cor-erro);
+}
+
+#modalSolicitacao .btn-danger:hover {
+  background: #a60d26;
+  border-color: #a60d26;
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 575.98px) {
+  #modalSolicitacao .modal-header,
+  #modalSolicitacao .modal-body {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+
+  #modalSolicitacao .modal-footer {
+    padding: 0.5rem 1.25rem 1.25rem;
+  }
+
+  #modalSolicitacao .modal-resumo {
+    grid-template-columns: 1fr;
+  }
+
+  #modalSolicitacao .modal-resumo--simples .modal-resumo__autor {
+    text-align: left;
+  }
+
+  #modalSolicitacao .modal-arquivo {
+    flex-wrap: wrap;
+  }
+
+  #modalSolicitacao .modal-arquivo .btn {
+    width: 100%;
+  }
+
+  #modalSolicitacao .modal-resumo__dados {
+    min-width: 0;
+    grid-template-columns: 1fr auto;
+  }
+
+  #modalSolicitacao dl.row {
+    grid-template-columns: 1fr;
+    gap: 0.15rem;
+  }
+
+  #modalSolicitacao dl.row dd {
+    margin-bottom: 0.5rem;
+  }
+
+  #modalSolicitacao .modal-footer [data-rodape] {
+    flex-direction: column-reverse;
+  }
+
+  #modalSolicitacao .modal-footer .btn,
+  #modalSolicitacao .modal-footer [data-rodape="prazo"] .btn:last-child,
+  #modalSolicitacao .modal-footer [data-rodape="justificativa"] .btn:last-child {
+    width: 100%;
+    flex: 0 0 auto;
+  }
+}

@@ -79,6 +79,8 @@ public final class Rotas {
         rota(servidor, "/api/solicitacao/cancelar", new CancelarSolicitacaoHandler(sessoes));
         rota(servidor, "/api/solicitacao/excluir",
                 new ExcluirSolicitacaoHandler(sessoes, new ExcluirSolicitacao(conteudoDao, armazenamento)));
+        rota(servidor, "/api/solicitacao/detalhe",
+                new DetalheSolicitacaoEmpresaHandler(sessoes, conteudoDao));
 
         // Doações
         rota(servidor, "/api/doacoes", new DoacoesHandler(sessoes));

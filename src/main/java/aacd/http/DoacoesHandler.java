@@ -50,7 +50,8 @@ public class DoacoesHandler implements HttpHandler {
                     sessao.get().getUsuarioId(),
                     campos.get().get("tipo"),
                     campos.get().get("descricao"),
-                    campos.get().get("quantidade"));
+                    campos.get().get("quantidadeImpressoras"),
+                    campos.get().get("quantidadeFilamento"));
             Http.json(ex, 201, Json.objeto().campo("id", id).build());
 
         } catch (IllegalArgumentException e) {
@@ -80,7 +81,8 @@ public class DoacoesHandler implements HttpHandler {
                         .campo("id", d.getId())
                         .campo("tipo", d.getTipo())
                         .campo("descricao", d.getDescricao())
-                        .campo("quantidade", d.getQuantidade())
+                        .campo("quantidadeImpressoras", d.getQuantidadeImpressoras())
+                        .campo("quantidadeFilamento", d.getQuantidadeFilamento())
                         .campo("dataManifestacao", d.getDataManifestacao() == null ? null : d.getDataManifestacao().toString())
                         .campoJson("empresa", empresa)
                         .build());

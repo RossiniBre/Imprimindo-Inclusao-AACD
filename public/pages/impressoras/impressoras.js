@@ -325,3 +325,124 @@ export function destruir() {
   document.body.style.removeProperty('overflow');
   document.body.style.removeProperty('padding-right');
 }
+
+const modalDoacao = new bootstrap.Modal(document.getElementById('modal-doacao'));
+const doacaoErro = document.getElementById('doacao-erro');
+const doacaoQuantidades = document.getElementById('doacao-quantidades');
+const grupoImpressoras = document.getElementById('doacao-grupo-impressoras');
+const grupoFilamento = document.getElementById('doacao-grupo-filamento');
+const doacaoDescricao = document.getElementById('doacao-descricao');
+
+function tipoDoacaoSelecionado() {
+  return document.querySelector('input[name="doacao-tipo"]:checked')?.value ?? '';
+}
+
+function atualizarCamposQuantidade() {
+  const tipo = tipoDoacaoSelecionado();
+  doacaoQuantidades.classList.toggle('d-none', !tipo);
+  grupoImpressoras.classList.toggle('d-none', tipo === 'FILAMENTO');
+  grupoFilamento.classList.toggle('d-none', tipo === 'IMPRESSORA');
+}
+
+function mostrarErroDoacao(msg) {
+  doacaoErro.textContent = msg;
+  doacaoErro.classList.remove('d-none');
+}
+
+document.querySelectorAll('input[name="doacao-tipo"]').forEach(radio => {
+  radio.addEventListener('change', atualizarCamposQuantidade);
+});
+
+// botões − e +
+document.querySelectorAll('#modal-doacao [data-passo]').forEach(botao => {
+  botao.addEventListener('click', () => {
+    const campo = document.getElementById(botao.dataset.alvo);
+    campo.value = Math.max(1, (Number(campo.value) || 1) + Number(botao.dataset.passo));
+  });
+});
+
+doacaoDescricao.addEventListener('input', () => {
+  document.getElementById('doacao-contador').textContent = `${doacaoDescricao.value.length}/300`;
+});
+
+document.getElementById('btn-doacao').addEventListener('click', () => {
+  document.querySelectorAll('input[name="doacao-tipo"]').forEach(r => { r.checked = false; });
+  document.getElementById('doacao-qtd-impressoras').value = 1;
+  document.getElementById('doacao-qtd-filamento').value = 1;
+  doacaoDescricao.value = '';
+  document.getElementById('doacao-contador').textContent = '0/300';
+  doacaoErro.classList.add('d-none');
+  atualizarCamposQuantidade();
+  modalDoacao.show();
+});
+
+document.getElementById('doacao-enviar').addEventListener('click', async () => {
+  const tipo = tipoDoacaoSelecionado();
+  const descricao = doacaoDescricao.value.trim();
+  const qtdImpressoras = Number(document.getElementById('doacao-qtd-impressoras').value);
+  const qtdFilamento = Number(document.getElementById('doacao-qtd-filamento').value);
+
+  if (!tipo) {
+    mostrarErroDoacao('Escolha o que deseja doar.');
+    return;
+  }
+  if ((tipo !== 'FILAMENTO' && qtdImpressoras < 1) || (tipo !== 'IMPRESSORA' && qtdFilamento < 1)) {
+    mostrarErroDoacao('Informe a quantidade (mínimo 1).');
+    return;
+  }
+  if (!descricao) {
+    mostrarErroDoacao('Descreva a doação.');
+    return;
+  }
+
+  const dados = new URLSearchParams({ tipo, descricao });
+  if (tipo !== 'FILAMENTO') dados.set('quantidadeImpressoras', qtdImpressoras);
+  if (tipo !== 'IMPRESSORA') dados.set('quantidadeFilamento', qtdFilamento);
+
+  const botao = document.getElementById('doacao-enviar');
+  botao.disabled = true;
+  try {
+    const resp = await fetch('/api/doacoes', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: dados
+    });
+
+    if (resp.status === 201) {
+      modalDoacao.hide();
+      mostrarAvisoSucesso('Manifestação de doação enviada com sucesso!');
+    } else if (resp.status === 401 || resp.status === 403) {
+      mostrarErroDoacao('Sua sessão expirou ou você não tem permissão. Entre novamente.');
+    } else {
+      mostrarErroDoacao('Não foi possível enviar. Confira os dados e tente de novo.');
+    }
+  } catch {
+    mostrarErroDoacao('Erro de conexão com o servidor.');
+  } finally {
+    botao.disabled = false;
+  }
+});
+
+function mostrarAvisoSucesso(msg) {
+  let container = document.getElementById('toast-container');
+  if (!container) {
+    container = document.createElement('div');
+    container.id = 'toast-container';
+    container.className = 'toast-container position-fixed top-0 end-0 p-3';
+    document.body.appendChild(container);
+  }
+
+  const toast = document.createElement('div');
+  toast.className = 'toast align-items-center text-bg-success border-0';
+  toast.setAttribute('role', 'status');
+  toast.innerHTML = `
+    <div class="d-flex">
+      <div class="toast-body"></div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
+    </div>`;
+  toast.querySelector('.toast-body').textContent = msg;
+  container.appendChild(toast);
+
+  toast.addEventListener('hidden.bs.toast', () => toast.remove());
+  new bootstrap.Toast(toast, { delay: 4000 }).show();
+}

@@ -58,4 +58,171 @@
         </div>
 
     </div>
+<div class="modal fade" id="modalSolicitacao" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+
+            <!-- Cabeçalho (o JS preenche título e subtítulo conforme o painel ativo) -->
+            <div class="modal-header">
+                <div>
+                    <h5 class="modal-title" data-modal-titulo></h5>
+                    <p class="modal-subtitulo" data-modal-subtitulo></p>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+
+            <div class="modal-body">
+                <div class="alert alert-danger d-none" data-erro role="alert"></div>
+
+                <!-- Painel: detalhes (somente leitura) -->
+                <div data-painel="detalhes">
+
+                    <div class="modal-resumo modal-resumo--simples">
+                        <div>
+                            <h6 class="modal-resumo__nome" data-campo="titulo"></h6>
+                            <p class="modal-resumo__pedido">Enviado por <strong data-campo="criadoPor"></strong></p>
+                        </div>
+                        <span class="modal-status" data-status-chip><span data-campo="statusTexto"></span></span>
+                    </div>
+
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">Impressora</dt>
+                        <dd class="col-sm-8" data-campo="impressora"></dd>
+
+                        <dt class="col-sm-4">Dimensões da peça</dt>
+                        <dd class="col-sm-8" data-campo="dimensoes"></dd>
+
+                        <dt class="col-sm-4">Quantidade</dt>
+                        <dd class="col-sm-8" data-detalhe="quantidade">—</dd>
+
+                        <dt class="col-sm-4">Recebida em</dt>
+                        <dd class="col-sm-8" data-campo="dataCriacao"></dd>
+
+                        <dt class="col-sm-4 d-none" data-linha="prazoEstimado">Prazo estimado</dt>
+                        <dd class="col-sm-8 d-none" data-linha="prazoEstimado" data-detalhe="prazoEstimado"></dd>
+                    </dl>
+
+                    <div class="modal-secao">
+                        <h6 class="modal-secao__titulo">Descrição</h6>
+                        <p class="modal-texto" data-detalhe="descricao">—</p>
+                    </div>
+
+                    <div class="modal-secao">
+                        <h6 class="modal-secao__titulo">Arquivo enviado</h6>
+                        <div class="modal-arquivo">
+                            <span class="modal-arquivo__icone" aria-hidden="true"><i class="bi bi-box"></i></span>
+                            <div class="modal-arquivo__info">
+                                <strong data-detalhe="nomeArquivo">—</strong>
+                                <small>Enviado junto com a solicitação</small>
+                            </div>
+                            <a class="btn btn-outline-secondary d-none" data-arquivo-link href="#" rel="noopener">Abrir arquivo</a>
+                        </div>
+                    </div>
+
+                    <div class="modal-secao d-none" data-linha="justificativa">
+                        <h6 class="modal-secao__titulo">Justificativa</h6>
+                        <p class="modal-texto modal-texto--nota" data-detalhe="justificativa"></p>
+                    </div>
+
+                    <div class="modal-secao d-none" data-linha="historico">
+                        <h6 class="modal-secao__titulo">Histórico</h6>
+                        <ul class="modal-historico list-unstyled mb-0" data-detalhe="historico"></ul>
+                    </div>
+                </div>
+
+                <!-- Painel: aceitar (impressora) -->
+                <div class="d-none" data-painel="prazo">
+
+                    <div class="modal-resumo">
+                        <div>
+                            <h6 class="modal-resumo__nome" data-campo="titulo"></h6>
+                            <p class="modal-resumo__pedido">Pedido <span data-campo="pedido"></span></p>
+                            <p class="modal-resumo__autor">Enviado por <strong data-campo="criadoPor"></strong></p>
+                        </div>
+
+                        <dl class="modal-resumo__dados">
+                            <dt>Impressora</dt>
+                            <dd data-aceite="impressora">—</dd>
+
+                            <dt class="d-none">Materiais</dt>
+                            <dd class="d-none" data-aceite="materiais">—</dd>
+
+                            <dt>Peça</dt>
+                            <dd data-aceite="peca">—</dd>
+
+                            <dt>Quantidade</dt>
+                            <dd data-aceite="quantidade">—</dd>
+                        </dl>
+                    </div>
+
+                    <label class="form-label" for="campoPrazo">Prazo estimado para finalizar</label>
+                    <input type="date" class="form-control" id="campoPrazo" name="prazo">
+                    <div class="form-text">Este prazo será informado à AACD.</div>
+
+                    <ul class="modal-checks" data-checks></ul>
+
+                    <div class="modal-aviso sucesso">
+                        Ao aceitar, a impressora fica ocupada e o pedido passa para Imprimindo. A AACD é avisada na hora.
+                    </div>
+                </div>
+
+                <!-- Painel: justificativa (recusar / falhou) -->
+                <div class="d-none" data-painel="justificativa">
+
+                    <div class="modal-resumo modal-resumo--simples">
+                        <div>
+                            <h6 class="modal-resumo__nome" data-campo="titulo"></h6>
+                            <p class="modal-resumo__pedido">Pedido <span data-campo="pedido"></span> · <span data-campo="dimensoes"></span></p>
+                        </div>
+                        <p class="modal-resumo__autor">Enviado por <strong data-campo="criadoPor"></strong></p>
+                    </div>
+
+                    <!-- Só aparece ao recusar -->
+                    <div class="mb-3" data-grupo-motivos>
+                        <div class="form-label" id="rotuloMotivo">Motivo da recusa</div>
+                        <div class="modal-chips" role="radiogroup" aria-labelledby="rotuloMotivo">
+                            <button type="button" class="modal-chip" role="radio" aria-checked="false" data-motivo="Sem capacidade no prazo">Sem capacidade no prazo</button>
+                            <button type="button" class="modal-chip" role="radio" aria-checked="false" data-motivo="Material indisponível">Material indisponível</button>
+                            <button type="button" class="modal-chip" role="radio" aria-checked="false" data-motivo="Peça não cabe na impressora">Peça não cabe na impressora</button>
+                            <button type="button" class="modal-chip" role="radio" aria-checked="false" data-motivo="Impressora em manutenção">Impressora em manutenção</button>
+                            <button type="button" class="modal-chip" role="radio" aria-checked="false" data-motivo="Outro">Outro</button>
+                        </div>
+                    </div>
+
+                    <label class="form-label" for="campoJustificativa" data-rotulo-justificativa>Observação (opcional)</label>
+                    <textarea class="form-control" id="campoJustificativa" name="justificativa"
+                              rows="3" maxlength="460"></textarea>
+                    <div class="form-text" data-ajuda-justificativa></div>
+                    <div class="modal-aviso" data-aviso-justificativa></div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <!-- Rodapé: detalhes -->
+                <div class="d-flex gap-2 ms-auto" data-rodape="detalhes">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fechar</button>
+
+                    <button type="button" class="btn btn-danger d-none" data-visivel="pendente" data-acao="ir-recusar">Recusar</button>
+                    <button type="button" class="btn btn-success d-none" data-visivel="pendente" data-acao="ir-prazo">Aceitar</button>
+
+                    <button type="button" class="btn btn-danger d-none" data-visivel="aceita" data-acao="ir-falhar">Falhou</button>
+                    <button type="button" class="btn btn-success d-none" data-visivel="aceita" data-acao="concluir">Concluir</button>
+                </div>
+
+                <!-- Rodapé: aceitar -->
+                <div class="d-flex gap-2 ms-auto d-none" data-rodape="prazo">
+                    <button type="button" class="btn btn-outline-secondary" data-acao="voltar">Voltar</button>
+                    <button type="button" class="btn btn-success" data-acao="confirmar-aceite">Confirmar e aceitar</button>
+                </div>
+
+                <!-- Rodapé: justificativa -->
+                <div class="d-flex gap-2 ms-auto d-none" data-rodape="justificativa">
+                    <button type="button" class="btn btn-outline-secondary" data-acao="voltar">Voltar</button>
+                    <button type="button" class="btn btn-danger" data-acao="confirmar-justificativa">Confirmar recusa</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
 </section>
