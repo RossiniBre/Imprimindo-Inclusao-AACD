@@ -1,0 +1,203 @@
+/* as cores vêm do tokens.css */
+
+body {
+    background-color: var(--cor-fundo);
+    color: var(--cor-texto);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Header Principal */
+.main-header {
+    background-color: var(--cor-superficie);
+    border-bottom: 2px solid #eef0f2;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+#imagem_aacd {
+    width: 40px;
+    height: 40px;
+}
+
+.logo-subtext {
+    font-size: 0.85rem;
+    border-left: 1px solid var(--cor-borda);
+    padding-left: 10px;
+}
+
+.btn-doe {
+    border-width: 2px;
+    background-color: var(--cor-cabecalho);
+    color: white;
+    font-weight: 600;
+}
+.btn-doe:hover {
+    background-color: #a3001b;
+    color: #FFFFFF;
+}
+
+
+/* Hero Section - Campanha */
+.hero-section {
+    background: linear-gradient(135deg, #FFF0CC 0%, #FFE285 100%);
+    border-radius: 24px;
+    padding: 40px;
+}
+
+.badge-doacao {
+    background-color: var(--cor-botao-principal);
+    color: var(--cor-texto);
+    font-weight: 800;
+    font-size: 1.5rem;
+    padding: 8px 16px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+.btn-hero {
+    background-color: var(--cor-botao-principal);
+    color: var(--cor-texto);
+    border: none;
+    border-radius: 12px;
+    padding: 12px 32px;
+}
+
+.btn-hero:hover {
+    background-color: var(--cor-botao-principal-hover);
+}
+
+/* Nossa Atuação */
+.section-title {
+    font-weight: 800;
+    color: var(--cor-texto);
+}
+
+.card-atuacao {
+    background: var(--cor-superficie);
+    border: 1px solid var(--cor-borda);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+}
+
+.card-atuacao i {
+    font-size: 2rem;
+    color: var(--cor-cabecalho);
+    margin-bottom: 10px;
+}
+
+.card-atuacao h5 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin: 0;
+    color: var(--cor-texto);
+}
+
+/* Banner Curvo de Doação */
+.banner-curvo {
+    background: linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.25)), url('https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?auto=format&fit=crop&w=1200&q=80') center/cover;
+    border-radius: 24px;
+    min-height: 380px;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+}
+
+.curved-box {
+    background-color: var(--cor-superficie);
+    padding: 50px 40px;
+    border-radius: 0 160px 160px 0;
+    max-width: 520px;
+    box-shadow: 6px 0 20px rgba(0,0,0,0.12);
+}
+
+/* Imagem/texto chamada PII */
+.container-imagem {
+    position: relative;   /* ← referência para o texto absoluto */
+    max-width: 100%;
+    overflow: hidden;     /* ← garante que nada vaze */
+}
+
+.imagem-PII {
+    border-radius: 3%;
+    max-width: 100%;      /* ← impede a imagem de estourar */
+    height: auto;
+}
+
+.texto-imagem {
+    position: absolute;
+    bottom: 5%;
+    left: 25%;
+    color: white;
+    z-index: 1;
+    font-size: 30px;
+    font-weight: 600;
+    text-align: center;
+}
+
+/* Histórias */
+.card-historia {
+    border: none;
+    border-radius: 16px;
+    overflow: hidden;
+    background: var(--cor-superficie);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.card-historia img {
+    height: 280px;
+    object-fit: cover;
+}
+
+.btn-historia {
+    background-color: var(--cor-cabecalho);
+    color: white;
+    border-radius: 8px;
+    width: 100%;
+    font-weight: 600;
+    border: none;
+}
+
+.btn-historia:hover {
+    color: white;
+    background-color: #a3001b;
+    opacity: 0.9;
+}
+
+/* Responsividade "Nossa Atuação" */
+.card-atuacao:hover {
+    background-color: #f0f0f0;
+    box-shadow: 0 4px 4px rgba(0,0,0,0.1);
+    color: black;
+}
+
+.btn-link {
+    color: var(--cor-cabecalho);
+    text-decoration: none;
+}
+.btn-link:hover {
+    color: #ac0b26;
+}
+
+/* Modo Alto Contraste */
+body.high-contrast {
+    background-color: #000000 !important;
+    color: #FFFF00 !important;
+}
+
+body.high-contrast .main-header,
+body.high-contrast .card-atuacao,
+body.high-contrast .curved-box,
+body.high-contrast .card-historia {
+    background-color: #121212 !important;
+    color: #FFFFFF !important;
+    border-color: #FFFF00 !important;
+}
+
+body.high-contrast .btn-doe,
+body.high-contrast .btn-historia,
+body.high-contrast .btn-hero {
+    background-color: #FFFF00 !important;
+    color: #000000 !important;
+}
