@@ -2,6 +2,8 @@ import { describe, it, expect, beforeEach } from 'vitest'
 import { carregarHtml } from './helpers/carregarTela.js'
 import {
   filtrarImpressoras,
+  agruparImpressoras,
+  ufDaCidade,
   extensaoValida,
   formatarPrazo,
   montarDescricao,
@@ -121,11 +123,20 @@ describe('impressoras da rede: validação do pedido', () => {
 describe('impressoras da rede: tela', () => {
   beforeEach(() => carregarHtml('impressoras-aacd', 'impressoras-aacd'))
 
-  it('tem busca, filtro de material, "só livres" e o modal escondido', () => {
+  it('tem busca, botão de filtros, as três seções e os modais escondidos', () => {
     expect(document.querySelector('#busca')).not.toBeNull()
-    expect(document.querySelector('#filtro-material')).not.toBeNull()
-    expect(document.querySelector('#so-livres').checked).toBe(true)
+    expect(document.querySelector('#botao-filtro')).not.toBeNull()
+ 
+    // o select de material e o "só livres" saíram: em uso também recebe pedidos
+    expect(document.querySelector('#filtro-material')).toBeNull()
+    expect(document.querySelector('#so-livres')).toBeNull()
+ 
+    for (const secao of ['#grupo-livres', '#grupo-em-uso', '#grupo-desativadas']) {
+      expect(document.querySelector(secao)).not.toBeNull()
+    }
+ 
     expect(document.querySelector('#modal-solicitacao').hidden).toBe(true)
+    expect(document.querySelector('#modal-filtros').hidden).toBe(true)
   })
 
   it('o formulário tem os campos que o back exige', () => {
@@ -133,5 +144,74 @@ describe('impressoras da rede: tela', () => {
       expect(document.querySelector(`#form-solicitacao [name="${nome}"]`), nome).not.toBeNull()
     }
     expect(document.querySelector('#campo-arquivo').accept).toBe('.stl,.obj,.3mf')
+  })
+})
+
+describe('impressoras da rede: seções e filtro por UF', () => {
+  const imp = (id, extra = {}) => ({
+    id,
+    modelo: `Modelo ${id}`,
+    empresa: { id: 1, nome: 'Mackenzie' },
+    cidade: 'São Paulo, SP',
+    uf: 'SP',
+    disponibilidade: 'OCIOSA',
+    ativo: true,
+    ...extra,
+  })
+ 
+  it('agrupa em livres, em uso e desativadas', () => {
+    const grupos = agruparImpressoras([
+      imp(1),
+      imp(2, { disponibilidade: 'EM_USO' }),
+      imp(3, { ativo: false }),
+    ])
+ 
+    expect(grupos.livres.map((i) => i.id)).toEqual([1])
+    expect(grupos.emUso.map((i) => i.id)).toEqual([2])
+    expect(grupos.desativadas.map((i) => i.id)).toEqual([3])
+  })
+ 
+  it('desativada vai para Desativadas mesmo estando ociosa ou em uso', () => {
+    const grupos = agruparImpressoras([
+      imp(1, { ativo: false, disponibilidade: 'OCIOSA' }),
+      imp(2, { ativo: false, disponibilidade: 'EM_USO' }),
+    ])
+ 
+    expect(grupos.desativadas).toHaveLength(2)
+    expect(grupos.livres).toHaveLength(0)
+    expect(grupos.emUso).toHaveLength(0)
+  })
+ 
+  it('sem o campo "ativo", a impressora conta como ativa', () => {
+    const semCampo = imp(1)
+    delete semCampo.ativo
+    const grupos = agruparImpressoras([semCampo])
+
+    expect(grupos.livres).toHaveLength(1)
+    expect(grupos.desativadas).toHaveLength(0)
+  })
+ 
+  it('sem filtros, as impressoras em uso continuam na lista', () => {
+    const lista = [imp(1), imp(2, { disponibilidade: 'EM_USO' })]
+ 
+    expect(filtrarImpressoras(lista, {})).toHaveLength(2)
+  })
+ 
+  it('filtra por UF, com "ou" entre as UFs marcadas', () => {
+    const lista = [
+      imp(1),
+      imp(2, { uf: 'RJ', cidade: 'Rio de Janeiro, RJ' }),
+      imp(3, { uf: 'MG', cidade: 'Belo Horizonte, MG' }),
+    ]
+ 
+    expect(filtrarImpressoras(lista, { ufs: ['SP'] }).map((i) => i.id)).toEqual([1])
+    expect(filtrarImpressoras(lista, { ufs: ['SP', 'RJ'] }).map((i) => i.id)).toEqual([1, 2])
+  })
+ 
+  it('tira a UF do fim da cidade', () => {
+    expect(ufDaCidade('São Paulo, SP')).toBe('SP')
+    expect(ufDaCidade('Rio de Janeiro - RJ')).toBe('RJ')
+    expect(ufDaCidade('')).toBe('')
+    expect(ufDaCidade(undefined)).toBe('')
   })
 })

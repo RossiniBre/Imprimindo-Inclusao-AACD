@@ -62,8 +62,8 @@ public class Empresa {
     }
 
     public void setTelefone(String telefone) {
-        if (telefone == null || !telefone.matches("\\d{11}")) {
-            throw new IllegalArgumentException("Telefone deve conter 11 dígitos!");
+        if (telefone == null || !telefone.matches("\\d{10,11}")) {
+            throw new IllegalArgumentException("Telefone deve conter 10 ou 11 dígitos!");
         }
         this.telefone = telefone;
     }

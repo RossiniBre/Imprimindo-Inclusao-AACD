@@ -126,3 +126,78 @@ body:has(.cadastro1) header {
     #formulario { width: 65.5%; }
     .geral { min-height: 100vh; }  /* era calc(100vh - 30px) */
 }
+
+/* Acrescente ao CSS do cadastro de empresa (etapas 1 e 2). */
+
+/* ---------- Asterisco vermelho nos campos obrigatórios ---------- */
+
+.obrigatorio::after {
+  content: ' *';
+  content: ' *' / '';          /* leitores de tela não leem o asterisco (já há aria-required) */
+  color: var(--cor-erro, #c62828);
+  font-weight: 700;
+}
+
+/* ---------- Erro por campo ---------- */
+
+.campo-erro {
+  margin: 0.25rem 0 0;
+  font-size: 0.75rem;
+  color: var(--cor-erro, #c62828);
+}
+
+input.com-erro,
+select.com-erro,
+textarea.com-erro {
+  border-color: var(--cor-erro, #c62828);
+}
+
+/* ---------- Barra de progresso ---------- */
+
+.progresso {
+  margin-bottom: 1.25rem;
+}
+
+.progresso__topo {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.375rem;
+  font-size: 0.8125rem;
+}
+
+.progresso__titulo {
+  color: var(--cor-texto-suave);
+  font-weight: 600;
+}
+
+.progresso__valor {
+  color: var(--cor-texto);
+  font-size: 0.875rem;
+}
+
+.progresso__trilho {
+  height: 0.5rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--cor-neutra-claro, #e6e6e6);
+}
+
+.progresso__preenchido {
+  width: 0;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--cor-sucesso, #2e7d32);
+  transition: width 0.3s ease;
+}
+
+.progresso__detalhe {
+  margin: 0.375rem 0 0;
+  font-size: 0.75rem;
+  color: var(--cor-texto-suave);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .progresso__preenchido { transition: none; }
+}

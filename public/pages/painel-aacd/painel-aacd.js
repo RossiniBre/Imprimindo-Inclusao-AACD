@@ -24,6 +24,18 @@ const NOME_DO_GRUPO = {
   recusadas: 'recusadas',
 };
 
+const ROTULO_STATUS = {
+  PENDENTE: 'Esperando aceite',
+  EM_ANDAMENTO: 'Imprimindo',
+  CONCLUIDA: 'Concluída',
+  RECUSADA: 'Recusada',
+  CANCELADA: 'Cancelada',
+  FALHOU: 'Falhou na impressão',
+};
+
+// Mesmo endpoint de arquivo que a empresa usa
+const URL_ARQUIVO = '/api/solicitacao/arquivo';
+
 
 export function agrupar(lista) {
   const grupos = { esperando: [], imprimindo: [], prontas: [], recusadas: [] };
@@ -252,6 +264,7 @@ export function iniciar(container) {
       acoes.appendChild(outra);
       acoes.appendChild(botao('Remover', 'remover', pedido));
     }
+    acoes.appendChild(botao('Ver detalhes', 'detalhes', pedido));
     cartao.appendChild(acoes);
 
     cartao.appendChild(elemento('p', 'cartao__rodape',
@@ -413,9 +426,11 @@ export function iniciar(container) {
     elementoAnterior = null;
   }
 
-  function aoApertarEsc(evento) {
-    if (evento.key === 'Escape' && !modal.hidden) fecharModal();
-  }
+    function aoApertarEsc(evento) {
+      if (evento.key !== 'Escape') return;
+      if (!modalDetalhes.hidden) fecharDetalhes();
+      else if (!modal.hidden) fecharModal();
+    }
 
   container.querySelector('#botao-fechar-modal').addEventListener('click', fecharModal);
   botaoVoltar.addEventListener('click', fecharModal);
@@ -448,11 +463,166 @@ export function iniciar(container) {
     botaoConfirmar.textContent = ACOES[acao].botao;
   });
 
+  // ----- Modal: detalhes (só leitura) -----
+
+  const modalDetalhes = container.querySelector('#modal-detalhes');
+  const corpoDetalhes = container.querySelector('#detalhes-corpo');
+  let aberturaDetalhes = 0;
+  let focoAnteriorDetalhes = null;
+
+  const STATUS_VISUAL = {
+    PENDENTE: 'pendente', EM_ANDAMENTO: 'aceita', CONCLUIDA: 'concluida',
+    RECUSADA: 'recusada', CANCELADA: 'cancelada', FALHOU: 'falhou',
+  };
+
+  function paresDeLinhas(pares) {
+    return pares
+      .filter(([, v]) => v !== undefined && v !== null && v !== '')
+      .flatMap(([rotulo, v]) => [elemento('dt', '', rotulo), elemento('dd', '', String(v))]);
+  }
+
+  function secaoDetalhes(titulo, filho) {
+    const s = elemento('section', 'det-secao');
+    s.append(elemento('h4', 'det-secao__titulo', titulo), filho);
+    return s;
+  }
+
+  function montarDetalhes(pedido, d, aviso) {
+    const nos = [];
+
+    // Cartão-resumo
+    const esq = elemento('div');
+    const autor = elemento('p', 'det-resumo__autor', 'Enviado por ');
+    autor.appendChild(elemento('strong', '', pedido.criadoPor ?? '—'));
+    esq.append(
+      elemento('h3', 'det-resumo__nome', pedido.titulo),
+      elemento('p', 'det-resumo__pedido', `Pedido #${pedido.id}`),
+      autor,
+    );
+
+    const status = elemento('span', 'det-status', ROTULO_STATUS[pedido.status] ?? pedido.status);
+    status.dataset.status = STATUS_VISUAL[pedido.status] ?? '';
+    const ddStatus = elemento('dd');
+    ddStatus.appendChild(status);
+
+    const dados = elemento('dl', 'det-resumo__dados');
+    dados.append(
+      elemento('dt', '', 'Status'), ddStatus,
+      ...paresDeLinhas([
+        ['Empresa', pedido.empresa],
+        ['Quantidade', d?.quantidade != null ? `${d.quantidade} un.` : null],
+        ['Prazo estimado', d?.prazoEstimado ? formatarData(d.prazoEstimado) : null],
+      ]),
+    );
+
+    const resumo = elemento('div', 'det-resumo');
+    resumo.append(esq, dados);
+    nos.push(resumo);
+
+    // Lista de detalhes
+    const linhas = paresDeLinhas([
+      ['Impressora', pedido.impressora],
+      ['Enviado em', pedido.criadoEm ? formatarDataHora(pedido.criadoEm) : null],
+      ['Dimensões', d?.comprimentoMm && d?.larguraMm && d?.alturaMm
+        ? `${d.comprimentoMm} × ${d.larguraMm} × ${d.alturaMm} mm` : null],
+    ]);
+    if (linhas.length) {
+      const lista = elemento('dl', 'det-lista');
+      lista.append(...linhas);
+      nos.push(lista);
+    }
+
+    // Descrição
+    if (d?.descricao) {
+      nos.push(secaoDetalhes('Descrição', elemento('p', 'det-texto', d.descricao)));
+    }
+
+    // Motivo (recusa / falha / cancelamento)
+    const motivo = d?.justificativa || pedido.justificativa;
+    if (motivo) {
+      nos.push(secaoDetalhes('Motivo', elemento('p', 'det-texto det-texto--nota', motivo)));
+    }
+
+    // Arquivo
+    if (d?.nomeArquivo) {
+      const info = elemento('div', 'det-arquivo__info');
+      info.append(elemento('strong', '', d.nomeArquivo));
+      const icone = elemento('span', 'det-arquivo__icone', '📄');
+      const link = elemento('a', 'det-btn det-btn--contorno', 'Baixar');
+      link.href = `${URL_ARQUIVO}?id=${encodeURIComponent(pedido.id)}`;
+      link.setAttribute('download', d.nomeArquivo);
+      const arq = elemento('div', 'det-arquivo');
+      arq.append(icone, info, link);
+      nos.push(secaoDetalhes('Arquivo', arq));
+    }
+
+    // Histórico
+    if (Array.isArray(d?.historico) && d.historico.length > 0) {
+      const ul = elemento('ul', 'det-historico');
+      d.historico.forEach((h) => {
+        const de = ROTULO_STATUS[h.de ?? h.statusAnterior] ?? '';
+        const para = ROTULO_STATUS[h.para ?? h.statusNovo] ?? '';
+        const texto = (de ? `${de} → ${para}` : para) + (h.observacao ? `: ${h.observacao}` : '');
+        const li = elemento('li');
+        li.appendChild(elemento('span', 'det-hist-texto', texto));
+        if (h.data) li.appendChild(elemento('span', 'det-hist-data', formatarDataHora(h.data)));
+        ul.appendChild(li);
+      });
+      nos.push(secaoDetalhes('Histórico', ul));
+    }
+
+    if (aviso) nos.push(elemento('p', 'det-aviso', aviso));
+    return nos;
+  }
+
+  async function abrirDetalhes(pedido) {
+    const minha = ++aberturaDetalhes;
+    focoAnteriorDetalhes = document.activeElement;
+
+    corpoDetalhes.replaceChildren(...montarDetalhes(pedido, null, 'Carregando detalhes...'));
+    modalDetalhes.hidden = false;
+    document.body.style.overflow = 'hidden';
+    modalDetalhes.querySelector('.det-fechar').focus();
+
+    try {
+      const resposta = await api.verSolicitacao(pedido.id);
+      if (minha !== aberturaDetalhes) return;
+      if (!resposta.ok) {
+        corpoDetalhes.replaceChildren(...montarDetalhes(
+          pedido, null, resposta.corpo?.erro ?? 'Não foi possível carregar os detalhes.'));
+        return;
+      }
+      corpoDetalhes.replaceChildren(...montarDetalhes(pedido, resposta.corpo ?? {}));
+    } catch {
+      if (minha !== aberturaDetalhes) return;
+      corpoDetalhes.replaceChildren(...montarDetalhes(pedido, null, 'Sem conexão com o servidor.'));
+    }
+  }
+
+  function fecharDetalhes() {
+    aberturaDetalhes++;
+    modalDetalhes.hidden = true;
+    document.body.style.overflow = '';
+    focoAnteriorDetalhes?.focus?.();
+    focoAnteriorDetalhes = null;
+  }
+
+  modalDetalhes.querySelectorAll('[data-fechar-detalhes]').forEach((b) =>
+    b.addEventListener('click', fecharDetalhes));
+  modalDetalhes.addEventListener('click', (evento) => {
+    if (evento.target === modalDetalhes) fecharDetalhes();
+  });
+
   container.querySelector('.painel__conteudo').addEventListener('click', (evento) => {
     const b = evento.target.closest('button[data-acao]');
     if (!b) return;
     const pedido = pedidos.find((p) => p.id === Number(b.dataset.id));
-    if (pedido) abrirModal(b.dataset.acao, pedido);
+    if (!pedido) return;
+    if (b.dataset.acao === 'detalhes') {
+      abrirDetalhes(pedido);
+      return;
+    }
+    abrirModal(b.dataset.acao, pedido);
   });
 
   limpar = () => {

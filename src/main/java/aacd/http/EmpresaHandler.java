@@ -38,13 +38,19 @@ public class EmpresaHandler implements HttpHandler {
             campos.get("cep"), campos.get("rua"), campos.get("numero"), campos.get("complemento"),
             campos.get("bairro"), campos.get("cidade"), campos.get("uf"));
             Http.json(ex, 201, Json.objeto().campo("mensagem", "Empresa cadastrada.").build());
-
         } catch (IllegalStateException e) {
             Http.erro(ex, 409, e.getMessage());
         } catch (IllegalArgumentException e) {
             Http.erro(ex, 400, e.getMessage());
         } catch (SQLException e) {
-            Http.erro(ex, 500, "Erro interno.");
+            System.err.println("Falha ao cadastrar empresa. SQLState=" + e.getSQLState()
+                    + " código=" + e.getErrorCode());
+            e.printStackTrace();
+            if (e.getSQLState() != null && e.getSQLState().startsWith("23")) {
+                Http.erro(ex, 409, "CNPJ ou e-mail já cadastrado.");
+            } else {
+                Http.erro(ex, 500, "Erro interno.");
+            }
         }
     }
 }

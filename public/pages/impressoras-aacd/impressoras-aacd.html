@@ -6,8 +6,7 @@
       <div>
         <h1>Impressoras livres</h1>
         <p class="tela__descricao">
-          Escolha uma das impressoras da rede de parceiros para prosseguir com o pedido de impressão.
-          O pedido vai direto para a empresa dona da impressora.
+          Veja todas as impressoras cadastradas por empresas parceiras
         </p>
       </div>
     </div>
@@ -21,14 +20,13 @@
         <input type="search" id="busca" placeholder="Buscar impressora, empresa ou cidade" autocomplete="off" aria-label="Buscar impressora">
       </label>
 
-      <select id="filtro-material" aria-label="Filtrar por material">
-        <option value="">Todos os materiais</option>
-      </select>
-
-      <label class="alternar">
-        <input type="checkbox" id="so-livres" checked>
-        <span>Só impressoras livres</span>
-      </label>
+      <button type="button" class="botao-filtro" id="botao-filtro" aria-haspopup="dialog">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polygon points="3 4 21 4 14 12.5 14 19 10 21 10 12.5 3 4"/>
+        </svg>
+        Filtros
+        <span class="botao-filtro__contagem" id="contagem-filtros" hidden>0</span>
+      </button>
     </div>
 
     <p class="tela__resumo" id="resumo" aria-live="polite"></p>
@@ -37,7 +35,40 @@
     <p class="tela__vazio" id="lista-carregando">Carregando impressoras...</p>
     <p class="tela__vazio" id="lista-vazia" hidden>Nenhuma impressora encontrada com esses filtros.</p>
 
-    <div class="cartoes" id="cartoes"></div>
+    <!-- Seções: cada uma só aparece quando tem impressoras -->
+    <div id="grupos">
+
+      <section class="grupo" id="grupo-livres" hidden>
+        <div class="grupo__cabecalho">
+          <span class="grupo__ponto grupo__ponto--livre" aria-hidden="true"></span>
+          <h2>Livres</h2>
+          <span class="grupo__contagem" id="contagem-livres">0</span>
+          <p class="grupo__descricao">Prontas para receber pedidos.</p>
+        </div>
+        <div class="cartoes" id="cartoes-livres"></div>
+      </section>
+
+      <section class="grupo" id="grupo-em-uso" hidden>
+        <div class="grupo__cabecalho">
+          <span class="grupo__ponto grupo__ponto--em-uso" aria-hidden="true"></span>
+          <h2>Em uso</h2>
+          <span class="grupo__contagem" id="contagem-em-uso">0</span>
+          <p class="grupo__descricao">Em uso na empresa, mas continuam recebendo pedidos.</p>
+        </div>
+        <div class="cartoes" id="cartoes-em-uso"></div>
+      </section>
+
+      <section class="grupo" id="grupo-desativadas" hidden>
+        <div class="grupo__cabecalho">
+          <span class="grupo__ponto grupo__ponto--desativada" aria-hidden="true"></span>
+          <h2>Desativadas</h2>
+          <span class="grupo__contagem" id="contagem-desativadas">0</span>
+          <p class="grupo__descricao">Pausadas pela empresa. Não recebem pedidos até serem reativadas.</p>
+        </div>
+        <div class="cartoes" id="cartoes-desativadas"></div>
+      </section>
+
+    </div>
 
   </div>
 
@@ -136,6 +167,38 @@
         </div>
       </div>
 
+    </div>
+  </div>
+
+  <!-- Modal: filtros por UF e material -->
+  <div class="modal-fundo" id="modal-filtros" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="filtros-titulo">
+      <div class="modal__cabecalho">
+        <h2 id="filtros-titulo">Filtrar impressoras</h2>
+        <button type="button" class="modal__fechar" data-fechar aria-label="Fechar">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="6" y1="6" x2="18" y2="18"/>
+            <line x1="18" y1="6" x2="6" y2="18"/>
+          </svg>
+        </button>
+      </div>
+
+      <fieldset class="modal__campo">
+        <legend>Estado (UF)</legend>
+        <div class="escolha" id="filtro-ufs"></div>
+      </fieldset>
+
+      <fieldset class="modal__campo">
+        <legend>Material</legend>
+        <div class="escolha" id="filtro-materiais"></div>
+      </fieldset>
+
+      <p class="modal__dica" id="filtros-resultado" aria-live="polite"></p>
+
+      <div class="modal__rodape">
+        <button type="button" class="modal__secundario" id="limpar-filtros">Limpar</button>
+        <button type="button" class="botao-confirmar" data-fechar>Ver impressoras</button>
+      </div>
     </div>
   </div>
 

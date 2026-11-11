@@ -2,8 +2,8 @@ import { perfilAtual } from './sessao.js';
 
 const MENUS = {
   EMPRESA:     [['/impressoras', 'Minhas impressoras'], ['/solicitacoes', 'Solicitações recebidas'], ['/contato', 'Entre em contato']],
-  FUNCIONARIO: [['/impressoras-aacd', 'Impressoras'], ['/painel-aacd', 'Solicitações'], ['/parceiros', 'Parceiros'], ['/doacoes', 'Doações']],
-  ADMIN:       [['/impressoras-aacd', 'Impressoras'], ['/painel-aacd', 'Solicitações'], ['/parceiros', 'Parceiros'], ['/doacoes', 'Doações'], ['/funcionarios', 'Funcionários']],
+  FUNCIONARIO: [['/impressoras-aacd', 'Impressoras'], ['/painel-aacd', 'Acompanhamento'], ['/parceiros', 'Parceiros'], ['/doacoes', 'Doações']],
+  ADMIN:       [['/impressoras-aacd', 'Impressoras'], ['/painel-aacd', 'Acompanhamento'], ['/parceiros', 'Parceiros'], ['/doacoes', 'Doações'], ['/funcionarios', 'Funcionários']],
 };
 
 // telas em que o menu nunca aparece, mesmo com sessão ativa

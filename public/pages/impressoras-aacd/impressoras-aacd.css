@@ -267,7 +267,7 @@
 .modal-fundo {
   position: fixed;
   inset: 0;
-  z-index: 100;
+  z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -625,4 +625,208 @@
   .modal__rodape > * {
     width: 100%;
   }
+}
+
+/* ===== Layout como no protótipo ===== */
+.impressoras-aacd .tela__descricao {
+  font-size: 0.75rem;
+}
+
+.impressoras-aacd .tela__resumo {
+  display: none;
+}
+
+/* Busca curta e retangular */
+.impressoras-aacd .filtros {
+  margin-bottom: 1.25rem;
+}
+
+.impressoras-aacd .busca {
+  flex: 0 1 17rem;
+  height: 2.5rem;
+  border: 1.5px solid #8a8a8a;
+  border-radius: 0.5rem;
+}
+
+/* Três colunas */
+.impressoras-aacd .cartoes {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.875rem;
+}
+
+/* Cartão compacto: topo / local / chips + botão */
+.impressoras-aacd .cartao {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "topo topo"
+    "local local"
+    "chips acao";
+  align-items: center;
+  gap: 0.375rem 0.75rem;
+  padding: 0.875rem 1rem;
+  border-radius: 0.5rem;
+}
+
+.impressoras-aacd .cartao__topo {
+  grid-area: topo;
+  align-items: center;
+}
+
+.impressoras-aacd .cartao__titulo {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.impressoras-aacd .cartao__detalhe {
+  grid-area: local;
+  margin: 0;
+  font-size: 0.6875rem;
+}
+
+.impressoras-aacd .cartao__chips {
+  grid-area: chips;
+  gap: 0.25rem;
+}
+
+/* O rodapé "some" para o botão entrar direto na grade; a mesa é escondida */
+.impressoras-aacd .cartao__rodape {
+  display: contents;
+}
+
+.impressoras-aacd .cartao__mesa {
+  display: none;
+}
+
+.impressoras-aacd .cartao .botao-principal {
+  grid-area: acao;
+  height: 2.25rem;
+  min-width: 6.5rem;
+  border-radius: 0.5rem;
+  text-transform: capitalize; /* "Ver detalhes" -> "Ver Detalhes" */
+}
+
+/* Chips de material verdes e vazados */
+.impressoras-aacd .cartao__chips .chip {
+  padding: 0.125rem 0.5rem;
+  border: 1px solid var(--cor-sucesso);
+  background: transparent;
+  color: var(--cor-texto);
+  font-size: 0.625rem;
+}
+
+@media (max-width: 64rem) {
+  .impressoras-aacd .cartoes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 40rem) {
+  .impressoras-aacd .cartoes { grid-template-columns: 1fr; }
+}
+
+/* Busca maior: cabe o placeholder inteiro */
+.impressoras-aacd .busca {
+  flex: 0 1 26rem;
+  min-width: 0;
+}
+
+/* Botão de filtros */
+.botao-filtro {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 2.5rem;
+  padding: 0 1rem;
+  border: 1.5px solid #8a8a8a;
+  border-radius: 0.5rem;
+  background: var(--cor-superficie);
+  color: var(--cor-texto);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.botao-filtro:hover {
+  background: var(--cor-neutra-claro);
+}
+
+.botao-filtro__contagem {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.25rem;
+  height: 1.25rem;
+  padding: 0 0.3rem;
+  border-radius: 999px;
+  background: var(--cor-botao-principal);
+  font-size: 0.6875rem;
+  font-weight: 700;
+}
+
+.grupo {
+  margin-bottom: 1.75rem;
+}
+
+.grupo__cabecalho {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.grupo__cabecalho h2 {
+  margin: 0;
+  font-size: 1.0625rem;
+  font-weight: 700;
+}
+
+.grupo__ponto {
+  flex-shrink: 0;
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 50%;
+}
+
+.grupo__ponto--livre      { background: var(--cor-sucesso); }
+.grupo__ponto--em-uso     { background: var(--cor-botao-principal); }
+.grupo__ponto--desativada { background: var(--cor-placeholder, #9a9a9a); }
+
+.grupo__contagem {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.375rem;
+  height: 1.375rem;
+  padding: 0 0.4rem;
+  border-radius: 999px;
+  background: var(--cor-neutra-claro);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--cor-texto-suave);
+}
+
+.grupo__descricao {
+  margin: 0 0 0 0.25rem;
+  font-size: 0.75rem;
+  color: var(--cor-texto-suave);
+}
+
+/* ---------- Cartão de impressora desativada ---------- */
+
+.cartao--desativada {
+  background: var(--cor-fundo);
+  opacity: 0.75;
+}
+
+.cartao--desativada:hover {
+  box-shadow: none;
+}
+
+.cartao__indisponivel {
+  grid-area: acao;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  white-space: nowrap;
+  color: var(--cor-texto-suave);
 }

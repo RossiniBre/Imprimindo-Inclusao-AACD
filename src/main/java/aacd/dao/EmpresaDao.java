@@ -34,12 +34,11 @@ public class EmpresaDao {
             ps.setString(10, endereco.getBairro());
             ps.setString(11, endereco.getCidade());
             ps.setString(12, endereco.getUf());
+            ps.executeUpdate();
 
-            try (ResultSet rs = ps.getGeneratedKeys()) {
-                if (rs.next()) {
-                    int id = rs.getInt(1);
-                    empresa.setId(id);
-                    return id;
+            try (ResultSet chaves = ps.getGeneratedKeys()) {
+                if (chaves.next()) {
+                    return chaves.getInt(1);
                 }
             }
             throw new SQLException("Não foi possível obter o id da empresa inserida.");

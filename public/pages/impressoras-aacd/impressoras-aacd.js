@@ -1,5 +1,6 @@
-// Impressoras da rede (lado AACD): lista as impressoras das empresas parceiras e abre o
-// modal de nova solicitação de impressão para a impressora escolhida.
+// Impressoras da rede (lado AACD): lista TODAS as impressoras das empresas parceiras, separadas
+// em seções (Livres, Em uso e Desativadas), filtra por UF e material e abre o modal de nova
+// solicitação de impressão para a impressora escolhida.
 
 import { api } from '../../shared/js/api.js';
 import {
@@ -19,17 +20,46 @@ export function normalizar(texto) {
   return String(texto ?? '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 }
 
-export function filtrarImpressoras(lista, { busca = '', material = '', soLivres = false } = {}) {
+// 'São Paulo, SP' -> 'SP'
+export function ufDaCidade(cidade) {
+  const m = /[,/\-\s]\s*([A-Za-z]{2})\s*$/.exec(String(cidade ?? '').trim());
+  return m ? m[1].toUpperCase() : '';
+}
+
+// Dentro de cada grupo vale "ou" (SP ou RJ; PLA ou PETG). Entre os grupos vale "e".
+// `material` (string única) e `soLivres` continuam aceitos para não quebrar os testes antigos,
+// mas a tela não usa mais `soLivres`: "em uso" também recebe pedidos.
+export function filtrarImpressoras(
+  lista,
+  { busca = '', material = '', materiais = [], ufs = [], soLivres = false } = {},
+) {
   const termo = normalizar(busca).trim();
+  const exigidos = material ? [...materiais, material] : materiais;
   return lista.filter((i) => {
     if (soLivres && i.disponibilidade !== 'OCIOSA') return false;
-    if (material && !codigosMateriais(i).includes(material)) return false;
+    if (ufs.length > 0 && !ufs.includes(i.uf)) return false;
+    if (exigidos.length > 0) {
+      const suportados = codigosMateriais(i);
+      if (!exigidos.some((m) => suportados.includes(m))) return false;
+    }
     if (!termo) return true;
     const texto = normalizar([
       i.modelo, i.empresa?.nome, i.cidade, ...codigosMateriais(i).map(rotuloMaterial),
     ].join(' '));
     return texto.includes(termo);
   });
+}
+
+// Separa em seções: desativadas (não recebem pedidos), livres e em uso.
+// "Em uso" é só a situação informada pela empresa e NÃO impede receber solicitações.
+export function agruparImpressoras(lista) {
+  const grupos = { livres: [], emUso: [], desativadas: [] };
+  lista.forEach((i) => {
+    if (i.ativo === false) grupos.desativadas.push(i);
+    else if (i.disponibilidade === 'OCIOSA') grupos.livres.push(i);
+    else grupos.emUso.push(i);
+  });
+  return grupos;
 }
 
 export function extensaoValida(nomeArquivo) {
@@ -71,13 +101,6 @@ export function validarArquivo(arquivo) {
   return null;
 }
 
-export function validar(dados, impressora, hoje = new Date()) {
-  const erros = validarPeca(dados, impressora, hoje);
-  const erroArquivo = validarArquivo(dados.arquivo);
-  if (erroArquivo) erros.arquivo = erroArquivo;
-  return erros;
-}
-
 // Valida os dados da peça (sem o arquivo): nome, quantidade, material, medidas e prazo
 export function validarPeca(dados, impressora, hoje = new Date()) {
   const erros = {};
@@ -112,6 +135,13 @@ export function validarPeca(dados, impressora, hoje = new Date()) {
     else if (data < inicioDeHoje) erros.prazo = 'O prazo já passou.';
   }
 
+  return erros;
+}
+
+export function validar(dados, impressora, hoje = new Date()) {
+  const erros = validarPeca(dados, impressora, hoje);
+  const erroArquivo = validarArquivo(dados.arquivo);
+  if (erroArquivo) erros.arquivo = erroArquivo;
   return erros;
 }
 
@@ -154,10 +184,13 @@ export function checagens(dados, impressora) {
 // ---------- Tela ----------
 
 let modal = null;
+let modalFiltros = null;
 
 export function destruir() {
   modal?.destruir();
+  modalFiltros?.destruir();
   modal = null;
+  modalFiltros = null;
 }
 
 export function iniciar(container, { params } = {}) {
@@ -166,14 +199,42 @@ export function iniciar(container, { params } = {}) {
   const medidasPorEmpresa = {};   // empresaId -> { impressoraId -> impressora com medidas }
   let impressoraAberta = null;
 
+  const ufsSel = new Set();
+  const materiaisSel = new Set();
+
   const busca = container.querySelector('#busca');
-  const filtroMaterial = container.querySelector('#filtro-material');
-  const soLivres = container.querySelector('#so-livres');
   const resumo = container.querySelector('#resumo');
   const avisoGeral = container.querySelector('#aviso-geral');
   const carregando = container.querySelector('#lista-carregando');
   const vazia = container.querySelector('#lista-vazia');
-  const cartoes = container.querySelector('#cartoes');
+  const areaGrupos = container.querySelector('#grupos');
+
+  // Uma seção por grupo: a seção inteira, a lista de cartões e o contador
+  const grupos = {
+    livres: {
+      secao: container.querySelector('#grupo-livres'),
+      lista: container.querySelector('#cartoes-livres'),
+      contagem: container.querySelector('#contagem-livres'),
+    },
+    emUso: {
+      secao: container.querySelector('#grupo-em-uso'),
+      lista: container.querySelector('#cartoes-em-uso'),
+      contagem: container.querySelector('#contagem-em-uso'),
+    },
+    desativadas: {
+      secao: container.querySelector('#grupo-desativadas'),
+      lista: container.querySelector('#cartoes-desativadas'),
+      contagem: container.querySelector('#contagem-desativadas'),
+    },
+  };
+
+  const botaoFiltro = container.querySelector('#botao-filtro');
+  const contagemFiltros = container.querySelector('#contagem-filtros');
+  const fundoFiltros = container.querySelector('#modal-filtros');
+  const listaUfs = container.querySelector('#filtro-ufs');
+  const listaMateriais = container.querySelector('#filtro-materiais');
+  const resultadoFiltros = container.querySelector('#filtros-resultado');
+  const limparFiltros = container.querySelector('#limpar-filtros');
 
   const fundo = container.querySelector('#modal-solicitacao');
   const modalImpressora = container.querySelector('#modal-impressora');
@@ -188,13 +249,8 @@ export function iniciar(container, { params } = {}) {
   const descricao = container.querySelector('#campo-descricao');
   const contador = container.querySelector('#contador-descricao');
 
-  MATERIAIS.forEach((m) => {
-    const opcao = elemento('option', '', m.rotulo);
-    opcao.value = m.codigo;
-    filtroMaterial.appendChild(opcao);
-  });
-
   modal = criarModal(fundo, { aoFechar: () => { impressoraAberta = null; } });
+  modalFiltros = criarModal(fundoFiltros, {});
 
   // ----- Avisos -----
 
@@ -219,25 +275,56 @@ export function iniciar(container, { params } = {}) {
     return false;
   }
 
-  // ----- Lista -----
+  // ----- Filtros (modal de UF e material) -----
 
   function filtrosAtuais() {
-    return { busca: busca.value, material: filtroMaterial.value, soLivres: soLivres.checked };
+    return {
+      busca: busca.value,
+      ufs: [...ufsSel],
+      materiais: [...materiaisSel],
+    };
   }
 
-  function montarCartao(i) {
-    const cartao = elemento('article', 'cartao');
+  function opcaoFiltro(grupo, valor, rotulo, selecionados) {
+    const label = elemento('label');
+    const entrada = document.createElement('input');
+    entrada.type = 'checkbox';
+    entrada.value = valor;
+    entrada.dataset.grupo = grupo;
+    entrada.checked = selecionados.has(valor);
+    label.appendChild(entrada);
+    label.appendChild(document.createTextNode(rotulo));
+    return label;
+  }
 
+  function desenharFiltros() {
+    const ufs = [...new Set(impressoras.map((i) => i.uf).filter(Boolean))].sort();
+    listaUfs.replaceChildren(...ufs.map((uf) => opcaoFiltro('uf', uf, uf, ufsSel)));
+    listaMateriais.replaceChildren(
+      ...MATERIAIS.map((m) => opcaoFiltro('material', m.codigo, m.rotulo, materiaisSel)),
+    );
+  }
+
+  // ----- Lista -----
+
+  function montarCartao(i) {
+    const desativada = i.ativo === false;
+    const cartao = elemento('article', 'cartao');
+    if (desativada) cartao.classList.add('cartao--desativada');
+
+    // Nome da impressora em destaque; a empresa vai para a linha de baixo
     const topo = elemento('div', 'cartao__topo');
-    topo.appendChild(elemento('h3', 'cartao__titulo', i.empresa?.nome ?? 'Empresa parceira'));
-    const disp = DISPONIBILIDADE[i.disponibilidade] ?? { rotulo: i.disponibilidade, classe: 'chip--neutro' };
+    topo.appendChild(elemento('h3', 'cartao__titulo', i.modelo));
+    const disp = desativada
+      ? { rotulo: 'Desativada', classe: 'chip--neutro' }
+      : (DISPONIBILIDADE[i.disponibilidade] ?? { rotulo: i.disponibilidade, classe: 'chip--neutro' });
     topo.appendChild(chip(disp.classe, disp.rotulo));
     cartao.appendChild(topo);
 
-    const modelo = elemento('p', 'cartao__detalhe');
-    modelo.appendChild(elemento('strong', '', i.modelo));
-    if (i.cidade) modelo.appendChild(document.createTextNode(` · ${i.cidade}`));
-    cartao.appendChild(modelo);
+    const local = elemento('p', 'cartao__detalhe');
+    local.appendChild(elemento('strong', '', i.empresa?.nome ?? 'Empresa parceira'));
+    if (i.cidade) local.appendChild(document.createTextNode(` · ${i.cidade}`));
+    cartao.appendChild(local);
 
     const chips = elemento('div', 'cartao__chips');
     const materiais = codigosMateriais(i);
@@ -247,10 +334,15 @@ export function iniciar(container, { params } = {}) {
 
     const rodape = elemento('div', 'cartao__rodape');
     rodape.appendChild(elemento('span', 'cartao__mesa', `Impressora ${i.id}`));
-    const botao = elemento('button', 'botao-principal', 'Ver detalhes');
-    botao.type = 'button';
-    botao.dataset.id = i.id;
-    rodape.appendChild(botao);
+    if (desativada) {
+      // Desativada: aparece na lista, mas não dá para solicitar impressão nela
+      rodape.appendChild(elemento('span', 'cartao__indisponivel', 'Sem pedidos'));
+    } else {
+      const botao = elemento('button', 'botao-principal', 'Ver detalhes');
+      botao.type = 'button';
+      botao.dataset.id = i.id;
+      rodape.appendChild(botao);
+    }
     cartao.appendChild(rodape);
 
     return cartao;
@@ -258,15 +350,28 @@ export function iniciar(container, { params } = {}) {
 
   function renderizar() {
     const filtradas = filtrarImpressoras(impressoras, filtrosAtuais());
-    const livres = impressoras.filter((i) => i.disponibilidade === 'OCIOSA').length;
+    const todas = agruparImpressoras(impressoras);
+    const porGrupo = agruparImpressoras(filtradas);
 
     resumo.textContent = impressoras.length === 0
       ? ''
-      : `${impressoras.length} impressora${impressoras.length === 1 ? '' : 's'} na rede · ${livres} livre${livres === 1 ? '' : 's'} · mostrando ${filtradas.length}`;
+      : `${impressoras.length} impressora${impressoras.length === 1 ? '' : 's'} na rede · ${todas.livres.length} livre${todas.livres.length === 1 ? '' : 's'} · ${todas.emUso.length} em uso · ${todas.desativadas.length} desativada${todas.desativadas.length === 1 ? '' : 's'} · mostrando ${filtradas.length}`;
+
+    const totalFiltros = ufsSel.size + materiaisSel.size;
+    contagemFiltros.textContent = String(totalFiltros);
+    contagemFiltros.hidden = totalFiltros === 0;
+    resultadoFiltros.textContent = `${filtradas.length} impressora${filtradas.length === 1 ? '' : 's'} encontrada${filtradas.length === 1 ? '' : 's'}`;
+
+    // Cada seção só aparece quando tem impressoras (já considerando busca e filtros)
+    Object.entries(grupos).forEach(([nome, g]) => {
+      const itens = porGrupo[nome];
+      g.lista.replaceChildren(...itens.map(montarCartao));
+      g.contagem.textContent = String(itens.length);
+      g.secao.hidden = itens.length === 0;
+    });
 
     carregando.hidden = true;
     vazia.hidden = filtradas.length > 0;
-    cartoes.replaceChildren(...filtradas.map(montarCartao));
   }
 
   async function carregar() {
@@ -292,17 +397,44 @@ export function iniciar(container, { params } = {}) {
       parceiros.corpo.forEach((p) => { parceirosPorId[p.id] = p; });
     }
 
-    impressoras = (Array.isArray(painel.corpo) ? painel.corpo : []).map((i) => ({
-      ...i,
-      cidade: cidadeUf(parceirosPorId[i.empresa?.id]?.endereco),
-    }));
+    impressoras = (Array.isArray(painel.corpo) ? painel.corpo : []).map((i) => {
+      const cidade = cidadeUf(parceirosPorId[i.empresa?.id]?.endereco);
+      return {
+        ...i,
+        cidade,
+        uf: ufDaCidade(cidade),
+        // Sem o campo, a impressora conta como ativa; só `false` (ou 0) é desativada
+        ativo: !(i.ativo === false || i.ativo === 0),
+      };
+    });
+    desenharFiltros();
     renderizar();
     return true;
   }
 
-  [busca, filtroMaterial, soLivres].forEach((campo) => campo.addEventListener('input', renderizar));
+  busca.addEventListener('input', renderizar);
 
-  // ----- Modal -----
+  botaoFiltro.addEventListener('click', () => {
+    modalFiltros.abrir(fundoFiltros.querySelector('input') ?? undefined);
+  });
+
+  fundoFiltros.addEventListener('change', (evento) => {
+    const caixa = evento.target;
+    if (!caixa.matches('input[data-grupo]')) return;
+    const alvo = caixa.dataset.grupo === 'uf' ? ufsSel : materiaisSel;
+    if (caixa.checked) alvo.add(caixa.value);
+    else alvo.delete(caixa.value);
+    renderizar();
+  });
+
+  limparFiltros.addEventListener('click', () => {
+    ufsSel.clear();
+    materiaisSel.clear();
+    fundoFiltros.querySelectorAll('input[data-grupo]').forEach((c) => { c.checked = false; });
+    renderizar();
+  });
+
+  // ----- Modal de solicitação -----
 
   async function medidasDaImpressora(impressora) {
     const empresaId = impressora.empresa?.id;
@@ -391,6 +523,15 @@ export function iniciar(container, { params } = {}) {
     const base = impressoras.find((i) => i.id === id);
     if (!base) return;
 
+    // Impressora desativada não recebe pedidos (cobre também o link direto ?impressora=)
+    if (base.ativo === false) {
+      mostrarAviso(`A impressora ${base.modelo} está desativada e não recebe pedidos no momento.`);
+      return;
+    }
+
+    // Se o modal de filtros estiver aberto (link direto), fecha antes
+    if (!fundoFiltros.hidden) modalFiltros.fechar?.();
+
     form.reset();
     mostrarErros({});
     erroModal.hidden = true;
@@ -410,14 +551,16 @@ export function iniciar(container, { params } = {}) {
     // As medidas da mesa vêm de outra rota; completa a ficha quando chegarem
     const completa = await medidasDaImpressora(base);
     if (completa && impressoraAberta?.id === base.id) {
-      impressoraAberta = { ...impressoraAberta, ...completa, empresa: base.empresa, cidade: base.cidade };
+      impressoraAberta = {
+        ...impressoraAberta, ...completa, empresa: base.empresa, cidade: base.cidade, uf: base.uf, ativo: base.ativo,
+      };
       desenharFicha(impressoraAberta);
       desenharMateriais(impressoraAberta);
       atualizarChecagem();
     }
   }
 
-  cartoes.addEventListener('click', (evento) => {
+  areaGrupos.addEventListener('click', (evento) => {
     const botao = evento.target.closest('button[data-id]');
     if (botao) abrirSolicitacao(Number(botao.dataset.id));
   });
@@ -493,10 +636,6 @@ export function iniciar(container, { params } = {}) {
     if (impressoraId) {
       const alvo = impressoras.find((i) => i.id === impressoraId);
       if (alvo) {
-        if (alvo.disponibilidade !== 'OCIOSA') {
-          soLivres.checked = false;
-          renderizar();
-        }
         abrirSolicitacao(impressoraId);
       } else {
         mostrarAviso(`A impressora ${impressoraId} não está mais disponível na rede.`);

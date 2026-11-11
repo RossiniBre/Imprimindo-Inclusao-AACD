@@ -4,36 +4,73 @@
 
     <div class="painel__cabecalho">
       <div>
-        <h1>Acompanhamento</h1>
+        <h1>Solicitações</h1>
         <p class="painel__descricao">
           Pedidos de impressão enviados às empresas parceiras.
-          Pedidos prontos, recusados ou cancelados saem da lista sozinhos depois de <span id="dias-limpeza">60</span> dias.
+          Pedidos concluídos, recusados ou cancelados saem da lista sozinhos depois de <span id="dias-limpeza">60</span> dias.
         </p>
       </div>
       <a class="painel__principal" href="#/impressoras-aacd">+ Nova solicitação</a>
     </div>
 
     <div class="painel__contadores" role="group" aria-label="Filtrar pedidos por status">
+
+      <button type="button" class="contador contador--prontas" data-grupo="prontas" aria-pressed="false">
+        <span class="contador__rotulo">Concluídas</span>
+        <strong class="contador__numero" data-papel="numero">0</strong>
+        <span class="contador__acao">
+          Ver pedidos
+          <span class="contador__seta" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"/>
+              <polyline points="19 12 12 19 5 12"/>
+            </svg>
+          </span>
+        </span>
+      </button>
+
       <button type="button" class="contador contador--esperando" data-grupo="esperando" aria-pressed="false">
         <span class="contador__rotulo">Esperando aceite</span>
         <strong class="contador__numero" data-papel="numero">0</strong>
-        <span class="contador__acao">Ver pedidos ↓</span>
+        <span class="contador__acao">
+          Ver pedidos
+          <span class="contador__seta" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"/>
+              <polyline points="19 12 12 19 5 12"/>
+            </svg>
+          </span>
+        </span>
       </button>
+
       <button type="button" class="contador contador--imprimindo" data-grupo="imprimindo" aria-pressed="false">
         <span class="contador__rotulo">Imprimindo</span>
         <strong class="contador__numero" data-papel="numero">0</strong>
-        <span class="contador__acao">Ver pedidos ↓</span>
+        <span class="contador__acao">
+          Ver pedidos
+          <span class="contador__seta" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"/>
+              <polyline points="19 12 12 19 5 12"/>
+            </svg>
+          </span>
+        </span>
       </button>
-      <button type="button" class="contador contador--prontas" data-grupo="prontas" aria-pressed="false">
-        <span class="contador__rotulo">Prontas</span>
-        <strong class="contador__numero" data-papel="numero">0</strong>
-        <span class="contador__acao">Ver pedidos ↓</span>
-      </button>
+
       <button type="button" class="contador contador--recusadas" data-grupo="recusadas" aria-pressed="false">
-        <span class="contador__rotulo">Recusadas</span>
+        <span class="contador__rotulo">Recusadas e falhas</span>
         <strong class="contador__numero" data-papel="numero">0</strong>
-        <span class="contador__acao">Ver pedidos ↓</span>
+        <span class="contador__acao">
+          Ver pedidos
+          <span class="contador__seta" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"/>
+              <polyline points="19 12 12 19 5 12"/>
+            </svg>
+          </span>
+        </span>
       </button>
+
     </div>
 
     <p class="painel__filtro" id="filtro-ativo" hidden>
@@ -46,6 +83,17 @@
     <p class="painel__vazio" id="lista-vazia" hidden>
       Nenhum pedido por aqui ainda. Comece por <a href="#/impressoras-aacd">Nova solicitação</a>.
     </p>
+
+    <section class="grupo" data-grupo="prontas" hidden>
+      <div class="grupo__cabecalho">
+        <h2><span class="grupo__ponto grupo__ponto--prontas" aria-hidden="true"></span>Concluídas <span class="grupo__total" data-papel="total">0</span></h2>
+        <div class="grupo__direita">
+          <span class="grupo__mostrando" data-papel="mostrando"></span>
+          <button type="button" class="botao-linha" data-papel="ver-todos" hidden>Ver todos</button>
+        </div>
+      </div>
+      <div class="grupo__cartoes" data-papel="cartoes"></div>
+    </section>
 
     <section class="grupo" data-grupo="esperando" hidden>
       <div class="grupo__cabecalho">
@@ -69,20 +117,9 @@
       <div class="grupo__cartoes" data-papel="cartoes"></div>
     </section>
 
-    <section class="grupo" data-grupo="prontas" hidden>
-      <div class="grupo__cabecalho">
-        <h2><span class="grupo__ponto grupo__ponto--prontas" aria-hidden="true"></span>Prontas <span class="grupo__total" data-papel="total">0</span></h2>
-        <div class="grupo__direita">
-          <span class="grupo__mostrando" data-papel="mostrando"></span>
-          <button type="button" class="botao-linha" data-papel="ver-todos" hidden>Ver todos</button>
-        </div>
-      </div>
-      <div class="grupo__cartoes" data-papel="cartoes"></div>
-    </section>
-
     <section class="grupo" data-grupo="recusadas" hidden>
       <div class="grupo__cabecalho">
-        <h2><span class="grupo__ponto grupo__ponto--recusadas" aria-hidden="true"></span>Recusadas <span class="grupo__total" data-papel="total">0</span></h2>
+        <h2><span class="grupo__ponto grupo__ponto--recusadas" aria-hidden="true"></span>Recusadas e falhas <span class="grupo__total" data-papel="total">0</span></h2>
         <div class="grupo__direita">
           <span class="grupo__mostrando" data-papel="mostrando"></span>
           <button type="button" class="botao-linha" data-papel="ver-todos" hidden>Ver todos</button>
@@ -93,7 +130,6 @@
 
   </div>
 
-  <!-- Modal de confirmação: cancelar (pendente) ou remover (pronta/recusada) -->
   <div class="modal-fundo" id="modal-confirmar" hidden>
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-titulo" aria-describedby="modal-texto">
 
@@ -133,5 +169,23 @@
 
     </div>
   </div>
+
+  <div id="modal-detalhes" class="det-fundo" hidden>
+  <div class="det-modal" role="dialog" aria-modal="true" aria-labelledby="detalhes-heading">
+    <div class="det-header">
+      <div>
+        <h2 class="det-titulo" id="detalhes-heading">Detalhes da solicitação</h2>
+        <p class="det-subtitulo">Informações do pedido enviado à empresa</p>
+      </div>
+      <button type="button" class="det-fechar" data-fechar-detalhes aria-label="Fechar">&times;</button>
+    </div>
+
+    <div class="det-body" id="detalhes-corpo"></div>
+
+    <div class="det-footer">
+      <button type="button" class="det-btn det-btn--contorno" data-fechar-detalhes>Fechar</button>
+    </div>
+  </div>
+</div>
 
 </section>
