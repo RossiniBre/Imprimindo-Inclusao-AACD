@@ -1,7 +1,11 @@
 // Back falso para ver as telas da AACD sem MySQL/Mongo e sem usuário cadastrado.
 // Sobe um servidor na porta 8099 com dados de exemplo e, em seguida, o servidor
 // estático (scripts/servidor.js) já apontando para ele.
-// Uso: npm run dev:falso  ->  http://127.0.0.1:8080/#/login  (qualquer usuário e senha entram)
+// Uso: npm run dev:falso  ->  http://127.0.0.1:8080/#/login
+// Login: o perfil vem do usuário digitado (qualquer senha entra):
+//   contém "admin"              -> ADMIN
+//   contém "empresa"/"parceiro" -> EMPRESA (entra como Mackenzie)
+//   qualquer outro              -> FUNCIONARIO
 // Só módulos que já vêm no Node. Nada aqui é gravado em disco: os dados voltam ao reiniciar.
 
 import { createServer } from 'node:http';
@@ -10,18 +14,23 @@ import { fileURLToPath } from 'node:url';
 import process from 'node:process';
 
 const PORTA_BACK = 8099;
+const EMPRESA_LOGADA = 1; // Mackenzie (tem impressoras e solicitações nos mocks)
+
+let perfilAtual = 'FUNCIONARIO';
+const perfilDe = (texto) => (/admin/i.test(texto) ? 'ADMIN' : /empresa|parceiro/i.test(texto) ? 'EMPRESA' : 'FUNCIONARIO');
 
 const parceiros = [
   { id: 1, nome: 'Mackenzie', email: 'contato@mackenzie.br', telefone: '(11) 2114-8000', endereco: { cep: '01302-907', rua: 'Rua da Consolação', numero: '930', bairro: 'Consolação', cidade: 'São Paulo', uf: 'SP' } },
-  { id: 2, nome: 'IMT Mauá', email: 'contato@maua.br', telefone: '(11) 4239-3000', endereco: { cep: '09580-900', rua: 'Praça Mauá', numero: '1', bairro: 'Mauá', cidade: 'São Caetano do Sul', uf: 'SP' } },
+  { id: 2, nome: 'IMT Mauá', email: 'contato@maua.br', telefone: '(11) 5242-5888', endereco: { cep: '09580-900', rua: 'Praça Mauá', numero: '1', bairro: 'Mauá', cidade: 'São Caetano do Sul', uf: 'SP' } },
   { id: 3, nome: 'Órbita Tech', email: 'oi@orbita.tech', telefone: '(11) 4002-8922', endereco: { cep: '09210-580', rua: 'Av. dos Estados', numero: '5001', bairro: 'Bangu', cidade: 'Santo André', uf: 'SP' } },
   { id: 4, nome: 'Prisma Labs', email: 'lab@prisma.com.br', telefone: '(11) 3333-1234', endereco: { cep: '01504-001', rua: 'Rua Vergueiro', numero: '1200', bairro: 'Liberdade', cidade: 'São Paulo', uf: 'SP' } },
 ];
 
 const mats = (...codigos) => codigos.map((c) => ({ codigo: c, rotulo: c }));
-const impressoras = [
+let impressoras = [
   { id: 11, empresaId: 1, modelo: 'Ender 3 V2', disponibilidade: 'OCIOSA', ativo: true, comprimentoMm: 220, larguraMm: 220, alturaMm: 250, materiais: mats('PLA', 'PETG') },
   { id: 12, empresaId: 1, modelo: 'Prusa MK4', disponibilidade: 'EM_USO', ativo: true, comprimentoMm: 250, larguraMm: 210, alturaMm: 220, materiais: mats('PLA', 'ABS', 'PETG') },
+  { id: 16, empresaId: 1, modelo: 'Ender 3 S1', disponibilidade: 'OCIOSA', ativo: false, comprimentoMm: 220, larguraMm: 220, alturaMm: 270, materiais: mats('PLA') },
   { id: 13, empresaId: 2, modelo: 'Bambu Lab X1', disponibilidade: 'OCIOSA', ativo: true, comprimentoMm: 256, larguraMm: 256, alturaMm: 256, materiais: mats('PLA', 'TPU') },
   { id: 14, empresaId: 3, modelo: 'Creality K1', disponibilidade: 'OCIOSA', ativo: true, comprimentoMm: 220, larguraMm: 220, alturaMm: 250, materiais: mats('ABS') },
   { id: 15, empresaId: 4, modelo: 'Anycubic Photon', disponibilidade: 'OCIOSA', ativo: true, comprimentoMm: 143, larguraMm: 89, alturaMm: 165, materiais: mats('RESINA') },
@@ -36,7 +45,7 @@ let solicitacoes = [
 ];
 
 let doacoes = [
-  { id: 231, tipo: 'AMBOS', descricao: 'Podemos atender a partir de amanhã, e o filamento já está separado. 10 rolos de PLA branco de 1 kg e uma Ender 3 V2 revisada.', quantidade: 11, dataManifestacao: '2026-11-09T09:30:00Z', empresa: { id: 2, nome: 'IMT Mauá', ativa: true, email: 'contato@maua.br', telefone: '(11) 4239-3000' } },
+  { id: 231, tipo: 'AMBOS', descricao: 'Podemos atender a partir de amanhã, e o filamento já está separado. 10 rolos de PLA branco de 1 kg e uma Ender 3 V2 revisada.', quantidade: 11, dataManifestacao: '2026-11-09T09:30:00Z', empresa: { id: 2, nome: 'IMT Mauá', ativa: true, email: 'contato@maua.br', telefone: '(11) 5242-5888' } },
   { id: 230, tipo: 'FILAMENTO', descricao: '10 unidades · PLA · 2 kg · Branco', quantidade: 10, dataManifestacao: '2026-11-09T07:00:00Z', empresa: { id: 1, nome: 'Mackenzie', ativa: true, email: 'contato@mackenzie.br', telefone: '(11) 2114-8000' } },
   { id: 229, tipo: 'IMPRESSORA', descricao: '1 unidade · Bambu Lab V2 · PLA, PETG e ABS', quantidade: 1, dataManifestacao: '2026-11-07T15:00:00Z', empresa: { id: 3, nome: 'Órbita Tech', ativa: false, email: 'oi@orbita.tech', telefone: '(11) 4002-8922' } },
 ];
@@ -62,20 +71,47 @@ const back = createServer(async (req, res) => {
   const p = url.pathname;
   console.log('[back falso]', req.method, req.url);
 
-  // Sessão: qualquer login entra como funcionário
-  if (p === '/api/login') { await lerCorpo(req); return json(res, 200, { perfil: 'FUNCIONARIO' }); }
-  if (p === '/api/logout') return json(res, 200, { mensagem: 'ok' });
-  if (p === '/api/me') return json(res, 200, { perfil: 'FUNCIONARIO', nome: 'Ana Martins', identificador: 'ana.martins', email: 'ana.martins@aacd.com', cargo: 'Coordenadora', setor: 'Inovação' });
+  // Sessão: o perfil depende do usuário digitado no login
+  if (p === '/api/login') {
+    perfilAtual = perfilDe(await lerCorpo(req));
+    return json(res, 200, { perfil: perfilAtual });
+  }
+  if (p === '/api/logout') { perfilAtual = 'FUNCIONARIO'; return json(res, 200, { mensagem: 'ok' }); }
+  if (p === '/api/me') {
+    if (perfilAtual === 'EMPRESA') {
+      const e = parceiros.find((x) => x.id === EMPRESA_LOGADA);
+      return json(res, 200, { perfil: 'EMPRESA', empresaId: e.id, nome: e.nome, email: e.email, telefone: e.telefone });
+    }
+    return json(res, 200, { perfil: perfilAtual, nome: 'Ana Martins', identificador: 'ana.martins', email: 'ana.martins@aacd.com', cargo: 'Coordenadora', setor: 'Inovação' });
+  }
+  if (p === '/api/esqueci-senha') { await lerCorpo(req); return json(res, 200, { mensagem: 'ok' }); }
 
-  // Parceiros e impressoras
+  // Parceiros e impressoras (visão AACD)
   if (p === '/api/parceiros') return json(res, 200, parceiros);
   const porEmpresa = p.match(/^\/api\/parceiros\/(\d+)\/impressoras$/);
   if (porEmpresa) return json(res, 200, impressoras.filter((i) => i.empresaId === Number(porEmpresa[1])));
   if (p === '/api/impressoras/painel') {
     return json(res, 200, impressoras.map((i) => ({
-      id: i.id, modelo: i.modelo, disponibilidade: i.disponibilidade, ativo: true,
+      id: i.id, modelo: i.modelo, disponibilidade: i.disponibilidade, ativo: i.ativo,
       empresa: { id: i.empresaId, nome: nomeEmpresa(i.empresaId) }, materiais: i.materiais,
     })));
+  }
+
+  // Visão da empresa
+  if (p === '/api/impressoras' && req.method === 'GET') {
+    return json(res, 200, impressoras.filter((i) => i.empresaId === EMPRESA_LOGADA));
+  }
+  if (p === '/api/impressoras' && req.method === 'POST') {
+    let corpo = {};
+    try { corpo = JSON.parse((await lerCorpo(req)) || '{}'); } catch { /* corpo não era JSON */ }
+    const id = 20 + impressoras.length;
+    impressoras.push({ id, empresaId: EMPRESA_LOGADA, modelo: corpo.modelo ?? 'Impressora nova', disponibilidade: 'OCIOSA', ativo: true, comprimentoMm: 200, larguraMm: 200, alturaMm: 200, materiais: mats('PLA') });
+    return json(res, 201, { id });
+  }
+  if (p === '/api/empresa/perfil') return json(res, 200, parceiros.find((e) => e.id === EMPRESA_LOGADA));
+  // Chute: "Solicitações recebidas" da empresa (confira no Network se a rota é essa)
+  if (p === '/api/empresa/solicitacoes') {
+    return json(res, 200, solicitacoes.filter((s) => s.empresa === nomeEmpresa(EMPRESA_LOGADA)));
   }
 
   // Solicitações
@@ -86,7 +122,7 @@ const back = createServer(async (req, res) => {
     solicitacoes.push({ id, titulo: 'Pedido novo', status: 'PENDENTE', empresa: 'Mackenzie', criadoPor: 'Ana Martins', impressora: 'Ender 3 V2', criadoEm: new Date().toISOString().slice(0, 19), decididoEm: null, finalizadoEm: null, justificativa: null, expiraEm: null });
     return json(res, 201, { id });
   }
-  if (p === '/api/solicitacao/ver') {
+  if (p === '/api/solicitacao/ver' || p === '/api/solicitacao/detalhe') {
     const s = solicitacoes.find((x) => x.id === Number(url.searchParams.get('id')));
     if (!s) return json(res, 404, { erro: 'Solicitação não encontrada.' });
     return json(res, 200, { id: s.id, titulo: s.titulo, status: s.status, justificativa: s.justificativa ?? undefined, prazoEstimado: s.status === 'EM_ANDAMENTO' ? '2026-11-12T18:00:00' : undefined });
@@ -130,7 +166,7 @@ back.on('error', (erro) => {
 });
 
 back.listen(porta, () => {
-  console.log(`Back falso em http://127.0.0.1:${porta} (qualquer usuário e senha entram)`);
+  console.log(`Back falso em http://127.0.0.1:${porta} (perfil pelo usuário: admin / empresa / outro = funcionário)`);
   const servidor = fileURLToPath(new URL('./servidor.js', import.meta.url));
   const filho = spawn(process.execPath, [servidor], {
     stdio: 'inherit',
