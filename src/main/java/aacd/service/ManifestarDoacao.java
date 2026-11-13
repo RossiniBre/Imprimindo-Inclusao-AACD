@@ -79,7 +79,7 @@ public class ManifestarDoacao {
         }
     }
 
-    private int lerQuantidade(String texto) {
+    public int lerQuantidade(String texto) {
         if (texto == null || texto.isBlank()) return 1;
         try {
             int q = Integer.parseInt(texto.trim());

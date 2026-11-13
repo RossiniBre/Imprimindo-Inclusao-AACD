@@ -217,8 +217,22 @@ export async function iniciar() {
   }));
 
   // navegação entre seções (Livres / Imprimindo / Desativadas)
+  let filtroAtivo = null;
+
+  function aplicarFiltro() {
+    ['livres', 'imprimindo', 'desativadas'].forEach((id) => {
+      $(id).classList.toggle('d-none', filtroAtivo !== null && filtroAtivo !== id);
+    });
+    document.querySelectorAll('[data-ir]').forEach((b) => {
+      const ativo = b.dataset.ir === filtroAtivo;
+      b.classList.toggle('ativo', ativo);
+      b.setAttribute('aria-pressed', String(ativo));
+    });
+  }
+
   document.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => {
-    $(b.dataset.ir).scrollIntoView({ behavior: 'smooth', block: 'start' });
+    filtroAtivo = filtroAtivo === b.dataset.ir ? null : b.dataset.ir;
+    aplicarFiltro();
   }));
 
   document.querySelector('.impressoras').addEventListener('click', (ev) => {

@@ -29,6 +29,10 @@ public class EsqueciSenhaHandler implements HttpHandler {
             return;
         }
 
+        String email = formulario.get().get("email");
+        System.out.println("[esqueci-senha] email recebido: " + email);
+        redefinicao.solicitar(email);
+
         redefinicao.solicitar(formulario.get().get("email"));
         Http.json(ex, 200, Json.objeto()
                 .campo("mensagem", "Se o e-mail estiver cadastrado, você receberá um código em instantes.")

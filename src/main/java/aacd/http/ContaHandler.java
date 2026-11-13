@@ -18,6 +18,8 @@ import java.util.Optional;
 
 public class ContaHandler implements HttpHandler {
 
+    private static final String EXCLUIR_MINHA = "/api/conta/excluir-minha";
+
     private final GerenciadorSessoes sessoes;
     private final UsuarioDao usuarioDao;
     private final AlterarEstadoConta alterarEstado;
@@ -39,28 +41,37 @@ public class ContaHandler implements HttpHandler {
             return;
         }
 
-        Optional<Sessao> sessao = Http.exigirPerfil(ex, sessoes, "ADMIN");
+        String caminho = ex.getRequestURI().getPath();
+
+        String perfilExigido = EXCLUIR_MINHA.equals(caminho) ? "EMPRESA" : "ADMIN";
+        Optional<Sessao> sessao = Http.exigirPerfil(ex, sessoes, perfilExigido);
         if (sessao.isEmpty()) return;
 
         Optional<Map<String, String>> campos = Http.lerFormulario(ex);
         if (campos.isEmpty()) return;
 
         try {
-            int alvoId = Http.lerId(campos.get(), "id", 0);
-
-            switch (ex.getRequestURI().getPath()) {
+            switch (caminho) {
                 case "/api/conta/desativar":
-                    alterarEstado.desativar(alvoId);
+                    alterarEstado.desativar(Http.lerId(campos.get(), "id", 0));
                     break;
                 case "/api/conta/reativar":
-                    alterarEstado.reativar(alvoId);
+                    alterarEstado.reativar(Http.lerId(campos.get(), "id", 0));
                     break;
                 case "/api/conta/excluir":
                     if (!senhaConfere(sessao.get(), campos.get().get("senha"))) {
                         Http.erro(ex, 403, "Senha incorreta.");
                         return;
                     }
-                    excluirConta.executar(alvoId);
+                    excluirConta.executar(Http.lerId(campos.get(), "id", 0));
+                    break;
+                case EXCLUIR_MINHA:
+                    if (!senhaConfere(sessao.get(), campos.get().get("senha"))) {
+                        Http.erro(ex, 403, "Senha incorreta.");
+                        return;
+                    }
+                    // o id vem da sessão, nunca do formulário
+                    excluirConta.executar(sessao.get().getUsuarioId());
                     break;
                 default:
                     Http.erro(ex, 404, "Rota não encontrada.");
@@ -82,7 +93,7 @@ public class ContaHandler implements HttpHandler {
 
     private boolean senhaConfere(Sessao sessao, String senha) throws SQLException {
         if (senha == null || senha.isEmpty()) return false;
-        Usuario admin = usuarioDao.buscarPorId(sessao.getUsuarioId());
-        return admin != null && Senha.confere(senha, admin.getSenhaHash());
+        Usuario logado = usuarioDao.buscarPorId(sessao.getUsuarioId());
+        return logado != null && Senha.confere(senha, logado.getSenhaHash());
     }
 }

@@ -35,10 +35,10 @@ public class RedefinicaoSenhaService {
         this.enviador = enviador;
         this.sessoes = sessoes;
     }
-    
+
     public void solicitar(String emailInformado) {
         String email = EmailValidador.normalizar(emailInformado);
-        if (email == null || EmailValidador.validar(email) != null) {
+        if (email == null || EmailValidador.validarLivre(email) != null) {
             return;
         }
         executor.submit(() -> processarPedido(email));
@@ -47,16 +47,25 @@ public class RedefinicaoSenhaService {
     private void processarPedido(String email) {
         try {
             Usuario usuario = usuarioDao.buscarPorEmail(email);
-            if (usuario == null) return;
-            if (redefinicaoDao.pedidoRecente(usuario.getId(), SEGUNDOS_ENTRE_PEDIDOS)) return;
+            if (usuario == null) {
+                System.out.println("[processarPedido] nenhum usuário com o e-mail " + email);
+                return;
+            }
+            if (redefinicaoDao.pedidoRecente(usuario.getId(), SEGUNDOS_ENTRE_PEDIDOS)) {
+                System.out.println("[processarPedido] bloqueado: pedido recente (< "
+                        + SEGUNDOS_ENTRE_PEDIDOS + "s) para usuário " + usuario.getId());
+                return;
+            }
 
             String codigo = CodigoRedefinicao.gerar();
             redefinicaoDao.salvar(usuario.getId(), Senha.gerarHash(codigo), MINUTOS_VALIDADE);
 
+            System.out.println("[processarPedido] enviando para " + email);
             enviador.enviar(email,
                     ModeloEmailRedefinicao.assunto(),
                     ModeloEmailRedefinicao.html(usuario.getNome(), codigo, MINUTOS_VALIDADE),
                     ModeloEmailRedefinicao.texto(usuario.getNome(), codigo, MINUTOS_VALIDADE));
+            System.out.println("[processarPedido] enviado");
         } catch (SQLException | EmailException | RuntimeException e) {
             e.printStackTrace();
         }

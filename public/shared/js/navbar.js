@@ -49,7 +49,10 @@ export function desenharMenu() {
   header.querySelector('.logo-menu').href = `#${itens[0][0]}`;
 
   const nav = header.querySelector('nav');
-  indicador = null;
+  const linkPerfil = header.querySelector('a[aria-label="Minha conta"]');
+  linkPerfil.onmouseenter = () => moverIndicador(linkPerfil);
+  linkPerfil.onmouseleave = () => moverIndicador(linkAtivo());
+
   nav.innerHTML = itens.map(([rota, texto]) => `<a href="#${rota}">${texto}</a>`).join('');
   obterIndicador();
 
@@ -62,16 +65,18 @@ export function desenharMenu() {
 }
 
 function linkAtivo() {
-  return document.querySelector('#menu nav a.ativo');
+  return document.querySelector(
+    '#menu nav a.ativo, #menu a[aria-label="Minha conta"].ativo'
+  );
 }
 
 function obterIndicador() {
-  const nav = document.querySelector('#menu nav');
-  if (!nav) return null;
+  const header = document.getElementById('menu');
+  if (!header) return null;
   if (!indicador || !indicador.isConnected) {
     indicador = document.createElement('span');
     indicador.className = 'menu__indicador';
-    nav.append(indicador);
+    header.append(indicador);   // agora no header, não no nav
   }
   return indicador;
 }
@@ -80,24 +85,25 @@ function moverIndicador(link, animar = true) {
   const barra = obterIndicador();
   if (!barra) return;
 
-  // sem link ativo (ex.: #/minha-conta): esconde a barra
   if (!link) {
     barra.style.opacity = '0';
     return;
   }
 
-  // layout ainda sem medida: tenta de novo no próximo frame
-  if (link.offsetWidth === 0) {
+  const h = barra.parentElement.getBoundingClientRect();
+  const l = link.getBoundingClientRect();
+
+  if (l.width === 0) {
     requestAnimationFrame(() => moverIndicador(link, animar));
     return;
   }
 
   if (!animar) barra.style.transition = 'none';
-  barra.style.width = `${link.offsetWidth}px`;
-  barra.style.transform = `translateX(${link.offsetLeft}px)`;
+  barra.style.width = `${l.width}px`;
+  barra.style.transform = `translateX(${l.left - h.left}px)`;
   barra.style.opacity = '1';
   if (!animar) {
-    barra.offsetWidth;   // força aplicar sem animação
+    barra.offsetWidth;
     barra.style.transition = '';
   }
 }
@@ -112,5 +118,9 @@ export function marcarAtivo(animar = true) {
   document.querySelectorAll('#menu nav a').forEach((a) => {
     a.classList.toggle('ativo', mesmaRota(a));
   });
+
+  const perfil = document.querySelector('#menu a[aria-label="Minha conta"]');
+  if (perfil) perfil.classList.toggle('ativo', mesmaRota(perfil));
+
   moverIndicador(linkAtivo(), animar);
 }

@@ -317,6 +317,7 @@ main:has(> .funcionarios) {
 }
 
 .botao-linha {
+  min-width: 5.5rem;
   height: 2rem;
   padding: 0 0.875rem;
   border: 1px solid var(--cor-texto);
@@ -324,6 +325,7 @@ main:has(> .funcionarios) {
   background: var(--cor-superficie);
   font-size: 0.75rem;
   font-weight: 600;
+  text-align: center;
   transition: background 0.2s;
 }
 
@@ -567,8 +569,9 @@ main:has(> .funcionarios) {
 .botao-linha--excluir {
   color: var(--cor-perigo, #c62828);
 }
+
 .botao-linha--excluir:hover {
-  background: var(--cor-perigo-fundo, #fdecea);
+  background: var(--cor-perigo-fundo, red);
 }
 
 .modal__texto {

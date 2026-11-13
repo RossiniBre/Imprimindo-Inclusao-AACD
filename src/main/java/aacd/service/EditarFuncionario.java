@@ -33,6 +33,12 @@ public class EditarFuncionario {
             throw new IllegalArgumentException("Funcionário não encontrado!");
         }
 
+        Usuario alvo = usuarioDao.buscarPorId(usuarioId);   // ajuste ao nome real do seu DAO
+        if (alvo == null) {
+            throw new IllegalArgumentException("Usuário não encontrado!");
+        }
+        boolean alvoEhAdmin = "ADMIN".equals(alvo.getPerfil());
+
         // Só mexe no e-mail se ele veio e é diferente do que já está salvo
         String emailNovo = email == null ? null : email.trim();
         boolean mudouEmail = emailNovo != null
@@ -43,7 +49,7 @@ public class EditarFuncionario {
             if (!ehAdmin) {
                 throw new IllegalStateException("Só a administração pode alterar o e-mail.");
             }
-            funcionario.setEmail(emailNovo);   // aqui o EmailValidador roda (@aacd.com)
+            funcionario.setEmail(emailNovo, alvoEhAdmin);
             if (usuarioDao.existePorEmailExceto(funcionario.getEmail(), usuarioId)) {
                 throw new IllegalStateException("E-mail já em uso!");
             }

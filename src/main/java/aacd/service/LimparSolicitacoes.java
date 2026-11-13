@@ -33,8 +33,6 @@ public class LimparSolicitacoes {
 
     private final SolicitacaoDao solicitacaoDao;
     private final SolicitacaoEventosDao eventosDao;
-    private final ConteudoSolicitacaoDao conteudoDao;
-    private final ArmazenamentoArquivo armazenamento;
     private final CriarSolicitacao.ProvedorConexao conexoes;
     private final ApagadorSolicitacao apagador;
 
@@ -44,12 +42,10 @@ public class LimparSolicitacoes {
     }
 
     public LimparSolicitacoes(SolicitacaoDao solicitacaoDao, SolicitacaoEventosDao eventosDao,
-                              ConteudoSolicitacaoDao conteudoDao, ArmazenamentoArquivo armazenamento,
-                              CriarSolicitacao.ProvedorConexao conexoes) {
+                            ConteudoSolicitacaoDao conteudoDao, ArmazenamentoArquivo armazenamento,
+                            CriarSolicitacao.ProvedorConexao conexoes) {
         this.solicitacaoDao = solicitacaoDao;
         this.eventosDao = eventosDao;
-        this.conteudoDao = conteudoDao;
-        this.armazenamento = armazenamento;
         this.conexoes = conexoes;
         this.apagador = new ApagadorSolicitacao(solicitacaoDao, eventosDao, conteudoDao, armazenamento);
     }

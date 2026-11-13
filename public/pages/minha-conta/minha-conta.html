@@ -60,10 +60,11 @@
 
       <div class="conta__principal">
 
-        <h2 class="cartao__titulo">Dados pessoais</h2>
-        <p class="cartao__nota cartao__nota--abaixo" id="nota-dados">O e-mail e a função são definidos pela administração da AACD.</p>
+        <div class="cartao">
+          <h2 class="cartao__titulo">Dados pessoais</h2>
+          <p class="cartao__nota cartao__nota--abaixo" id="nota-dados">O e-mail e a função são definidos pela administração da AACD.</p>
 
-        <form id="form-dados" novalidate>
+          <form id="form-dados" novalidate>
             <div class="campo">
               <label for="dado-nome">Nome completo</label>
               <input type="text" id="dado-nome" name="nome" maxlength="45" autocomplete="name">
@@ -129,6 +130,8 @@
             </div>
           </form>
         </div>
+
+        <div class="cartao" id="cartao-pedidos">
 
         <div class="cartao" id="cartao-pedidos">
           <h2 class="cartao__titulo">Meus pedidos recentes</h2>

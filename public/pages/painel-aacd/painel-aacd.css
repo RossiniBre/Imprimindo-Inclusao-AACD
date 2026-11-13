@@ -223,6 +223,7 @@ main:has(> .painel) {
   background: var(--cor-superficie);
   color: var(--cor-texto);
   transition: background 0.2s, border-color 0.2s;
+  transition: transform 0.2s, background 0.2s, border-color 0.2s;
 }
 
 .contador:hover .contador__seta {
@@ -230,6 +231,7 @@ main:has(> .painel) {
 }
 
 .contador[aria-pressed="true"] .contador__seta {
+  transform: rotate(180deg);
   border-color: transparent;
   background: var(--cor-botao-principal);
 }

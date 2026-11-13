@@ -73,7 +73,7 @@ body {
 }
 
 .filtro.active {
-    border: 2px solid var(--vermelho);
+    border: 2px solid var(--laranja);
     background: #FFFAFA;
     box-shadow: 0 3px 10px rgba(200, 16, 46, .08);
 }

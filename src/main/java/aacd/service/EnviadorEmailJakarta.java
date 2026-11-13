@@ -29,6 +29,10 @@ public class EnviadorEmailJakarta implements EnviadorEmail {
         this.remetenteNome = cfg.getProperty("mail.remetente.nome", "Imprimindo Inclusão");
         String senha = cfg.getProperty("mail.senha");
 
+        if (usuario == null || senha == null || senha.isBlank()) {
+            throw new IllegalStateException("mail.usuario / mail.senha ausentes no mail.properties");
+        }
+
         Properties smtp = new Properties();
         smtp.put("mail.smtp.host", cfg.getProperty("mail.host", "smtp.gmail.com"));
         smtp.put("mail.smtp.port", cfg.getProperty("mail.port", "587"));
@@ -44,6 +48,7 @@ public class EnviadorEmailJakarta implements EnviadorEmail {
                 return new PasswordAuthentication(usuario, senha);
             }
         });
+        this.session.setDebug("true".equals(cfg.getProperty("mail.debug")));
     }
 
     @Override

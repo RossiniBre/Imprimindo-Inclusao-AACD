@@ -14,15 +14,38 @@
       </div>
     </div>
 
-    <nav class="d-flex flex-wrap gap-2 mb-2" aria-label="Seções">
-      <button type="button" class="btn btn-sm btn-outline-secondary fw-semibold" data-ir="livres">
-        Livres <span class="badge rounded-pill bg-secondary-subtle text-secondary-emphasis" data-contagem="livres">0</span>
+    <nav class="filtros-cards mb-2" aria-label="Seções">
+      <button type="button" class="filtro-card filtro-verde" data-ir="livres" aria-pressed="false">
+        <span class="filtro-info">
+          <span class="filtro-rotulo">Livres</span>
+          <span class="filtro-numero" data-contagem="livres">0</span>
+        </span>
+        <span class="filtro-acao">
+          Ver impressoras
+          <span class="filtro-seta"><i class="bi bi-arrow-down"></i></span>
+        </span>
       </button>
-      <button type="button" class="btn btn-sm btn-outline-secondary fw-semibold" data-ir="imprimindo">
-        Imprimindo <span class="badge rounded-pill bg-secondary-subtle text-secondary-emphasis" data-contagem="imprimindo">0</span>
+
+      <button type="button" class="filtro-card filtro-amarelo" data-ir="imprimindo" aria-pressed="false">
+        <span class="filtro-info">
+          <span class="filtro-rotulo">Imprimindo</span>
+          <span class="filtro-numero" data-contagem="imprimindo">0</span>
+        </span>
+        <span class="filtro-acao">
+          Ver impressoras
+          <span class="filtro-seta"><i class="bi bi-arrow-down"></i></span>
+        </span>
       </button>
-      <button type="button" class="btn btn-sm btn-outline-secondary fw-semibold" data-ir="desativadas">
-        Desativadas <span class="badge rounded-pill bg-secondary-subtle text-secondary-emphasis" data-contagem="desativadas">0</span>
+
+      <button type="button" class="filtro-card filtro-cinza" data-ir="desativadas" aria-pressed="false">
+        <span class="filtro-info">
+          <span class="filtro-rotulo">Desativadas</span>
+          <span class="filtro-numero" data-contagem="desativadas">0</span>
+        </span>
+        <span class="filtro-acao">
+          Ver impressoras
+          <span class="filtro-seta"><i class="bi bi-arrow-down"></i></span>
+        </span>
       </button>
     </nav>
 

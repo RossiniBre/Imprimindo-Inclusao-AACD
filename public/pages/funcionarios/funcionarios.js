@@ -168,6 +168,11 @@ export function iniciar(container) {
       ? ''
       : `<button type="button" class="botao-linha botao-linha--excluir" data-acao="excluir" data-id="${f.id}">Excluir</button>`;
 
+      // Admin edita os próprios dados na tela de perfil, não aqui.
+    const botaoEditar = admin
+      ? ''
+      : `<button type="button" class="botao-linha" data-acao="editar" data-id="${f.id}">Editar</button>`;
+
     tr.innerHTML = `
       <td>
         <div class="pessoa">
@@ -185,7 +190,7 @@ export function iniciar(container) {
       <td>${chipStatus}</td>
       <td>
         <div class="acoes">
-          <button type="button" class="botao-linha" data-acao="editar" data-id="${f.id}">Editar</button>
+          ${botaoEditar}
           ${botaoStatus}
           ${botaoExcluir}
         </div>
@@ -271,7 +276,9 @@ export function iniciar(container) {
     const acao = botao.dataset.acao;
 
     if (acao === 'editar') {
-      abrirModalEditar(funcionarios.find((f) => f.id === id));
+      const alvo = funcionarios.find((f) => f.id === id);
+      if (alvo?.perfil === 'ADMIN') return;
+      abrirModalEditar(alvo);
       return;
     }
 

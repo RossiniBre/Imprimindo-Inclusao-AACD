@@ -214,6 +214,85 @@ export function iniciar(container) {
     pedidosRodape.hidden = pedidos.length <= lista.length;
   }
 
+    // ----- Excluir a própria conta -----
+
+  const botaoExcluirConta = q('#botao-excluir-conta');
+  const modalExcluir = q('#modal-excluir-conta');
+  const nomeExcluir = q('#excluir-conta-nome');
+  const campoSenhaExcluir = q('#excluir-conta-senha');
+  const erroExcluir = q('#erro-excluir-conta');
+  const botaoConfirmarExcluir = q('#botao-confirmar-excluir-conta');
+
+  function abrirModalExcluir() {
+    nomeExcluir.textContent = valorDe(eu, 'razaoSocial', 'razao', 'nome') || 'sua empresa';
+    campoSenhaExcluir.value = '';
+    erroExcluir.hidden = true;
+    modalExcluir.hidden = false;
+    document.body.style.overflow = 'hidden';
+    campoSenhaExcluir.focus();
+  }
+
+  function fecharModalExcluir() {
+    modalExcluir.hidden = true;
+    document.body.style.overflow = '';
+    campoSenhaExcluir.value = '';
+    erroExcluir.hidden = true;
+    botaoConfirmarExcluir.disabled = false;
+    botaoConfirmarExcluir.textContent = 'Excluir minha conta';
+    botaoExcluirConta.focus();
+  }
+
+  botaoExcluirConta.addEventListener('click', abrirModalExcluir);
+  q('#botao-fechar-excluir-conta').addEventListener('click', fecharModalExcluir);
+  q('#botao-cancelar-excluir-conta').addEventListener('click', fecharModalExcluir);
+  modalExcluir.addEventListener('click', (evento) => {
+    if (evento.target === modalExcluir) fecharModalExcluir();
+  });
+
+  // o foco fica dentro do modal, então não precisa de listener no document
+  modalExcluir.addEventListener('keydown', (evento) => {
+    if (evento.key === 'Escape') fecharModalExcluir();
+  });
+  campoSenhaExcluir.addEventListener('keydown', (evento) => {
+    if (evento.key === 'Enter') {
+      evento.preventDefault();
+      botaoConfirmarExcluir.click();
+    }
+  });
+
+  botaoConfirmarExcluir.addEventListener('click', async () => {
+    const senha = campoSenhaExcluir.value;
+    if (senha === '') {
+      erroExcluir.textContent = 'Digite a sua senha para confirmar.';
+      erroExcluir.hidden = false;
+      campoSenhaExcluir.focus();
+      return;
+    }
+
+    erroExcluir.hidden = true;
+    botaoConfirmarExcluir.disabled = true;
+    botaoConfirmarExcluir.textContent = 'Excluindo...';
+
+    try {
+      const r = await api.excluirMinhaConta(senha);
+      if (r.ok) {
+        document.body.style.overflow = '';
+        location.hash = '#/login';
+        return;
+      }
+      erroExcluir.textContent = r.corpo?.erro ?? 'Não foi possível excluir. Tente de novo.';
+      erroExcluir.hidden = false;
+      campoSenhaExcluir.value = '';
+      campoSenhaExcluir.focus();
+    } catch {
+      erroExcluir.textContent = 'Sem conexão com o servidor. Tente de novo em instantes.';
+      erroExcluir.hidden = false;
+    }
+
+    botaoConfirmarExcluir.disabled = false;
+    botaoConfirmarExcluir.textContent = 'Excluir minha conta';
+  });
+
   // ----- Carregamento -----
 
   async function carregar() {

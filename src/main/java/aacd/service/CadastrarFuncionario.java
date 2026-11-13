@@ -46,13 +46,18 @@ public class CadastrarFuncionario {
             throw new IllegalStateException("E-mail já em uso!");
         }
 
+        String erro = EmailValidador.validar(emailNormalizado);
+        if (erro != null) {
+            throw new IllegalArgumentException(erro);
+        }
+
         try (Connection conn = ConnectionFactory.getConnection()) {
             conn.setAutoCommit(false);
             try {
                 int usuarioId = usuarioDao.inserir(conn, novo);
                 funcionarioDao.inserir(conn, new Funcionario(usuarioId, emailNormalizado, cargo, setor));
                 conn.commit();
-            } catch (SQLException e) {
+            } catch (SQLException | RuntimeException e) {
                 conn.rollback();
                 throw e;
             }

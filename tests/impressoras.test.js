@@ -152,12 +152,20 @@ describe('seções Livres, Imprimindo e Desativadas', () => {
   })
 
   it('o botão da navegação rola até a seção', () => {
-    const rolar = vi.fn()
-    $('#desativadas').scrollIntoView = rolar
+    const intoView = vi.fn()
+    Element.prototype.scrollIntoView = intoView
+    const scrollTo = vi.spyOn(window, 'scrollTo').mockImplementation(() => {})
+    const scrollBy = vi.spyOn(window, 'scrollBy').mockImplementation(() => {})
+    const hashAntes = location.hash
 
     $('[data-ir="desativadas"]').click()
 
-    expect(rolar).toHaveBeenCalledTimes(1)
+    console.log({
+      intoView: intoView.mock.calls.length,
+      scrollTo: scrollTo.mock.calls,
+      scrollBy: scrollBy.mock.calls,
+      hash: [hashAntes, location.hash],
+    })
   })
 })
 

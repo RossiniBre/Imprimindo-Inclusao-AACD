@@ -177,3 +177,91 @@ main {
   border-color: #2B2B2B;
   color: #2B2B2B;
 }
+
+/* cards de filtro (mesmo padrão dos cards de solicitações) */
+.filtros-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+}
+
+.filtro-card {
+    --cor: var(--cinza);
+    --cor-numero: var(--texto);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 16px 20px;
+    text-align: left;
+    color: var(--texto);
+    background: #fff;
+    border: 1px solid var(--cinza);
+    border-left: 4px solid var(--cor);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: box-shadow .15s, transform .15s;
+    --destaque: var(--laranja);
+    --destaque-claro: #FFF1C2; 
+    transition: box-shadow .15s, transform .15s, background .2s, border-color .2s;
+}
+.filtro-card:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .08);
+    transform: translateY(-1px);
+}
+.filtro-card.ativo {
+    box-shadow: none;
+    border-color: var(--destaque);
+    background: var(--destaque-claro);
+}
+
+.filtro-verde   { --cor: var(--verde);   --cor-numero: var(--verde); }
+.filtro-amarelo { --cor: var(--laranja); --cor-numero: #7A5F00; }
+.filtro-cinza   { --cor: #6B6B6B;        --cor-numero: var(--texto); }
+
+.filtro-info {
+    display: flex;
+    flex-direction: column;
+}
+.filtro-rotulo {
+    font-size: 14px;
+    color: #555;
+}
+.filtro-numero {
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--cor-numero);
+}
+
+.filtro-acao {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: #555;
+}
+.filtro-seta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border: 1px solid var(--cinza);
+    border-radius: 50%;
+    background: #fff;
+    color: var(--texto);
+    transition: transform .2s;
+    transition: transform .2s, background .2s, border-color .2s;
+}
+
+.filtro-card:hover .filtro-seta {
+    background: #f1f1f1;
+}
+
+.filtro-card.ativo .filtro-seta {
+    transform: rotate(180deg);
+    border-color: transparent;
+    background: var(--destaque);
+}

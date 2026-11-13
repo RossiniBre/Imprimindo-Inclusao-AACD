@@ -56,7 +56,13 @@ public class Funcionario {
     }
 
     public void setEmail(String email) {
-        String erro = EmailValidador.validar(email);
+        setEmail(email, false);
+    }
+
+    public void setEmail(String email, boolean livre) {
+        String erro = livre
+                ? EmailValidador.validarLivre(email)
+                : EmailValidador.validar(email);
         if (erro != null) {
             throw new IllegalArgumentException(erro);
         }

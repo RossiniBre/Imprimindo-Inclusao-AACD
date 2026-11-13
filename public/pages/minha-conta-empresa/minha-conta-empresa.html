@@ -46,6 +46,7 @@
         </div>
 
         <button type="button" class="conta__sair" id="botao-sair">Sair da conta</button>
+        <button type="button" class="conta__excluir" id="botao-excluir-conta">Excluir minha conta</button>
 
       </aside>
 
@@ -194,4 +195,34 @@
     </div>
 
   </div>
+
+  <div class="excluir-fundo" id="modal-excluir-conta" hidden>
+  <div class="excluir-modal" role="dialog" aria-modal="true" aria-labelledby="excluir-titulo">
+    <div class="excluir-modal__topo">
+      <div>
+        <h2 id="excluir-titulo">Excluir minha conta</h2>
+        <p class="excluir-modal__sub">Esta ação não pode ser desfeita</p>
+      </div>
+      <button type="button" class="excluir-modal__fechar" id="botao-fechar-excluir-conta" aria-label="Fechar">×</button>
+    </div>
+
+    <p class="excluir-modal__texto">
+      Tem certeza que deseja excluir a conta de <strong id="excluir-conta-nome"></strong>?
+      Os dados da empresa, as impressoras, as doações e todas solicitações recebidas serão
+      apagados, e você perderá o acesso à plataforma.
+    </p>
+
+    <div class="campo">
+      <label for="excluir-conta-senha">Sua senha, para confirmar</label>
+      <input type="password" id="excluir-conta-senha" autocomplete="current-password">
+    </div>
+
+    <p class="conta__erro-form" id="erro-excluir-conta" role="alert" hidden></p>
+
+    <div class="excluir-modal__rodape">
+      <button type="button" class="botao-linha botao-linha--grande" id="botao-cancelar-excluir-conta">Cancelar</button>
+      <button type="button" class="excluir-modal__confirmar" id="botao-confirmar-excluir-conta">Excluir minha conta</button>
+    </div>
+  </div>
+</div>
 </section>

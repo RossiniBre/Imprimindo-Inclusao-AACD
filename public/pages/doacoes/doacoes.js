@@ -60,7 +60,14 @@ export function linkEmail(d) {
   const email = d.empresa?.email;
   if (!email) return null;
   const assunto = `Doação ${numeroDoacao(d.id)} - AACD`;
-  return `mailto:${email}?subject=${encodeURIComponent(assunto)}&body=${encodeURIComponent(mensagemDoacao(d))}`;
+  const params = new URLSearchParams({
+    view: 'cm',
+    fs: '1',
+    to: email,
+    su: assunto,
+    body: mensagemDoacao(d),
+  });
+  return `https://mail.google.com/mail/?${params}`;
 }
 
 export function linkMapa(endereco) {
@@ -215,8 +222,10 @@ export function iniciar(container) {
     const el = elemento(href ? 'a' : 'button');
     if (href) {
       el.href = href;
-      el.target = '_blank';
-      el.rel = 'noopener noreferrer';
+      if (!href.startsWith('mailto:')) {
+        el.target = '_blank';
+        el.rel = 'noopener noreferrer';
+      }
       el.title = dica;
     } else {
       el.type = 'button';
