@@ -28,7 +28,7 @@ public class ResponderSolicitacao {
                 new ImpressoraDao(), new PermissaoImpressora());
     }
 
-    ResponderSolicitacao(SolicitacaoDao solicitacaoDao, SolicitacaoEventosDao eventosDao,
+    public ResponderSolicitacao(SolicitacaoDao solicitacaoDao, SolicitacaoEventosDao eventosDao,
                          ImpressoraDao impressoraDao, PermissaoImpressora permissao) {
         this.solicitacaoDao = solicitacaoDao;
         this.eventosDao = eventosDao;
