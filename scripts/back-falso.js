@@ -85,6 +85,13 @@ const back = createServer(async (req, res) => {
     return json(res, 200, { perfil: perfilAtual, nome: 'Ana Martins', identificador: 'ana.martins', email: 'ana.martins@aacd.com', cargo: 'Coordenadora', setor: 'Inovação' });
   }
   if (p === '/api/esqueci-senha') { await lerCorpo(req); return json(res, 200, { mensagem: 'ok' }); }
+  // Redefinir senha: no back falso o único código aceito é 123456
+  if (p === '/api/redefinir-senha') {
+    const campos = new URLSearchParams(await lerCorpo(req));
+    if (!(campos.get('novaSenha') ?? '').trim()) return json(res, 400, { erro: 'Senha não pode estar vazia' });
+    if (campos.get('codigo') !== '123456') return json(res, 400, { erro: 'Código inválido ou expirado.' });
+    return json(res, 200, { mensagem: 'Senha redefinida com sucesso.' });
+  }
 
   // Parceiros e impressoras (visão AACD)
   if (p === '/api/parceiros') return json(res, 200, parceiros);

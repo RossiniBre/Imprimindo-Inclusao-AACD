@@ -1,0 +1,33 @@
+TELA: Confira seu e-mail (código de recuperação de senha)
+Quem acessa: qualquer pessoa, sem login (empresa ou funcionário da AACD). Rota: #/codigo-senha.
+Não está no Figma: segue o layout dividido do login e do "Esqueci minha senha".
+
+Recuperação de senha, em três telas:
+  1. #/esqueci-senha    a pessoa informa o e-mail; o back envia um código de 6 dígitos por e-mail
+  2. #/codigo-senha     (esta) a pessoa informa o código que recebeu
+  3. #/redefinir-senha  a pessoa escolhe a nova senha; no fim, "Ir para o login"
+
+O que faz: mostra para qual e-mail o código foi enviado e pede os 6 números, uma caixa por número.
+As caixas aceitam só números e o cursor pula sozinho para a próxima. Colar o código inteiro em
+qualquer caixa preenche as seis ("123 456" ou "123-456" também funciona). Backspace em caixa vazia
+apaga a anterior, e as setas andam entre as caixas. "Continuar" leva para a tela da nova senha.
+"Pedir outro código" volta para o passo 1 (o back só envia um novo depois de 60 segundos).
+Sem e-mail guardado (link direto ou aba nova) a tela volta para #/esqueci-senha.
+
+LIMITAÇÃO DO BACK (importante): não existe rota para conferir só o código. O back confere o código
+junto com a nova senha, em POST /api/redefinir-senha (email, codigo, novaSenha). Por isso:
+  - esta tela confere só o formato (6 números) e guarda o código;
+  - se o código estiver errado ou vencido, quem descobre é o passo 3, ao salvar a senha. Nesse caso
+    a pessoa é trazida de volta para cá, com o aviso "Código inválido ou expirado".
+Para conferir o código já aqui, o time do back precisaria criar uma rota (ex.: POST
+/api/redefinir-senha/conferir). Com ela, a troca nesta tela é pequena: chamar a rota no "Continuar".
+Regras do back: o código vale 15 minutos e aceita até 5 tentativas.
+
+Onde ficam os dados entre as telas (funções em pages/esqueci-senha/esqueci-senha.js):
+  - e-mail: sessionStorage (não vai para a URL, para não ficar no histórico do navegador);
+  - código: só na memória da página. Recarregar a página no passo 3 apaga e volta para cá.
+
+CSS: o HTML usa as classes .redefinir__* e o CSS desta tela importa o de pages/redefinir-senha.
+?perfil=aacd troca os textos do painel vermelho, como no "Esqueci minha senha".
+
+Para testar sem o back de verdade (npm run dev:falso): o código que funciona é 123456.

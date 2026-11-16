@@ -1,0 +1,126 @@
+<section class="nova-solicitacao escolher-impressora">
+
+  <aside class="ns__painel">
+    <span class="ns__circulo ns__circulo--topo" aria-hidden="true"></span>
+    <span class="ns__circulo ns__circulo--baixo" aria-hidden="true"></span>
+
+    <div class="ns__marca">
+      <img src="/shared/img/logo-aacd.png" alt="AACD">
+      <span>AACD · Impressoras 3D</span>
+    </div>
+
+    <div class="ns__texto">
+      <h1>Nova solicitação de impressão</h1>
+      <p>Preencha as informações da peça e envie o pedido à empresa que vai imprimir.</p>
+    </div>
+
+    <ol class="ns__passos" aria-label="Passos da solicitação">
+      <li class="ns__passo ns__passo--feito">
+        <span class="ns__numero" aria-hidden="true">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </span>
+        <span class="ns__passo-texto">
+          <strong>Dados da peça</strong>
+          <small>Arquivo, material e tamanho</small>
+        </span>
+      </li>
+      <li class="ns__passo ns__passo--atual" aria-current="step">
+        <span class="ns__numero" aria-hidden="true">2</span>
+        <span class="ns__passo-texto">
+          <strong>Escolher impressora</strong>
+          <small>Impressoras que atendem ao pedido</small>
+        </span>
+      </li>
+      <li class="ns__passo">
+        <span class="ns__numero" aria-hidden="true">3</span>
+        <span class="ns__passo-texto">
+          <strong>Confirmar e enviar</strong>
+          <small>Revise antes de enviar</small>
+        </span>
+      </li>
+    </ol>
+
+    <div class="ns__usuario" id="ns-usuario" hidden>
+      <span class="ns__avatar" id="ns-usuario-iniciais" aria-hidden="true"></span>
+      <span class="ns__usuario-texto">
+        <strong id="ns-usuario-nome"></strong>
+        <small id="ns-usuario-papel"></small>
+      </span>
+    </div>
+  </aside>
+
+  <div class="ns__area">
+    <div class="ns__caixa ei__caixa">
+
+      <a class="ei__voltar" href="#/nova-solicitacao">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        Voltar para os dados da peça
+      </a>
+
+      <p class="ns__etapa">Passo 2 de 3</p>
+      <h2>Escolher impressora</h2>
+      <p class="ei__descricao" id="descricao" aria-live="polite">Procurando impressoras que atendem ao pedido...</p>
+
+      <p class="ei__pedido" id="pedido"></p>
+
+      <p class="ei__aviso ei__aviso--erro" id="aviso-geral" role="alert" hidden></p>
+
+      <div class="ei__vazio" id="lista-vazia" hidden>
+        <strong>Nenhuma impressora da rede atende a este pedido agora.</strong>
+        <p id="vazia-motivo"></p>
+        <a class="ei__secundario" href="#/nova-solicitacao">Alterar os dados da peça</a>
+      </div>
+
+      <div class="ei__cartoes" id="cartoes"></div>
+
+      <p class="ei__rodape" id="rodape" hidden></p>
+
+      <!-- Aparece quando uma impressora é selecionada; fica presa ao pé da janela -->
+      <div class="ei__barra" id="barra-continuar" role="status" hidden>
+        <p>
+          <small>Impressora selecionada</small>
+          <strong id="barra-texto"></strong>
+        </p>
+        <button type="button" class="ei__continuar" id="botao-continuar">Continuar</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Modal: detalhes da impressora -->
+  <div class="ei__modal-fundo" id="modal-detalhes" hidden>
+    <div class="ei__modal" role="dialog" aria-modal="true" aria-labelledby="modal-titulo">
+
+      <div class="ei__modal-topo">
+        <div>
+          <h2 id="modal-titulo"></h2>
+          <p class="ei__modal-local" id="modal-local"></p>
+        </div>
+        <button type="button" class="ei__modal-fechar" data-fechar aria-label="Fechar">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="6" y1="6" x2="18" y2="18"/>
+            <line x1="18" y1="6" x2="6" y2="18"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="ei__modal-chips" id="modal-chips"></div>
+
+      <dl class="ei__modal-dados" id="modal-dados"></dl>
+
+      <h3 class="ei__modal-subtitulo">A peça e esta impressora</h3>
+      <ul class="ns__checagem" id="modal-checagem"></ul>
+
+      <div class="ei__modal-rodape">
+        <button type="button" class="ei__secundario" data-fechar>Fechar</button>
+        <button type="button" class="ei__continuar" id="modal-selecionar">Selecionar esta impressora</button>
+      </div>
+
+    </div>
+  </div>
+
+</section>

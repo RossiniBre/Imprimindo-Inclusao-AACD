@@ -291,10 +291,6 @@
   z-index: auto;
 }
 
-.modal-fundo .modal--larga {
-  max-width: 40rem;
-}
-
 .modal__cabecalho {
   display: flex;
   align-items: flex-start;
@@ -306,11 +302,6 @@
 .modal h2 {
   margin-bottom: 0.25rem;
   font-size: 1.375rem;
-}
-
-.modal__subtitulo {
-  font-size: 0.8125rem;
-  color: var(--cor-texto-suave);
 }
 
 .modal__fechar {
@@ -330,17 +321,6 @@
 .modal__fechar:hover {
   background: var(--cor-neutra-claro);
   color: var(--cor-texto);
-}
-
-/* Ficha da impressora escolhida (chips no topo do modal) */
-.modal__ficha {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.375rem;
-  margin-bottom: 1.25rem;
-  padding: 0.75rem 0.875rem;
-  border-radius: 0.5rem;
-  background: var(--cor-fundo);
 }
 
 .modal__campo {
@@ -403,27 +383,10 @@
   border-color: var(--cor-erro);
 }
 
-.modal__linha {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.875rem;
-}
-
 .modal__dica {
   margin-top: 0.25rem;
   font-size: 0.75rem;
   color: var(--cor-texto-suave);
-}
-
-.modal__contador {
-  text-align: right;
-}
-
-.modal__erro {
-  min-height: 1rem;
-  margin-top: 0.25rem;
-  font-size: 0.75rem;
-  color: var(--cor-erro);
 }
 
 /* Chips de escolha (material) */
@@ -473,84 +436,6 @@
   cursor: not-allowed;
 }
 
-/* Três medidas lado a lado */
-.medidas {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0.625rem;
-}
-
-.medidas label {
-  position: relative;
-  display: block;
-  margin: 0;
-}
-
-.medidas input {
-  padding-right: 2.75rem;
-}
-
-.medidas span {
-  position: absolute;
-  top: 50%;
-  right: 0.875rem;
-  transform: translateY(-50%);
-  font-size: 0.75rem;
-  color: var(--cor-texto-suave);
-  pointer-events: none;
-}
-
-/* Checagem peça × impressora */
-.checagem {
-  margin: 0.25rem 0 1rem;
-  padding: 0;
-  list-style: none;
-  border: 1px solid var(--cor-borda);
-  border-radius: 0.5rem;
-  overflow: hidden;
-}
-
-.checagem:empty {
-  display: none;
-}
-
-.checagem li {
-  display: grid;
-  grid-template-columns: 1.25rem 1fr auto;
-  gap: 0.625rem;
-  align-items: center;
-  padding: 0.5rem 0.875rem;
-  font-size: 0.8125rem;
-}
-
-.checagem li + li {
-  border-top: 1px solid var(--cor-borda);
-}
-
-.checagem__icone {
-  font-weight: 700;
-}
-
-.checagem__valor {
-  font-size: 0.75rem;
-  color: var(--cor-texto-suave);
-}
-
-.checagem li.ok .checagem__icone     { color: var(--cor-sucesso); }
-.checagem li.falha .checagem__icone  { color: var(--cor-erro); }
-.checagem li.falha                   { background: var(--cor-erro-claro); }
-.checagem li.duvida .checagem__icone { color: var(--cor-destaque-texto); }
-
-.modal__erro-geral {
-  margin-bottom: 1rem;
-  padding: 0.75rem 0.875rem;
-  border-left: 4px solid var(--cor-erro);
-  border-radius: 0.375rem;
-  background: var(--cor-erro-claro);
-  font-size: 0.875rem;
-  color: var(--cor-erro);
-}
-
 .modal__rodape {
   display: flex;
   justify-content: flex-end;
@@ -573,47 +458,9 @@
   background: var(--cor-neutra-claro);
 }
 
-/* Estado de sucesso dentro do modal */
-.modal__sucesso {
-  text-align: center;
-}
-
-.modal__sucesso h3 {
-  margin-bottom: 0.5rem;
-  font-size: 1.25rem;
-}
-
-.modal__sucesso p {
-  margin: 0 auto 1.25rem;
-  max-width: 24rem;
-  font-size: 0.875rem;
-  color: var(--cor-texto-suave);
-}
-
-.modal__sucesso .modal__rodape {
-  justify-content: center;
-}
-
-.modal__icone-ok {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 3.5rem;
-  height: 3.5rem;
-  margin: 0.5rem auto 1rem;
-  border-radius: 50%;
-  background: var(--cor-sucesso-claro);
-  color: var(--cor-sucesso);
-}
-
 /* ---------- Responsivo ---------- */
 
 @media (max-width: 37.5rem) {
-  .modal__linha,
-  .medidas {
-    grid-template-columns: 1fr;
-  }
-
   .modal-fundo .modal {
     padding: 1.375rem 1.125rem;
   }

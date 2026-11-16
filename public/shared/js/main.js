@@ -6,6 +6,8 @@ import { desenharMenu } from './navbar.js';
 rota('/',              { pagina: 'login',          publica: true,  titulo: 'Entrar' });
 rota('/login',         { pagina: 'login',          publica: true,  titulo: 'Entrar' });
 rota('/esqueci-senha', { pagina: 'esqueci-senha',  publica: true,  titulo: 'Recuperar senha' });
+rota('/codigo-senha',    { pagina: 'codigo-senha',    publica: true, titulo: 'Código de recuperação' });
+rota('/redefinir-senha', { pagina: 'redefinir-senha', publica: true, titulo: 'Nova senha' });
 rota('/funcionarios',  { pagina: 'funcionarios',   publica: false, titulo: 'Funcionários' });
 rota('/painel-aacd',   { pagina: 'painel-aacd',    publica: false, titulo: 'Acompanhamento' });
 rota('/minha-conta',         { pagina: 'minha-conta',         publica: false, titulo: 'Meu perfil' });
@@ -19,6 +21,10 @@ rota('/solicitacoes', { pagina: 'solicitacoes', pasta: 'Solicitacoes-empresa', p
 rota('/impressoras-aacd', { pagina: 'impressoras-aacd', publica: false, titulo: 'Impressoras' });
 rota('/parceiros',        { pagina: 'parceiros',        publica: false, titulo: 'Parceiros' });
 rota('/doacoes',          { pagina: 'doacoes',          publica: false, titulo: 'Doações' });
+rota('/nova-solicitacao',   { pagina: 'nova-solicitacao',   publica: false, titulo: 'Nova solicitação' });
+rota('/escolher-impressora', { pagina: 'escolher-impressora', publica: false, titulo: 'Escolher impressora' });
+rota('/confirmar-solicitacao', { pagina: 'confirmar-solicitacao', publica: false, titulo: 'Confirmar solicitação' });
+rota('/contato',            { pagina: 'contato',            publica: false, titulo: 'Contato' });
 rota('/reescolher-empresa', { pagina: 'reescolher-empresa', publica: false, titulo: 'Escolher empresa' });
 
 window.addEventListener('hashchange', desenharMenu);

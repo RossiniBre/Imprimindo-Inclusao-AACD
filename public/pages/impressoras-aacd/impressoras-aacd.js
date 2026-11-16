@@ -1,6 +1,8 @@
 // Impressoras da rede (lado AACD): lista TODAS as impressoras das empresas parceiras, separadas
-// em seções (Livres, Em uso e Desativadas), filtra por UF e material e abre o modal de nova
-// solicitação de impressão para a impressora escolhida.
+// em seções (Livres, Em uso e Desativadas) e filtra por UF e material. "Ver detalhes" leva para
+// a tela Nova solicitação (#/nova-solicitacao), que substituiu o modal que ficava aqui.
+// As funções puras de validação continuam neste arquivo e são usadas pelas telas
+// nova-solicitacao e reescolher-empresa.
 
 import { api } from '../../shared/js/api.js';
 import {
@@ -183,21 +185,16 @@ export function checagens(dados, impressora) {
 
 // ---------- Tela ----------
 
-let modal = null;
 let modalFiltros = null;
 
 export function destruir() {
-  modal?.destruir();
   modalFiltros?.destruir();
-  modal = null;
   modalFiltros = null;
 }
 
 export function iniciar(container, { params } = {}) {
   let impressoras = [];
   let parceirosPorId = {};
-  const medidasPorEmpresa = {};   // empresaId -> { impressoraId -> impressora com medidas }
-  let impressoraAberta = null;
 
   const ufsSel = new Set();
   const materiaisSel = new Set();
@@ -236,20 +233,6 @@ export function iniciar(container, { params } = {}) {
   const resultadoFiltros = container.querySelector('#filtros-resultado');
   const limparFiltros = container.querySelector('#limpar-filtros');
 
-  const fundo = container.querySelector('#modal-solicitacao');
-  const modalImpressora = container.querySelector('#modal-impressora');
-  const ficha = container.querySelector('#modal-ficha');
-  const form = container.querySelector('#form-solicitacao');
-  const escolhaMaterial = container.querySelector('#escolha-material');
-  const checagemLista = container.querySelector('#checagem');
-  const erroModal = container.querySelector('#erro-modal');
-  const botaoEnviar = container.querySelector('#botao-enviar');
-  const sucesso = container.querySelector('#modal-sucesso');
-  const sucessoId = container.querySelector('#sucesso-id');
-  const descricao = container.querySelector('#campo-descricao');
-  const contador = container.querySelector('#contador-descricao');
-
-  modal = criarModal(fundo, { aoFechar: () => { impressoraAberta = null; } });
   modalFiltros = criarModal(fundoFiltros, {});
 
   // ----- Avisos -----
@@ -434,196 +417,15 @@ export function iniciar(container, { params } = {}) {
     renderizar();
   });
 
-  // ----- Modal de solicitação -----
+  // ----- Nova solicitação -----
 
-  async function medidasDaImpressora(impressora) {
-    const empresaId = impressora.empresa?.id;
-    if (!empresaId) return null;
-
-    if (!medidasPorEmpresa[empresaId]) {
-      try {
-        const resposta = await api.impressorasDoParceiro(empresaId);
-        const mapa = {};
-        if (resposta.ok && Array.isArray(resposta.corpo)) {
-          resposta.corpo.forEach((i) => { mapa[i.id] = i; });
-        }
-        medidasPorEmpresa[empresaId] = mapa;
-      } catch {
-        return null;
-      }
-    }
-    return medidasPorEmpresa[empresaId][impressora.id] ?? null;
-  }
-
-  function lerFormulario() {
-    const material = form.querySelector('input[name="material"]:checked')?.value ?? '';
-    return {
-      arquivo: form.querySelector('#campo-arquivo').files?.[0] ?? null,
-      titulo: form.querySelector('#campo-titulo').value,
-      quantidade: form.querySelector('#campo-quantidade').value,
-      material,
-      comprimentoMm: form.querySelector('#campo-comprimento').value,
-      larguraMm: form.querySelector('#campo-largura').value,
-      alturaMm: form.querySelector('#campo-altura').value,
-      prazo: form.querySelector('#campo-prazo').value,
-      observacao: descricao.value,
-    };
-  }
-
-  function mostrarErros(erros) {
-    ['arquivo', 'titulo', 'quantidade', 'material', 'medidas', 'prazo'].forEach((campo) => {
-      const alvo = container.querySelector(`#erro-${campo}`);
-      if (alvo) alvo.textContent = erros[campo] ?? '';
-    });
-    form.querySelector('#campo-titulo').classList.toggle('com-erro', Boolean(erros.titulo));
-    form.querySelector('#campo-quantidade').classList.toggle('com-erro', Boolean(erros.quantidade));
-    form.querySelector('#campo-prazo').classList.toggle('com-erro', Boolean(erros.prazo));
-    ['comprimento', 'largura', 'altura'].forEach((m) =>
-      form.querySelector(`#campo-${m}`).classList.toggle('com-erro', Boolean(erros.medidas)));
-  }
-
-  function desenharFicha(i) {
-    const disp = DISPONIBILIDADE[i.disponibilidade] ?? { rotulo: i.disponibilidade, classe: 'chip--neutro' };
-    const itens = [chip(disp.classe, disp.rotulo)];
-    const mesa = medidas(i);
-    itens.push(chip('chip--neutro', mesa ? `Mesa ${mesa}` : 'Mesa não informada'));
-    codigosMateriais(i).forEach((m) => itens.push(chip('chip--contorno', rotuloMaterial(m))));
-    ficha.replaceChildren(...itens);
-  }
-
-  function desenharMateriais(i) {
-    const suportados = codigosMateriais(i);
-    escolhaMaterial.replaceChildren(...MATERIAIS.map((m) => {
-      const rotulo = elemento('label');
-      const entrada = document.createElement('input');
-      entrada.type = 'radio';
-      entrada.name = 'material';
-      entrada.value = m.codigo;
-      entrada.disabled = suportados.length > 0 && !suportados.includes(m.codigo);
-      if (suportados.length === 1 && suportados[0] === m.codigo) entrada.checked = true;
-      rotulo.appendChild(entrada);
-      rotulo.appendChild(document.createTextNode(m.rotulo));
-      return rotulo;
-    }));
-  }
-
-  function atualizarChecagem() {
-    if (!impressoraAberta) return;
-    const itens = checagens(lerFormulario(), impressoraAberta);
-    checagemLista.replaceChildren(...itens.map((c) => {
-      const li = elemento('li', c.estado);
-      li.appendChild(elemento('span', 'checagem__icone', c.estado === 'ok' ? '✓' : c.estado === 'falha' ? '✕' : '?'));
-      li.appendChild(elemento('span', '', c.rotulo));
-      li.appendChild(elemento('span', 'checagem__valor', c.valor));
-      return li;
-    }));
-  }
-
-  async function abrirSolicitacao(id) {
-    const base = impressoras.find((i) => i.id === id);
-    if (!base) return;
-
-    // Impressora desativada não recebe pedidos (cobre também o link direto ?impressora=)
-    if (base.ativo === false) {
-      mostrarAviso(`A impressora ${base.modelo} está desativada e não recebe pedidos no momento.`);
-      return;
-    }
-
-    // Se o modal de filtros estiver aberto (link direto), fecha antes
-    if (!fundoFiltros.hidden) modalFiltros.fechar?.();
-
-    form.reset();
-    mostrarErros({});
-    erroModal.hidden = true;
-    botaoEnviar.disabled = false;
-    botaoEnviar.textContent = 'Enviar solicitação';
-    contador.textContent = '0';
-    form.hidden = false;
-    sucesso.hidden = true;
-
-    impressoraAberta = { ...base };
-    modalImpressora.textContent = `${base.modelo} · ${base.empresa?.nome ?? ''}${base.cidade ? ` · ${base.cidade}` : ''}`;
-    desenharFicha(impressoraAberta);
-    desenharMateriais(impressoraAberta);
-    checagemLista.replaceChildren();
-    modal.abrir(form.querySelector('#campo-arquivo'));
-
-    // As medidas da mesa vêm de outra rota; completa a ficha quando chegarem
-    const completa = await medidasDaImpressora(base);
-    if (completa && impressoraAberta?.id === base.id) {
-      impressoraAberta = {
-        ...impressoraAberta, ...completa, empresa: base.empresa, cidade: base.cidade, uf: base.uf, ativo: base.ativo,
-      };
-      desenharFicha(impressoraAberta);
-      desenharMateriais(impressoraAberta);
-      atualizarChecagem();
-    }
-  }
-
+  // O pedido é criado na tela Nova solicitação; a impressora clicada vai como preferência
   areaGrupos.addEventListener('click', (evento) => {
     const botao = evento.target.closest('button[data-id]');
-    if (botao) abrirSolicitacao(Number(botao.dataset.id));
+    if (botao) location.hash = `#/nova-solicitacao?impressora=${encodeURIComponent(botao.dataset.id)}`;
   });
 
-  form.addEventListener('input', () => {
-    contador.textContent = String(descricao.value.length);
-    atualizarChecagem();
-  });
-
-  form.addEventListener('submit', async (evento) => {
-    evento.preventDefault();
-    if (!impressoraAberta) return;
-
-    const dados = lerFormulario();
-    const erros = validar(dados, impressoraAberta);
-    mostrarErros(erros);
-    erroModal.hidden = true;
-    if (Object.keys(erros).length > 0) {
-      container.querySelector(`#erro-${Object.keys(erros)[0]}`)?.scrollIntoView({ block: 'center' });
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append('titulo', dados.titulo.trim());
-    formData.append('descricao', montarDescricao(dados));
-    formData.append('quantidade', String(Number(dados.quantidade)));
-    formData.append('comprimentoMm', String(Number(dados.comprimentoMm)));
-    formData.append('larguraMm', String(Number(dados.larguraMm)));
-    formData.append('alturaMm', String(Number(dados.alturaMm)));
-    formData.append('impressoraId', String(impressoraAberta.id));
-    formData.append('arquivo', dados.arquivo, dados.arquivo.name);
-
-    botaoEnviar.disabled = true;
-    botaoEnviar.textContent = 'Enviando...';
-
-    try {
-      const resposta = await api.criarSolicitacao(formData);
-      if (resposta.ok) {
-        sucessoId.textContent = resposta.corpo?.id ?? '';
-        form.hidden = true;
-        sucesso.hidden = false;
-        sucesso.querySelector('a')?.focus();
-        carregar();
-        return;
-      }
-      if (resposta.status === 401) {
-        location.hash = '#/login';
-        return;
-      }
-      erroModal.textContent = resposta.status === 413
-        ? 'O arquivo passa de 50 MB.'
-        : resposta.status === 403
-          ? 'Só funcionários e administradores da AACD criam pedidos.'
-          : (resposta.corpo?.erro ?? 'Não foi possível enviar o pedido. Tente de novo.');
-    } catch {
-      erroModal.textContent = 'Sem conexão com o servidor. Tente de novo em instantes.';
-    }
-    erroModal.hidden = false;
-    botaoEnviar.disabled = false;
-    botaoEnviar.textContent = 'Enviar solicitação';
-  });
-
-  // ----- Parâmetros da URL (#/impressoras-aacd?impressora=12 ou ?empresa=3) -----
+  // ----- Parâmetro da URL (#/impressoras-aacd?empresa=3) -----
 
   carregar().then((ok) => {
     if (!ok) return;
@@ -631,15 +433,6 @@ export function iniciar(container, { params } = {}) {
     if (empresaId && parceirosPorId[empresaId]) {
       busca.value = parceirosPorId[empresaId].nome;
       renderizar();
-    }
-    const impressoraId = Number(params?.get('impressora'));
-    if (impressoraId) {
-      const alvo = impressoras.find((i) => i.id === impressoraId);
-      if (alvo) {
-        abrirSolicitacao(impressoraId);
-      } else {
-        mostrarAviso(`A impressora ${impressoraId} não está mais disponível na rede.`);
-      }
     }
   });
 }

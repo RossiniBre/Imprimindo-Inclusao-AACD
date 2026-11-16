@@ -1,5 +1,5 @@
 // Parceiros da AACD: empresas parceiras em cartões, números da rede e modal de detalhes
-// com as impressoras da empresa (cada uma leva ao modal de nova solicitação).
+// com as impressoras da empresa (cada uma leva à tela Nova solicitação).
 
 import { api } from '../../shared/js/api.js';
 import { DISPONIBILIDADE, cidadeUf, medidas, codigosMateriais, rotuloMaterial } from '../../shared/js/dominio.js';
@@ -205,7 +205,7 @@ export function iniciar(container) {
     li.appendChild(chips);
 
     const link = elemento('a', 'botao-linha', 'Solicitar');
-    link.href = `#/impressoras-aacd?impressora=${i.id}`;
+    link.href = `#/nova-solicitacao?impressora=${i.id}`;
     li.appendChild(link);
     return li;
   }

@@ -1,0 +1,141 @@
+<section class="contato">
+
+  <div class="contato__conteudo">
+
+    <h1>Contato</h1>
+    <p class="contato__descricao">Fale com a AACD sobre pedidos, retirada das peças e dúvidas do projeto.</p>
+
+    <!-- Três formas de falar com a AACD -->
+    <div class="contato__cartoes">
+
+      <article class="contato__cartao">
+        <div class="contato__cartao-topo">
+          <span class="contato__icone" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/>
+            </svg>
+          </span>
+          <h2>Telefone da AACD</h2>
+        </div>
+        <p class="contato__destaque" id="telefone"></p>
+        <p class="contato__detalhe" id="telefone-horario"></p>
+        <p class="contato__detalhe" id="telefone-ramal"></p>
+        <button type="button" class="contato__botao" id="copiar-telefone">Copiar número</button>
+      </article>
+
+      <article class="contato__cartao">
+        <div class="contato__cartao-topo">
+          <span class="contato__icone" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="5" width="18" height="14" rx="2"/>
+              <polyline points="3 7 12 13 21 7"/>
+            </svg>
+          </span>
+          <h2>E-mail do projeto</h2>
+        </div>
+        <p class="contato__destaque" id="email"></p>
+        <p class="contato__detalhe">Resposta em até 1 dia útil</p>
+        <p class="contato__detalhe">Cite o número do pedido no assunto</p>
+        <a class="contato__botao" id="escrever-email" target="_blank" rel="noopener">Escrever e-mail</a>
+      </article>
+
+      <article class="contato__cartao">
+        <div class="contato__cartao-topo">
+          <span class="contato__icone" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="8" r="4"/>
+              <path d="M4 21a8 8 0 0 1 16 0"/>
+            </svg>
+          </span>
+          <h2>Responsável pelo projeto</h2>
+        </div>
+        <p class="contato__destaque" id="responsavel"></p>
+        <p class="contato__detalhe" id="responsavel-setor"></p>
+        <p class="contato__detalhe" id="responsavel-contato"></p>
+        <a class="contato__botao" id="escrever-responsavel" target="_blank" rel="noopener">Escrever para o responsável</a>
+      </article>
+
+    </div>
+
+    <div class="contato__colunas">
+
+      <!-- Retirada das peças -->
+      <section class="contato__cartao" aria-labelledby="titulo-retirada">
+        <h2 class="contato__titulo" id="titulo-retirada">Retirada das peças</h2>
+
+        <div class="contato__item">
+          <span class="contato__icone" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12z"/>
+              <circle cx="12" cy="10" r="2.5"/>
+            </svg>
+          </span>
+          <div>
+            <p class="contato__rotulo">Endereço</p>
+            <p class="contato__valor" id="retirada-endereco"></p>
+            <p class="contato__detalhe" id="retirada-entrada"></p>
+          </div>
+        </div>
+
+        <div class="contato__item">
+          <span class="contato__icone" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="9"/>
+              <polyline points="12 7 12 12 15.5 14"/>
+            </svg>
+          </span>
+          <div>
+            <p class="contato__rotulo">Horário</p>
+            <p class="contato__valor" id="retirada-horario"></p>
+            <p class="contato__detalhe" id="retirada-fechado"></p>
+          </div>
+        </div>
+
+        <div class="contato__lembrete">
+          <strong>Antes de vir, avise a AACD por telefone ou e-mail.</strong>
+          <p>Assim a peça já fica separada na portaria e você não espera.</p>
+        </div>
+
+        <a class="contato__botao" id="ver-mapa" target="_blank" rel="noopener">Ver no mapa</a>
+      </section>
+
+      <!-- Envie uma mensagem -->
+      <section class="contato__cartao" aria-labelledby="titulo-mensagem">
+        <h2 class="contato__titulo" id="titulo-mensagem">Envie uma mensagem</h2>
+        <p class="contato__detalhe contato__detalhe--abaixo">A equipe da AACD responde por e-mail em até 1 dia útil.</p>
+
+        <form id="form-mensagem" novalidate>
+          <div class="contato__linha">
+            <div class="contato__campo">
+              <label for="campo-assunto">Assunto</label>
+              <select id="campo-assunto" name="assunto"></select>
+            </div>
+            <div class="contato__campo">
+              <label for="campo-pedido">Pedido relacionado <span class="contato__opcional">(opcional)</span></label>
+              <select id="campo-pedido" name="pedido">
+                <option value="">Nenhum pedido</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="contato__campo">
+            <label for="campo-mensagem">Mensagem</label>
+            <textarea id="campo-mensagem" name="mensagem" rows="5" maxlength="1500" placeholder="Descreva sua dúvida. Se for sobre um pedido, diga o número e o que aconteceu." aria-describedby="erro-mensagem"></textarea>
+            <p class="contato__erro" id="erro-mensagem" aria-live="polite"></p>
+          </div>
+
+          <p class="contato__resposta" id="resposta-para" hidden>
+            A resposta será enviada para <strong id="resposta-email"></strong>
+          </p>
+
+          <p class="contato__aviso" id="aviso-envio" role="status" hidden></p>
+
+          <button type="submit" class="contato__enviar" id="botao-enviar">Enviar mensagem</button>
+        </form>
+      </section>
+
+    </div>
+
+  </div>
+
+</section>

@@ -1,0 +1,26 @@
+TELA: Contato (lado da empresa parceira)
+Quem acessa: empresas (perfil EMPRESA). Rota: #/contato (aba "Entre em contato" da navbar da empresa).
+O que faz: mostra como falar com a AACD e onde retirar as peças.
+  - Telefone da AACD: número, horário e ramal do projeto. "Copiar número" copia o telefone.
+  - E-mail do projeto: "Escrever e-mail" abre a escrita de um e-mail para o projeto.
+  - Responsável pelo projeto: nome, setor, e-mail e ramal. "Escrever para <nome>" abre o e-mail.
+  - Retirada das peças: endereço, entrada, horário, lembrete de avisar antes e "Ver no mapa".
+  - Envie uma mensagem: assunto, pedido relacionado (opcional) e mensagem (10 a 1500 caracteres).
+
+ATENÇÃO, DADOS DE EXEMPLO: telefone, e-mails, nome do responsável, endereço e horários são os valores
+do Figma. Eles ficam todos na constante CONTATO_AACD, no começo de contato.js. Troquem pelos dados
+reais da AACD antes de publicar.
+
+"Enviar mensagem" NÃO grava nada no back: o back não tem rota de mensagem/contato. O botão valida e
+abre o Gmail em outra aba (mesmo esquema da tela de Doações), com destinatário (e-mail do projeto),
+assunto e texto prontos. A empresa confere e envia por lá. O assunto leva o número do pedido
+("[Pedido 6502] Dúvida sobre um pedido - Nexa Engenharia") e o texto termina com a assinatura da
+empresa (nome, pedido, e-mail de resposta e telefone).
+Se o time do back criar uma rota (ex.: POST /api/contato), basta trocar o window.open do submit pela
+chamada em shared/js/api.js.
+
+Rotas do back usadas (via shared/js/api.js):
+  GET /api/empresa/perfil -> nome, e-mail e telefone da empresa ("A resposta será enviada para ...")
+  GET /api/solicitacoes   -> pedidos da empresa, para o campo "Pedido relacionado"
+Sem sessão (401) a tela redireciona para #/login. Se uma das rotas falhar, a tela continua
+funcionando: some a linha do e-mail de resposta ou o campo fica só com "Nenhum pedido".

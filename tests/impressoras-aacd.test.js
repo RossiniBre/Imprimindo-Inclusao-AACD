@@ -123,7 +123,7 @@ describe('impressoras da rede: validação do pedido', () => {
 describe('impressoras da rede: tela', () => {
   beforeEach(() => carregarHtml('impressoras-aacd', 'impressoras-aacd'))
 
-  it('tem busca, botão de filtros, as três seções e os modais escondidos', () => {
+  it('tem busca, botão de filtros, as três seções e o modal de filtros escondido', () => {
     expect(document.querySelector('#busca')).not.toBeNull()
     expect(document.querySelector('#botao-filtro')).not.toBeNull()
  
@@ -135,15 +135,9 @@ describe('impressoras da rede: tela', () => {
       expect(document.querySelector(secao)).not.toBeNull()
     }
  
-    expect(document.querySelector('#modal-solicitacao').hidden).toBe(true)
+    // o modal de nova solicitação virou a tela #/nova-solicitacao
+    expect(document.querySelector('#modal-solicitacao')).toBeNull()
     expect(document.querySelector('#modal-filtros').hidden).toBe(true)
-  })
-
-  it('o formulário tem os campos que o back exige', () => {
-    for (const nome of ['arquivo', 'titulo', 'quantidade', 'comprimentoMm', 'larguraMm', 'alturaMm']) {
-      expect(document.querySelector(`#form-solicitacao [name="${nome}"]`), nome).not.toBeNull()
-    }
-    expect(document.querySelector('#campo-arquivo').accept).toBe('.stl,.obj,.3mf')
   })
 })
 

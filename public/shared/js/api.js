@@ -45,6 +45,8 @@ export const api = {
     requisitar('POST', '/api/empresa/editar', { ...resto, rua: logradouro }),
   editarNome: (nome) => requisitar('POST', '/api/usuario/nome', { nome }),
   esqueciSenha: (email) => requisitar('POST', '/api/esqueci-senha', { email }),
+  redefinirSenha: (email, codigo, novaSenha) =>
+    requisitar('POST', '/api/redefinir-senha', { email, codigo, novaSenha }),
   cadastrarEmpresa:  (dados) => requisitar('POST', '/api/empresas', dados),
   cadastrarImpressora: (dados) => requisitar('POST', '/api/impressoras', dados),
   impressoras: () => requisitar('GET', '/api/impressoras'),

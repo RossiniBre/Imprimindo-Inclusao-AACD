@@ -5,9 +5,9 @@ cadastrou, quantas peças já imprimiu para a AACD e a cidade/UF), com busca por
 No topo, os números da rede: parceiros, impressoras da rede e peças impressas para a AACD.
 "Ver detalhes" abre o modal do Figma ("Parceiros - Modal de ação card"): dados da empresa, endereço
 (estado, cidade, bairro, CEP, logradouro, número), contato (e-mail e telefone) e a lista de impressoras
-da empresa, cada uma com Livre/Em uso, mesa e materiais e o botão "Solicitar", que leva ao modal de nova
-solicitação em #/impressoras-aacd?impressora=ID. "Solicitar impressão" filtra as impressoras da empresa.
-"+ Nova solicitação" no cabeçalho vai para #/impressoras-aacd (a criação do pedido é lá).
+da empresa, cada uma com Livre/Em uso, mesa e materiais e o botão "Solicitar", que leva à tela Nova
+solicitação em #/nova-solicitacao?impressora=ID. "Solicitar impressão" filtra as impressoras da empresa.
+"+ Nova solicitação" no cabeçalho vai para #/nova-solicitacao (a criação do pedido é lá).
 
 Rotas do back usadas (via shared/js/api.js):
   GET /api/parceiros                  -> id, nome, email, telefone, endereco{cep,rua,numero,bairro,cidade,uf}

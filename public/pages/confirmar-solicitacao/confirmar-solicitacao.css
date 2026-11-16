@@ -1,0 +1,235 @@
+/* Nova solicitação de impressão, passo 3 (Confirmar e enviar).
+   O casco (painel vermelho + área de conteúdo), os chips e a checagem vêm do arquivo compartilhado. */
+
+@import url("/shared/css/passos-solicitacao.css");
+
+.cs__caixa {
+  max-width: 46rem;
+}
+
+.cs__voltar {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-bottom: 1.25rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--cor-texto);
+  text-decoration: none;
+}
+
+.cs__voltar:hover {
+  text-decoration: underline;
+}
+
+.cs__descricao {
+  margin: 0.25rem 0 1.25rem;
+  font-size: 0.875rem;
+  color: var(--cor-texto-suave);
+}
+
+/* ---------- Blocos de detalhe ---------- */
+
+.cs__bloco {
+  margin-bottom: 0.875rem;
+  padding: 1rem 1.125rem;
+  border: 1px solid var(--cor-borda);
+  border-radius: 0.625rem;
+  background: var(--cor-superficie);
+}
+
+.cs__bloco-topo {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.625rem;
+}
+
+.cs__bloco-topo h3 {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cor-texto-suave);
+}
+
+.cs__bloco-topo a {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--cor-texto);
+}
+
+.cs__modelo {
+  font-size: 1.1875rem;
+  font-weight: 700;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.cs__local {
+  margin-bottom: 0.625rem;
+  font-size: 0.8125rem;
+  color: var(--cor-texto-suave);
+}
+
+.cs__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+}
+
+/* Tabela rótulo / valor */
+.cs__dados {
+  display: grid;
+  grid-template-columns: 9.5rem minmax(0, 1fr);
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+.cs__dados dt,
+.cs__dados dd {
+  margin: 0;
+  padding: 0.5rem 0;
+  border-top: 1px solid var(--cor-neutra-claro);
+}
+
+.cs__dados dt:first-of-type,
+.cs__dados dt:first-of-type + dd {
+  border-top: none;
+  padding-top: 0;
+}
+
+.cs__dados dt {
+  font-weight: 400;
+  color: var(--cor-texto-suave);
+}
+
+.cs__dados dd {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+  white-space: pre-line;
+}
+
+.cs__bloco .ns__checagem {
+  margin: 0;
+}
+
+/* ---------- Erro e botões ---------- */
+
+.cs__erro {
+  margin-bottom: 1rem;
+  padding: 0.75rem 0.875rem;
+  border-left: 4px solid var(--cor-erro);
+  border-radius: 0.375rem;
+  background: var(--cor-erro-claro);
+  font-size: 0.875rem;
+  color: var(--cor-erro);
+}
+
+.cs__rodape {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+.cs__rodape--centro {
+  justify-content: center;
+}
+
+.cs__secundario,
+.cs__confirmar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 2.75rem;
+  min-width: 9.5rem;
+  padding: 0 1.5rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  text-decoration: none;
+}
+
+.cs__secundario {
+  border: 1px solid var(--cor-borda);
+  background: var(--cor-superficie);
+  font-weight: 600;
+  color: var(--cor-texto);
+  transition: background 0.2s;
+}
+
+.cs__secundario:hover {
+  background: var(--cor-neutra-claro);
+}
+
+.cs__confirmar {
+  border: 1px solid transparent;
+  background: var(--cor-sucesso);
+  color: var(--cor-superficie);
+  font-weight: 700;
+  transition: filter 0.2s;
+}
+
+.cs__confirmar:hover:not(:disabled) {
+  filter: brightness(0.92);
+}
+
+/* ---------- Pedido enviado ---------- */
+
+.cs__sucesso {
+  padding-top: 4rem;
+  text-align: center;
+}
+
+.cs__sucesso h2:focus {
+  outline: none;
+}
+
+.cs__sucesso p {
+  margin: 0.5rem auto 1.5rem;
+  max-width: 28rem;
+  font-size: 0.9375rem;
+  color: var(--cor-texto-suave);
+}
+
+.cs__icone-ok {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 4rem;
+  height: 4rem;
+  margin: 0 auto 1.25rem;
+  border-radius: 50%;
+  background: var(--cor-sucesso-claro);
+  color: var(--cor-sucesso);
+}
+
+/* ---------- Responsivo ---------- */
+
+@media (max-width: 37.5rem) {
+  .cs__dados {
+    grid-template-columns: 1fr;
+  }
+
+  .cs__dados dd {
+    padding-top: 0;
+    border-top: none;
+  }
+
+  .cs__dados dt:first-of-type + dd {
+    padding-top: 0;
+  }
+
+  .cs__dados dt {
+    padding-bottom: 0.125rem;
+  }
+
+  .cs__rodape {
+    flex-direction: column-reverse;
+  }
+
+  .cs__rodape > * {
+    width: 100%;
+  }
+}

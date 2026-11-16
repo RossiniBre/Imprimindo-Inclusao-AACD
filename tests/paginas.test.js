@@ -31,9 +31,7 @@ describe('rotas do main.js', () => {
   // Telas previstas no Figma que ainda não foram feitas. Os links para elas já
   // existem nas telas prontas; quando a rota for registrada no main.js, tire
   // daqui (o teste abaixo cobra isso).
-  const ROTAS_PENDENTES = new Set([
-    '/contato',   // Contato (AACD) — aba do painel-aacd
-  ])
+  const ROTAS_PENDENTES = new Set([])
 
   it('todo link interno (href="#/...") aponta para uma rota registrada ou pendente', () => {
     const registradas = new Set(rotas.map((r) => r.caminho))

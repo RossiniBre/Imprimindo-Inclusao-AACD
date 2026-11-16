@@ -1,0 +1,135 @@
+<section class="nova-solicitacao">
+
+  <aside class="ns__painel">
+    <span class="ns__circulo ns__circulo--topo" aria-hidden="true"></span>
+    <span class="ns__circulo ns__circulo--baixo" aria-hidden="true"></span>
+
+    <div class="ns__marca">
+      <img src="/shared/img/logo-aacd.png" alt="AACD">
+      <span>AACD · Impressoras 3D</span>
+    </div>
+
+    <div class="ns__texto">
+      <h1>Nova solicitação de impressão</h1>
+      <p>Preencha as informações da peça e envie o pedido à empresa que vai imprimir.</p>
+    </div>
+
+    <ol class="ns__passos" aria-label="Passos da solicitação">
+      <li class="ns__passo ns__passo--atual" aria-current="step">
+        <span class="ns__numero" aria-hidden="true">1</span>
+        <span class="ns__passo-texto">
+          <strong>Dados da peça</strong>
+          <small>Arquivo, material e tamanho</small>
+        </span>
+      </li>
+      <li class="ns__passo">
+        <span class="ns__numero" aria-hidden="true">2</span>
+        <span class="ns__passo-texto">
+          <strong>Escolher impressora</strong>
+          <small>Impressoras que atendem ao pedido</small>
+        </span>
+      </li>
+      <li class="ns__passo">
+        <span class="ns__numero" aria-hidden="true">3</span>
+        <span class="ns__passo-texto">
+          <strong>Confirmar e enviar</strong>
+          <small>Revise antes de enviar</small>
+        </span>
+      </li>
+    </ol>
+
+    <div class="ns__usuario" id="ns-usuario" hidden>
+      <span class="ns__avatar" id="ns-usuario-iniciais" aria-hidden="true"></span>
+      <span class="ns__usuario-texto">
+        <strong id="ns-usuario-nome"></strong>
+        <small id="ns-usuario-papel"></small>
+      </span>
+    </div>
+  </aside>
+
+  <div class="ns__area">
+    <form class="ns__caixa" id="form-peca" novalidate>
+
+      <p class="ns__etapa">Passo 1 de 3</p>
+      <h2>Dados da peça</h2>
+
+      <div class="ns__campo">
+        <label for="campo-arquivo">Arquivo da impressão</label>
+        <input type="file" class="ns__arquivo-entrada" id="campo-arquivo" name="arquivo" accept=".stl,.obj,.3mf" aria-describedby="dica-arquivo erro-arquivo">
+
+        <label class="ns__arquivo ns__arquivo--vazio" id="arquivo-vazio" for="campo-arquivo">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 16V4"/>
+            <polyline points="7 9 12 4 17 9"/>
+            <path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/>
+          </svg>
+          <span><strong>Escolha o arquivo</strong> ou arraste para cá</span>
+        </label>
+
+        <div class="ns__arquivo" id="arquivo-escolhido" hidden>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 3 14 8 19 8"/>
+          </svg>
+          <span class="ns__arquivo-texto">
+            <strong id="arquivo-nome"></strong>
+            <small id="arquivo-tamanho"></small>
+          </span>
+          <button type="button" class="ns__trocar" id="botao-trocar">Trocar</button>
+        </div>
+
+        <p class="ns__dica" id="dica-arquivo">Formatos .stl, .obj ou .3mf, até 50 MB.</p>
+        <p class="ns__erro" id="erro-arquivo" aria-live="polite"></p>
+      </div>
+
+      <div class="ns__linha">
+        <div class="ns__campo">
+          <label for="campo-titulo">Nome da peça</label>
+          <input type="text" id="campo-titulo" name="titulo" placeholder="Prótese de mão" maxlength="100" autocomplete="off">
+          <p class="ns__erro" id="erro-titulo" aria-live="polite"></p>
+        </div>
+        <div class="ns__campo">
+          <label for="campo-prazo">Prazo desejado <span class="ns__opcional">(opcional)</span></label>
+          <input type="date" id="campo-prazo" name="prazo">
+          <p class="ns__erro" id="erro-prazo" aria-live="polite"></p>
+        </div>
+      </div>
+
+      <fieldset class="ns__campo">
+        <legend>Material necessário</legend>
+        <div class="ns__escolha" id="escolha-material"></div>
+        <p class="ns__erro" id="erro-material" aria-live="polite"></p>
+      </fieldset>
+
+      <div class="ns__linha ns__linha--medidas">
+        <fieldset class="ns__campo">
+          <legend>Tamanho da peça (comprimento × largura × altura, mm)</legend>
+          <div class="ns__medidas">
+            <input type="number" id="campo-comprimento" name="comprimentoMm" min="1" placeholder="180" inputmode="numeric" aria-label="Comprimento em milímetros">
+            <input type="number" id="campo-largura" name="larguraMm" min="1" placeholder="95" inputmode="numeric" aria-label="Largura em milímetros">
+            <input type="number" id="campo-altura" name="alturaMm" min="1" placeholder="60" inputmode="numeric" aria-label="Altura em milímetros">
+          </div>
+          <p class="ns__erro" id="erro-medidas" aria-live="polite"></p>
+        </fieldset>
+        <div class="ns__campo">
+          <label for="campo-quantidade">Quantidade</label>
+          <input type="number" id="campo-quantidade" name="quantidade" value="1" min="1" max="1000" inputmode="numeric">
+          <p class="ns__erro" id="erro-quantidade" aria-live="polite"></p>
+        </div>
+      </div>
+
+      <div class="ns__campo">
+        <label for="campo-observacao">Observação <span class="ns__opcional">(opcional)</span></label>
+        <textarea id="campo-observacao" name="observacao" rows="3" maxlength="1800" placeholder="Peça para paciente infantil. Se possível, imprimir com 20% de preenchimento."></textarea>
+        <p class="ns__dica ns__contador"><span id="contador-observacao">0</span> / 1800</p>
+      </div>
+
+      <div class="ns__rodape">
+        <button type="button" class="ns__secundario" id="botao-cancelar">Cancelar</button>
+        <button type="submit" class="ns__continuar" id="botao-continuar">Continuar</button>
+      </div>
+
+    </form>
+  </div>
+
+</section>

@@ -1,8 +1,59 @@
-// Tela "Esqueci minha senha".
+// Tela "Esqueci minha senha": primeiro passo da recuperação de senha.
+//   1. esqueci-senha   -> (aqui) a pessoa informa o e-mail e o back envia um código de 6 dígitos
+//   2. codigo-senha    -> a pessoa informa o código
+//   3. redefinir-senha -> a pessoa escolhe a nova senha
+// Este arquivo também guarda o que passa de uma tela para a outra (e-mail e código).
 
 import { api } from '../../shared/js/api.js';
 
-const VARIANTES = {
+// O e-mail digitado aqui vai para as telas seguintes pelo sessionStorage (e não pela URL,
+// para não ficar no histórico do navegador). Some ao fechar a aba ou ao trocar a senha.
+const CHAVE_EMAIL = 'redefinicao-email';
+
+export function guardarEmail(email) {
+  try { sessionStorage.setItem(CHAVE_EMAIL, email); } catch { /* sem sessionStorage: o campo fica vazio */ }
+}
+
+export function emailGuardado() {
+  try { return sessionStorage.getItem(CHAVE_EMAIL) ?? ''; } catch { return ''; }
+}
+
+export function esquecerEmail() {
+  try { sessionStorage.removeItem(CHAVE_EMAIL); } catch { /* nada a limpar */ }
+}
+
+// O código digitado no passo 2 fica só na memória da página, até a senha ser trocada.
+// O aviso é a recusa do back ("código inválido"), mostrada quando a pessoa volta ao passo 2.
+let codigoDigitado = '';
+let avisoDoCodigo = '';
+
+export function guardarCodigo(codigo) {
+  codigoDigitado = codigo;
+}
+
+export function codigoGuardado() {
+  return codigoDigitado;
+}
+
+export function guardarAvisoDoCodigo(texto) {
+  avisoDoCodigo = texto;
+}
+
+// Lê o aviso uma vez só: depois de mostrado, ele some
+export function pegarAvisoDoCodigo() {
+  const texto = avisoDoCodigo;
+  avisoDoCodigo = '';
+  return texto;
+}
+
+// Senha trocada (ou recuperação abandonada): nada fica guardado
+export function esquecerRecuperacao() {
+  esquecerEmail();
+  codigoDigitado = '';
+  avisoDoCodigo = '';
+}
+
+export const VARIANTES = {
   empresa: {
     painelTitulo: 'Sua impressora 3D pode mudar a vida de alguém.',
     painelDescricao: 'Conecte sua empresa à AACD e ajude a produzir próteses e órteses para quem mais precisa.',
@@ -38,14 +89,13 @@ function aplicarVariante(container, nome) {
 
 export function iniciar(container, { params } = {}) {
   aplicarVariante(container, variante(params));
+  const sufixo = variante(params) === 'aacd' ? '?perfil=aacd' : '';
 
   const formulario = container.querySelector('#form-esqueci');
   const campoEmail = container.querySelector('#esqueci-email');
   const erroEmail = container.querySelector('#erro-email');
   const erroGeral = container.querySelector('#erro-geral');
   const botao = container.querySelector('#botao-enviar');
-  const sucesso = container.querySelector('#mensagem-sucesso');
-  const textoSucesso = container.querySelector('#texto-sucesso');
 
   function mostrarErro(texto) {
     erroEmail.textContent = texto;
@@ -83,11 +133,10 @@ export function iniciar(container, { params } = {}) {
       const resposta = await api.esqueciSenha(email);
 
       if (resposta.ok) {
-        formulario.hidden = true;
-        textoSucesso.textContent =
-          resposta.corpo?.mensagem ??
-          `Se ${email} estiver cadastrado, você vai receber o código em alguns minutos.`;
-        sucesso.hidden = false;
+        // O back responde igual existindo ou não a conta. A tela seguinte pede o código.
+        guardarEmail(email);
+        guardarCodigo('');   // código novo a caminho: o antigo não vale mais
+        location.hash = `#/codigo-senha${sufixo}`;
         return;
       }
 

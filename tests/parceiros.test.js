@@ -62,8 +62,8 @@ describe('parceiros: tela', () => {
     expect(document.querySelector('#modal-parceiro').hidden).toBe(true)
   })
 
-  it('"+ Nova solicitação" leva para as impressoras da rede', () => {
+  it('"+ Nova solicitação" leva para a tela de nova solicitação', () => {
     const link = [...document.querySelectorAll('a')].find((a) => a.textContent.includes('Nova solicitação'))
-    expect(link.getAttribute('href')).toBe('#/impressoras-aacd')
+    expect(link.getAttribute('href')).toBe('#/nova-solicitacao')
   })
 })

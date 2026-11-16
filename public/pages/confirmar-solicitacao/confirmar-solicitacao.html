@@ -1,0 +1,127 @@
+<section class="nova-solicitacao confirmar-solicitacao">
+
+  <aside class="ns__painel">
+    <span class="ns__circulo ns__circulo--topo" aria-hidden="true"></span>
+    <span class="ns__circulo ns__circulo--baixo" aria-hidden="true"></span>
+
+    <div class="ns__marca">
+      <img src="/shared/img/logo-aacd.png" alt="AACD">
+      <span>AACD · Impressoras 3D</span>
+    </div>
+
+    <div class="ns__texto">
+      <h1>Nova solicitação de impressão</h1>
+      <p>Preencha as informações da peça e envie o pedido à empresa que vai imprimir.</p>
+    </div>
+
+    <ol class="ns__passos" aria-label="Passos da solicitação">
+      <li class="ns__passo ns__passo--feito">
+        <span class="ns__numero" aria-hidden="true">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </span>
+        <span class="ns__passo-texto">
+          <strong>Dados da peça</strong>
+          <small>Arquivo, material e tamanho</small>
+        </span>
+      </li>
+      <li class="ns__passo ns__passo--feito">
+        <span class="ns__numero" aria-hidden="true">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </span>
+        <span class="ns__passo-texto">
+          <strong>Escolher impressora</strong>
+          <small>Impressoras que atendem ao pedido</small>
+        </span>
+      </li>
+      <li class="ns__passo ns__passo--atual" aria-current="step">
+        <span class="ns__numero" aria-hidden="true">3</span>
+        <span class="ns__passo-texto">
+          <strong>Confirmar e enviar</strong>
+          <small>Revise antes de enviar</small>
+        </span>
+      </li>
+    </ol>
+
+    <div class="ns__usuario" id="ns-usuario" hidden>
+      <span class="ns__avatar" id="ns-usuario-iniciais" aria-hidden="true"></span>
+      <span class="ns__usuario-texto">
+        <strong id="ns-usuario-nome"></strong>
+        <small id="ns-usuario-papel"></small>
+      </span>
+    </div>
+  </aside>
+
+  <div class="ns__area">
+    <div class="ns__caixa cs__caixa">
+
+      <!-- Revisão do pedido -->
+      <div id="revisao">
+
+        <a class="cs__voltar" href="#/escolher-impressora">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="15 18 9 12 15 6"/>
+          </svg>
+          Voltar para as impressoras
+        </a>
+
+        <p class="ns__etapa">Passo 3 de 3</p>
+        <h2>Confirmar e enviar</h2>
+        <p class="cs__descricao">Revise os detalhes. Ao confirmar, a empresa recebe o pedido e decide se aceita.</p>
+
+        <section class="cs__bloco" aria-labelledby="titulo-impressora">
+          <div class="cs__bloco-topo">
+            <h3 id="titulo-impressora">Impressora escolhida</h3>
+            <a href="#/escolher-impressora">Trocar impressora</a>
+          </div>
+          <p class="cs__modelo" id="imp-modelo"></p>
+          <p class="cs__local" id="imp-local"></p>
+          <div class="cs__chips" id="imp-chips"></div>
+        </section>
+
+        <section class="cs__bloco" aria-labelledby="titulo-peca">
+          <div class="cs__bloco-topo">
+            <h3 id="titulo-peca">Dados da peça</h3>
+            <a href="#/nova-solicitacao">Editar</a>
+          </div>
+          <dl class="cs__dados" id="dados"></dl>
+        </section>
+
+        <section class="cs__bloco" aria-labelledby="titulo-checagem">
+          <div class="cs__bloco-topo">
+            <h3 id="titulo-checagem">A peça e a impressora</h3>
+          </div>
+          <ul class="ns__checagem" id="checagem"></ul>
+        </section>
+
+        <p class="cs__erro" id="erro-envio" role="alert" hidden></p>
+
+        <div class="cs__rodape">
+          <a class="cs__secundario" href="#/escolher-impressora">Voltar</a>
+          <button type="button" class="cs__confirmar" id="botao-confirmar">Confirmar solicitação</button>
+        </div>
+
+      </div>
+
+      <!-- Pedido enviado -->
+      <div class="cs__sucesso" id="sucesso" hidden>
+        <div class="cs__icone-ok" aria-hidden="true">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </div>
+        <h2 id="sucesso-titulo" tabindex="-1">Pedido enviado!</h2>
+        <p id="sucesso-texto"></p>
+        <div class="cs__rodape cs__rodape--centro">
+          <a class="cs__secundario" href="#/nova-solicitacao">Nova solicitação</a>
+          <a class="cs__confirmar" href="#/painel-aacd">Ir para o acompanhamento</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</section>

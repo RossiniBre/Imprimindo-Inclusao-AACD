@@ -8,7 +8,7 @@ Cada seção mostra até 4 cartões e o botão "Ver todos (n)" abre o resto.
 Cada cartão mostra o número do pedido, título, empresa, impressora e quem enviou.
 Imprimindo: barra de progresso da aceitação até o prazo estimado pela empresa.
 Ações: Cancelar pedido (só pendente) e Remover (pronta ou recusada), com modal de confirmação.
-"+ Nova solicitação" leva para #/impressoras-aacd (a criação do pedido é no modal de lá) e
+"+ Nova solicitação" leva para #/nova-solicitacao (tela de criação do pedido, em passos) e
 "Escolher outra empresa" leva para #/reescolher-empresa?pedido=ID (reenvio do pedido recusado).
 
 Rotas do back usadas (via shared/js/api.js):

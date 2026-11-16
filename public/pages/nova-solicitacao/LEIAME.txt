@@ -1,0 +1,28 @@
+TELA: Nova solicitação de impressão, passo 1 de 3 (Dados da peça)
+Quem acessa: funcionários da AACD e admin. Rota: #/nova-solicitacao (sem navbar, como no Figma).
+Substitui o antigo modal "Nova solicitação de impressão" da tela Impressoras.
+
+O que faz: a AACD descreve a peça ANTES de escolher a impressora. Campos: arquivo 3D (.stl/.obj/.3mf até
+50 MB, com "Trocar" e arrastar-e-soltar), nome da peça, prazo desejado (opcional), material, medidas
+C×L×A em mm, quantidade e observação (opcional). "Continuar" valida, guarda o rascunho em
+shared/js/rascunho-solicitacao.js e vai para o passo 2 (#/escolher-impressora, ver o LEIAME de lá).
+"Cancelar" apaga o rascunho e vai para o Acompanhamento (#/painel-aacd).
+Voltando do passo 2, a tela reabre com tudo o que já foi preenchido, inclusive o arquivo.
+
+Chegam aqui: "+ Nova solicitação" (Acompanhamento e Parceiros), "Ver detalhes" do cartão da tela
+Impressoras e "Solicitar" do modal de Parceiros. Os dois últimos mandam ?impressora=ID, que fica
+guardado no rascunho (impressoraId): no passo 2 essa impressora aparece primeiro, se atender.
+
+O pedido só vai para o back no passo 3 (#/confirmar-solicitacao), em "Confirmar solicitação".
+
+Rascunho (rascunhoAtual()): arquivo (File), titulo, prazo ('AAAA-MM-DD' ou ''), material (código),
+comprimentoMm, larguraMm, alturaMm, quantidade (números), observacao, impressoraId (ou null) e
+impressora (objeto escolhido no passo 2, ou null).
+Fica só na memória: recarregar a página apaga. As funções prontas para os próximos passos estão em
+pages/impressoras-aacd/impressoras-aacd.js: filtrarImpressoras, validarPeca, checagens e montarDescricao.
+
+Rotas do back usadas: GET /api/me (nome e perfil no rodapé do painel vermelho; 401 manda para #/login).
+
+CSS: o casco (painel vermelho, passos, área), comum aos três passos, está em shared/css/passos-solicitacao.css.
+
+Diferença para o Figma: o campo Quantidade não está no frame, mas o back exige `quantidade`.

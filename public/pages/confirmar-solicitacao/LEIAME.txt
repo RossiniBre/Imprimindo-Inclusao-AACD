@@ -1,0 +1,32 @@
+TELA: Nova solicitação de impressão, passo 3 de 3 (Confirmar e enviar)
+Quem acessa: funcionários da AACD e admin. Rota: #/confirmar-solicitacao (sem navbar, como no Figma).
+Chega aqui pelo "Continuar" do passo 2 (#/escolher-impressora), depois de selecionar uma impressora.
+
+O que faz: mostra os detalhes do rascunho (shared/js/rascunho-solicitacao.js) para revisão:
+  - Impressora escolhida: modelo, empresa · cidade/UF, chips Livre/Em uso, mesa e materiais.
+    "Trocar impressora" volta ao passo 2.
+  - Dados da peça: nome, arquivo (com o tamanho), material, tamanho, quantidade, prazo e observação.
+    "Editar" volta ao passo 1 (que reabre preenchido).
+  - A peça e a impressora: a checagem de material, tamanho e disponibilidade.
+"Confirmar solicitação" cria o pedido no back. Dando certo, a tela troca para "Pedido N enviado!",
+com os links "Ir para o acompanhamento" e "Nova solicitação", e o rascunho é apagado.
+Dando errado, a mensagem aparece acima dos botões, o rascunho continua e dá para tentar de novo.
+O botão fica travado enquanto envia, para não criar o pedido duas vezes.
+Sem rascunho (página recarregada ou link direto) a tela volta para #/nova-solicitacao; com rascunho
+mas sem impressora, para #/escolher-impressora.
+
+Rotas do back usadas (via shared/js/api.js):
+  POST /api/solicitacoes (multipart) -> titulo, descricao, quantidade, comprimentoMm, larguraMm,
+                                        alturaMm, impressoraId e arquivo. Devolve { id }.
+  GET  /api/me                       -> nome e perfil no rodapé do painel vermelho
+401 manda para #/login; 413 = arquivo maior que 50 MB; 403 = perfil sem permissão.
+
+Decisão por causa do back: não há campo de material nem de prazo na solicitação. Os dois vão no começo
+da descrição ("Material: PLA. Prazo desejado: 20/11/2026. <observação>"), montada por montarDescricao
+(pages/impressoras-aacd/impressoras-aacd.js).
+
+Diferença para o Figma: o frame tem a coluna "Resumo do pedido" e "Responsável pelo pedido" à direita;
+aqui os detalhes ficam em uma coluna só e quem está logado aparece no rodapé do painel vermelho.
+O botão se chama "Confirmar solicitação" (no frame, "Enviar solicitação"), a pedido do grupo.
+
+CSS: casco, chips e checagem em shared/css/passos-solicitacao.css (@import no começo do CSS da tela).

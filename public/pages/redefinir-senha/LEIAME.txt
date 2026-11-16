@@ -1,0 +1,33 @@
+TELA: Crie uma nova senha (último passo da recuperação de senha)
+Quem acessa: qualquer pessoa, sem login (empresa ou funcionário da AACD). Rota: #/redefinir-senha.
+Não está no Figma: segue o layout dividido do login e do "Esqueci minha senha".
+
+Recuperação de senha, em três telas:
+  1. #/esqueci-senha    a pessoa informa o e-mail; o back envia um código de 6 dígitos por e-mail
+  2. #/codigo-senha     a pessoa informa o código que recebeu
+  3. #/redefinir-senha  (esta) a pessoa escolhe a nova senha; no fim, "Ir para o login"
+
+O que faz: pede a nova senha e a confirmação e envia tudo ao back (e-mail e código vêm dos passos
+anteriores). Dando certo, mostra "Senha alterada!" e o botão "Ir para o login".
+Regras da tela:
+  - Nova senha: pelo menos 8 caracteres e igual à confirmação. O back só exige que não esteja vazia;
+    o mínimo de 8 é do front, igual ao do cadastro.
+  - Os botões do olho mostram e escondem cada senha.
+  - "Voltar para o código" leva ao passo 2, com o código ainda preenchido.
+  - Sem e-mail guardado a tela volta para #/esqueci-senha; sem código, para #/codigo-senha.
+  - ?perfil=aacd troca os textos do painel vermelho, como no "Esqueci minha senha".
+
+O CÓDIGO É CONFERIDO AQUI: o back não tem rota para conferir só o código (ver o LEIAME de
+pages/codigo-senha). Se ele recusar o código, a pessoa volta para o passo 2 com o aviso
+"Código inválido ou expirado" e digita de novo. A senha digitada não é guardada.
+
+Rota do back usada (via shared/js/api.js):
+  POST /api/redefinir-senha -> email, codigo, novaSenha
+    200 { mensagem }                      senha trocada; o back encerra as sessões abertas da conta
+    400 "Código inválido ou expirado."    código errado, vencido, já usado, tentativas esgotadas ou
+                                          e-mail que não confere (o back não diz qual)
+    400 "Senha não pode estar vazia"
+
+O CSS desta tela também é usado pela tela do código (pages/codigo-senha importa este arquivo).
+
+Para testar sem o back de verdade (npm run dev:falso): o código que funciona é 123456.

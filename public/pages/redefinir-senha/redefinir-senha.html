@@ -1,0 +1,95 @@
+<section class="redefinir">
+  <aside class="redefinir__painel">
+    <span class="redefinir__circulo redefinir__circulo--topo" aria-hidden="true"></span>
+    <span class="redefinir__circulo redefinir__circulo--meio" aria-hidden="true"></span>
+    <span class="redefinir__circulo redefinir__circulo--baixo" aria-hidden="true"></span>
+
+    <img class="redefinir__logo" src="/shared/img/logo-aacd.png" alt="AACD">
+
+    <div class="redefinir__texto">
+      <h1 id="redefinir-painel-titulo">Sua impressora 3D pode mudar a vida de alguém.</h1>
+      <p id="redefinir-painel-descricao">Conecte sua empresa à AACD e ajude a produzir próteses e órteses para quem mais precisa.</p>
+    </div>
+
+    <p class="redefinir__rodape" id="redefinir-painel-rodape">Portal de empresas parceiras</p>
+  </aside>
+
+  <div class="redefinir__area">
+    <div class="redefinir__caixa">
+      <div class="redefinir__chave" aria-hidden="true">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="8" cy="15" r="4.5"/>
+          <path d="M11.2 11.8 20 3"/>
+          <path d="M16.5 6.5 19 9"/>
+          <path d="M14 9l2 2"/>
+        </svg>
+      </div>
+
+      <h2 id="redefinir-titulo" tabindex="-1">Crie uma nova senha</h2>
+      <p class="redefinir__descricao" id="redefinir-descricao">
+        Escolha a nova senha da conta <strong id="redefinir-email"></strong>.
+      </p>
+
+      <form id="form-redefinir" novalidate>
+        <div class="redefinir__campo">
+          <label for="redefinir-senha">Nova senha</label>
+          <div class="redefinir__senha">
+            <input type="password" id="redefinir-senha" name="novaSenha"
+                   placeholder="Mínimo de 8 caracteres" autocomplete="new-password">
+            <button type="button" class="redefinir__olho" data-olho="redefinir-senha" aria-label="Mostrar a nova senha" aria-pressed="false">
+              <svg class="redefinir__olho-aberto" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+              <svg class="redefinir__olho-fechado" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" hidden>
+                <path d="M17.94 17.94A10.5 10.5 0 0 1 12 19c-6.5 0-10-7-10-7a18.6 18.6 0 0 1 5.06-5.94"/>
+                <path d="M9.9 4.24A9.9 9.9 0 0 1 12 4c6.5 0 10 7 10 7a18.5 18.5 0 0 1-2.16 3.19"/>
+                <path d="M14.12 14.12a3 3 0 1 1-4.24-4.24"/>
+                <line x1="2" y1="2" x2="22" y2="22"/>
+              </svg>
+            </button>
+          </div>
+          <p class="redefinir__erro" id="erro-senha" aria-live="polite"></p>
+        </div>
+
+        <div class="redefinir__campo">
+          <label for="redefinir-confirmacao">Confirmar nova senha</label>
+          <div class="redefinir__senha">
+            <input type="password" id="redefinir-confirmacao" name="confirmacao"
+                   placeholder="Repita a nova senha" autocomplete="new-password">
+            <button type="button" class="redefinir__olho" data-olho="redefinir-confirmacao" aria-label="Mostrar a confirmação da senha" aria-pressed="false">
+              <svg class="redefinir__olho-aberto" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+              <svg class="redefinir__olho-fechado" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" hidden>
+                <path d="M17.94 17.94A10.5 10.5 0 0 1 12 19c-6.5 0-10-7-10-7a18.6 18.6 0 0 1 5.06-5.94"/>
+                <path d="M9.9 4.24A9.9 9.9 0 0 1 12 4c6.5 0 10 7 10 7a18.5 18.5 0 0 1-2.16 3.19"/>
+                <path d="M14.12 14.12a3 3 0 1 1-4.24-4.24"/>
+                <line x1="2" y1="2" x2="22" y2="22"/>
+              </svg>
+            </button>
+          </div>
+          <p class="redefinir__erro" id="erro-confirmacao" aria-live="polite"></p>
+        </div>
+
+        <p class="redefinir__erro-geral" id="erro-geral" role="alert" hidden></p>
+
+        <button type="submit" class="redefinir__enviar" id="botao-redefinir">Redefinir senha</button>
+
+        <p class="redefinir__outro">
+          Digitou o código errado?
+          <a id="link-codigo" href="#/codigo-senha">Voltar para o código</a>
+        </p>
+      </form>
+
+      <div class="redefinir__sucesso" id="mensagem-sucesso" role="status" hidden>
+        <strong>Senha alterada!</strong>
+        <p>Sua nova senha já está valendo. Por segurança, as sessões abertas foram encerradas.</p>
+        <a class="redefinir__enviar" id="link-entrar" href="#/login">Ir para o login</a>
+      </div>
+
+      <a class="redefinir__voltar" id="link-voltar" href="#/login">← Voltar para o login</a>
+    </div>
+  </div>
+</section>

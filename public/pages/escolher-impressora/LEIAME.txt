@@ -1,0 +1,40 @@
+TELA: Nova solicitação de impressão, passo 2 de 3 (Escolher impressora)
+Quem acessa: funcionários da AACD e admin. Rota: #/escolher-impressora (sem navbar, como no Figma).
+No Figma o frame se chama "Escolher empresa" e lista empresas; o grupo decidiu listar IMPRESSORAS.
+
+O que faz: lê o rascunho do passo 1 (shared/js/rascunho-solicitacao.js) e mostra só as impressoras da
+rede que atendem ao pedido:
+  - ativas (desativada não recebe pedido);
+  - que trabalham com o material escolhido;
+  - em que a peça cabe na mesa (comprimento, largura e altura, medida a medida).
+Impressora sem lista de materiais ou sem medidas da mesa NÃO é descartada: aparece com o aviso
+"Mesa não informada: confirme com a empresa".
+"Em uso" também aparece (continua recebendo pedidos), depois das livres. Se a pessoa chegou ao passo 1
+por uma impressora específica (?impressora=ID), ela vem em primeiro lugar, se atender.
+Cada cartão mostra modelo, chip Livre/Em uso, empresa · cidade/UF, a mesa e dois botões:
+  - "Ver detalhes" abre o modal com a ficha da impressora (empresa, cidade, e-mail, telefone, mesa,
+    materiais) e a checagem da peça com ela. O modal tem "Selecionar esta impressora".
+  - "Selecionar" marca o cartão e faz aparecer, presa ao pé da janela, a barra com a impressora
+    selecionada e o botão "Continuar" à direita, que leva ao passo 3 (#/confirmar-solicitacao).
+Quando nenhuma atende, a tela diz quantas ficaram de fora por cada motivo e oferece alterar os dados.
+Sem rascunho (página recarregada ou link direto) a tela volta para #/nova-solicitacao.
+
+"Selecionar" guarda no rascunho `impressora` (objeto com id, modelo, empresa{id,nome}, cidade, contato,
+disponibilidade, materiais e medidas da mesa) e `impressoraId`. O envio ao back é no passo 3.
+Voltando do passo 3, a impressora continua selecionada. Se os dados da peça mudarem e ela deixar de
+atender, a seleção é desfeita.
+
+Rotas do back usadas (via shared/js/api.js):
+  GET /api/impressoras/painel         -> lista da rede (id, modelo, disponibilidade, ativo, empresa, materiais)
+  GET /api/parceiros                  -> cidade/UF de cada empresa
+  GET /api/parceiros/{id}/impressoras -> medidas da mesa, só das empresas que passaram no filtro de material
+  GET /api/me                         -> nome e perfil no rodapé do painel vermelho
+Sem sessão (401) a tela redireciona para #/login.
+
+Fora do back (está no frame do Figma, mas não dá para fazer no front):
+  - "Livre até 12/12, 14h" / "Sem reserva prevista": o back não tem agenda da impressora.
+  - "Filamento incluso" / "Sem filamento · AACD envia": o back não tem esse campo.
+  - Filtrar pelo prazo do pedido: sem agenda, o prazo só aparece no resumo.
+
+CSS: o casco (painel vermelho, passos, área), os chips e a checagem estão em shared/css/passos-solicitacao.css, importado
+com @import no começo do CSS desta tela e do passo 1.

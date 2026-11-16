@@ -7,7 +7,7 @@ const MENUS = {
 };
 
 // telas em que o menu nunca aparece, mesmo com sessão ativa
-const SEM_MENU = ['/', '/login', '/esqueci-senha', '/vire-apoiador', '/cadastro-empresa/cadastro1', '/cadastro-empresa/cadastro2'];
+const SEM_MENU = ['/', '/login', '/esqueci-senha', '/codigo-senha', '/redefinir-senha', '/vire-apoiador', '/cadastro-empresa/cadastro1', '/cadastro-empresa/cadastro2', '/nova-solicitacao', '/escolher-impressora', '/confirmar-solicitacao'];
 
 // para onde o ícone de perfil leva, conforme quem está logado
 const PERFIL_ROTA = {
