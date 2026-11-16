@@ -70,40 +70,74 @@
 
         <p class="ns__etapa">Passo 3 de 3</p>
         <h2>Confirmar e enviar</h2>
-        <p class="cs__descricao">Revise os detalhes. Ao confirmar, a empresa recebe o pedido e decide se aceita.</p>
+        <p class="cs__descricao">Revise o pedido. A empresa recebe o pedido para a impressora escolhida e decide se aceita.</p>
 
-        <section class="cs__bloco" aria-labelledby="titulo-impressora">
-          <div class="cs__bloco-topo">
-            <h3 id="titulo-impressora">Impressora escolhida</h3>
-            <a href="#/escolher-impressora">Trocar impressora</a>
+        <div class="cs__grade">
+
+          <div class="cs__coluna">
+
+            <section class="cs__bloco" aria-labelledby="titulo-impressora">
+              <div class="cs__impressora-topo">
+                <div>
+                  <p class="cs__rotulo" id="titulo-impressora">Impressora escolhida</p>
+                  <p class="cs__modelo" id="imp-modelo"></p>
+                  <p class="cs__local" id="imp-local"></p>
+                </div>
+                <a class="cs__contorno" href="#/escolher-impressora">Trocar impressora</a>
+              </div>
+
+              <div class="cs__tabela-rolagem">
+                <table class="cs__tabela">
+                  <thead>
+                    <tr>
+                      <th scope="col">Requisito</th>
+                      <th scope="col">A peça precisa</th>
+                      <th scope="col">A impressora tem</th>
+                      <th scope="col"><span class="cs__so-leitor">Situação</span></th>
+                    </tr>
+                  </thead>
+                  <tbody id="checagem"></tbody>
+                </table>
+              </div>
+            </section>
+
+            <section class="cs__bloco cs__bloco--observacao" aria-labelledby="titulo-observacao">
+              <div class="cs__bloco-topo">
+                <h3 id="titulo-observacao">Observação</h3>
+                <a href="#/nova-solicitacao">Editar</a>
+              </div>
+              <p class="cs__observacao" id="observacao-texto"></p>
+              <p class="cs__nota">Visível para o responsável da empresa.</p>
+            </section>
+
           </div>
-          <p class="cs__modelo" id="imp-modelo"></p>
-          <p class="cs__local" id="imp-local"></p>
-          <div class="cs__chips" id="imp-chips"></div>
-        </section>
 
-        <section class="cs__bloco" aria-labelledby="titulo-peca">
-          <div class="cs__bloco-topo">
-            <h3 id="titulo-peca">Dados da peça</h3>
-            <a href="#/nova-solicitacao">Editar</a>
-          </div>
-          <dl class="cs__dados" id="dados"></dl>
-        </section>
+          <aside class="cs__resumo" aria-labelledby="titulo-resumo">
+            <p class="cs__rotulo" id="titulo-resumo">Resumo do pedido</p>
+            <p class="cs__resumo-titulo" id="resumo-titulo"></p>
+            <dl class="cs__dados" id="dados"></dl>
 
-        <section class="cs__bloco" aria-labelledby="titulo-checagem">
-          <div class="cs__bloco-topo">
-            <h3 id="titulo-checagem">A peça e a impressora</h3>
-          </div>
-          <ul class="ns__checagem" id="checagem"></ul>
-        </section>
+            <div class="cs__responsavel-bloco" id="responsavel" hidden>
+              <p class="cs__rotulo">Responsável pelo pedido</p>
+              <div class="cs__responsavel">
+                <span class="cs__avatar" id="resp-iniciais" aria-hidden="true"></span>
+                <span>
+                  <strong id="resp-nome"></strong>
+                  <small id="resp-papel"></small>
+                </span>
+              </div>
+              <p class="cs__nota cs__nota--centro">Seu nome fica registrado no pedido e a empresa o vê.</p>
+            </div>
 
-        <p class="cs__erro" id="erro-envio" role="alert" hidden></p>
+            <p class="cs__erro" id="erro-envio" role="alert" hidden></p>
 
-        <div class="cs__rodape">
-          <a class="cs__secundario" href="#/escolher-impressora">Voltar</a>
-          <button type="button" class="cs__confirmar" id="botao-confirmar">Confirmar solicitação</button>
+            <div class="cs__acoes">
+              <button type="button" class="cs__confirmar" id="botao-confirmar">Enviar solicitação</button>
+              <a class="cs__secundario" href="#/escolher-impressora">Voltar</a>
+            </div>
+          </aside>
+
         </div>
-
       </div>
 
       <!-- Pedido enviado -->

@@ -5,28 +5,33 @@ const ok = (corpo) => Promise.resolve({ ok: true, status: 200, corpo })
 
 vi.mock('../public/shared/js/api.js', () => ({
   api: {
-    perfilEmpresa: vi.fn(() => ok({ nome: 'Nexa Engenharia', email: 'pedidos@nexa.com.br', telefone: '(11) 4002-8922' })),
-    solicitacoes: vi.fn(() => ok([
-      { id: 6500, titulo: 'Órtese de punho', status: 'CONCLUIDA' },
-      { id: 6502, titulo: 'Prótese de mão', status: 'PENDENTE' },
-    ])),
+    contatoAacd: vi.fn(() => ok({
+      nome: 'Ana Martins', email: 'ana@aacd.org.br', setor: 'Impressão 3D', ramal: '2214',
+    })),
   },
 }))
 
 import { api } from '../public/shared/js/api.js'
-import {
-  iniciar, CONTATO_AACD, ASSUNTOS, linkDeEmail, linkDoMapa, opcoesDePedidos, validarMensagem, montarEmail,
-} from '../public/pages/contato/contato.js'
+import { iniciar, CONTATO_AACD, linkDeEmail } from '../public/pages/contato/contato.js'
 
 const $ = (seletor) => document.querySelector(seletor)
-const enviar = () => $('#form-mensagem').dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }))
+const esperar = () => new Promise((r) => setTimeout(r, 0))
 
 async function abrir() {
   carregarHtml('contato', 'contato')
   iniciar($('#conteudo'))
-  await vi.waitFor(() => expect($('#campo-pedido').options.length).toBe(3))
-  await vi.waitFor(() => expect($('#resposta-para').hidden).toBe(false))
+  await vi.waitFor(() => expect($('#email').textContent).toBe('ana@aacd.org.br'))
 }
+
+// Para os casos em que o back não entrega o contato
+async function abrirSemContato() {
+  carregarHtml('contato', 'contato')
+  iniciar($('#conteudo'))
+  await vi.waitFor(() => expect(api.contatoAacd).toHaveBeenCalled())
+  await esperar()
+}
+
+const cartaoDe = (seletor) => $(seletor).closest('.contato__cartao')
 
 describe('contato: funções puras', () => {
   it('monta o link do Gmail com destinatário, assunto e texto', () => {
@@ -37,58 +42,19 @@ describe('contato: funções puras', () => {
     expect(url.searchParams.get('body')).toBe('Olá\nmundo')
     expect(new URL(linkDeEmail({ para: 'a@aacd.org.br' })).searchParams.has('su')).toBe(false)
   })
-
-  it('monta o link do mapa a partir do endereço', () => {
-    expect(new URL(linkDoMapa('Av. Exemplo, 1000 · São Paulo, SP')).searchParams.get('query'))
-      .toBe('Av. Exemplo, 1000, São Paulo, SP')
-  })
-
-  it('lista os pedidos do mais novo para o mais antigo', () => {
-    expect(opcoesDePedidos([{ id: 6500, titulo: 'Órtese' }, { id: 6502, titulo: 'Prótese de mão' }, { id: 6501 }]))
-      .toEqual([
-        { valor: '6502', rotulo: 'Pedido 6502 · Prótese de mão' },
-        { valor: '6501', rotulo: 'Pedido 6501' },
-        { valor: '6500', rotulo: 'Pedido 6500 · Órtese' },
-      ])
-    expect(opcoesDePedidos(null)).toEqual([])
-  })
-
-  it('valida a mensagem: obrigatória, mínimo e máximo', () => {
-    expect(validarMensagem('  ')).toMatch(/Escreva/)
-    expect(validarMensagem('oi')).toMatch(/pelo menos 10/)
-    expect(validarMensagem('x'.repeat(1501))).toMatch(/máximo 1500/)
-    expect(validarMensagem('Quando posso retirar a peça?')).toBeNull()
-  })
-
-  it('monta o e-mail com o número do pedido no assunto e a assinatura da empresa', () => {
-    const empresa = { nome: 'Nexa Engenharia', email: 'pedidos@nexa.com.br', telefone: '(11) 4002-8922' }
-    expect(montarEmail({ assunto: 'Dúvida sobre um pedido', pedido: 'Pedido 6502 · Prótese de mão', mensagem: ' Qual o prazo? ', empresa }))
-      .toEqual({
-        assunto: '[Pedido 6502] Dúvida sobre um pedido - Nexa Engenharia',
-        corpo: 'Qual o prazo?\n\n--\nEmpresa: Nexa Engenharia\nPedido relacionado: 6502 · Prótese de mão\nResponder para: pedidos@nexa.com.br\nTelefone: (11) 4002-8922',
-      })
-    expect(montarEmail({ assunto: 'Outro assunto', mensagem: 'Olá, tudo bem?' }))
-      .toEqual({ assunto: 'Outro assunto', corpo: 'Olá, tudo bem?\n\n--' })
-  })
 })
 
 describe('contato: tela', () => {
   beforeEach(() => {
     location.hash = ''
     vi.clearAllMocks()
-    window.open = vi.fn()
   })
 
-  it('mostra os contatos da AACD, a retirada e os links', async () => {
+  it('mostra telefone, horário e ramal da AACD', async () => {
     await abrir()
     expect($('#telefone').textContent).toBe(CONTATO_AACD.telefone)
-    expect($('#email').textContent).toBe(CONTATO_AACD.email)
-    expect($('#responsavel').textContent).toBe('Ana Martins')
-    expect($('#escrever-responsavel').textContent).toBe('Escrever para Ana')
-    expect($('#retirada-endereco').textContent).toBe(CONTATO_AACD.retirada.endereco)
-    expect($('#escrever-email').href).toContain(encodeURIComponent(CONTATO_AACD.email))
-    expect($('#escrever-responsavel').href).toContain(encodeURIComponent(CONTATO_AACD.responsavel.email))
-    expect($('#ver-mapa').href).toMatch(/^https:\/\/www\.google\.com\/maps/)
+    expect($('#telefone-horario').textContent).toBe(CONTATO_AACD.telefoneHorario)
+    expect($('#telefone-ramal').textContent).toBe(`Ramal do projeto: ${CONTATO_AACD.ramal}`)
   })
 
   it('"Copiar número" copia o telefone', async () => {
@@ -100,56 +66,55 @@ describe('contato: tela', () => {
     expect(writeText).toHaveBeenCalledWith(CONTATO_AACD.telefone)
   })
 
-  it('preenche assuntos, pedidos da empresa e o e-mail de resposta', async () => {
+  it('e-mail do projeto e responsável vêm do back e viram links de e-mail', async () => {
     await abrir()
-    expect([...$('#campo-assunto').options].map((o) => o.value)).toEqual(ASSUNTOS)
-    expect([...$('#campo-pedido').options].map((o) => o.textContent))
-      .toEqual(['Nenhum pedido', 'Pedido 6502 · Prótese de mão', 'Pedido 6500 · Órtese de punho'])
-    expect($('#resposta-email').textContent).toBe('pedidos@nexa.com.br')
+    expect(cartaoDe('#email').hidden).toBe(false)
+    expect(cartaoDe('#responsavel').hidden).toBe(false)
+
+    expect(new URL($('#escrever-email').href).searchParams.get('to')).toBe('ana@aacd.org.br')
+
+    expect($('#responsavel').textContent).toBe('Ana Martins')
+    expect($('#responsavel-setor').textContent).toBe('Impressão 3D')
+    expect($('#responsavel-contato').textContent).toBe('ana@aacd.org.br · ramal 2214')
+    expect($('#escrever-responsavel').textContent).toBe('Escrever para Ana')
+    expect(new URL($('#escrever-responsavel').href).searchParams.get('to')).toBe('ana@aacd.org.br')
   })
 
-  it('não envia mensagem vazia ou curta demais', async () => {
-    await abrir()
-    enviar()
-    expect($('#erro-mensagem').textContent).toMatch(/Escreva/)
-    $('#campo-mensagem').value = 'oi'
-    enviar()
-    expect($('#erro-mensagem').textContent).toMatch(/pelo menos/)
-    expect(window.open).not.toHaveBeenCalled()
-    expect($('#aviso-envio').hidden).toBe(true)
-  })
-
-  it('"Enviar mensagem" abre o e-mail pronto para o projeto e avisa', async () => {
-    await abrir()
-    $('#campo-pedido').value = '6502'
-    $('#campo-mensagem').value = 'Quando posso retirar a peça?'
-    enviar()
-
-    expect(window.open).toHaveBeenCalledTimes(1)
-    const [endereco, alvo] = window.open.mock.calls[0]
-    const url = new URL(endereco)
-    expect(alvo).toBe('_blank')
-    expect(url.searchParams.get('to')).toBe(CONTATO_AACD.email)
-    expect(url.searchParams.get('su')).toBe('[Pedido 6502] Dúvida sobre um pedido - Nexa Engenharia')
-    expect(url.searchParams.get('body')).toMatch(/^Quando posso retirar a peça\?/)
-    expect(url.searchParams.get('body')).toMatch(/Responder para: pedidos@nexa\.com\.br/)
-    expect($('#aviso-envio').hidden).toBe(false)
-    expect($('#erro-mensagem').textContent).toBe('')
-  })
-
-  it('sem sessão vai para o login; sem pedidos e sem perfil a tela continua de pé', async () => {
-    api.perfilEmpresa.mockImplementationOnce(() => Promise.resolve({ ok: false, status: 500, corpo: null }))
-    api.solicitacoes.mockImplementationOnce(() => Promise.reject(new Error('rede')))
-    carregarHtml('contato', 'contato')
-    iniciar($('#conteudo'))
-    await Promise.resolve()
-    expect($('#resposta-para').hidden).toBe(true)
-    expect($('#campo-pedido').options.length).toBe(1)
+  it('sem o contato do back, os cartões de e-mail e responsável ficam ocultos e o telefone continua', async () => {
+    api.contatoAacd.mockImplementationOnce(() => Promise.reject(new Error('rede')))
+    await abrirSemContato()
+    expect(cartaoDe('#email').hidden).toBe(true)
+    expect(cartaoDe('#responsavel').hidden).toBe(true)
     expect($('#telefone').textContent).toBe(CONTATO_AACD.telefone)
+  })
 
-    api.perfilEmpresa.mockImplementationOnce(() => Promise.resolve({ ok: false, status: 401, corpo: null }))
+  it('perfil sem nome ou sem e-mail não mostra os cartões', async () => {
+    api.contatoAacd.mockImplementationOnce(() => ok({ nome: 'Ana Martins', email: '' }))
+    await abrirSemContato()
+    expect(cartaoDe('#email').hidden).toBe(true)
+    expect(cartaoDe('#responsavel').hidden).toBe(true)
+  })
+
+  it('sessão expirada manda para o login', async () => {
+    api.contatoAacd.mockImplementationOnce(() => Promise.resolve({ ok: false, status: 401, corpo: null }))
     carregarHtml('contato', 'contato')
     iniciar($('#conteudo'))
     await vi.waitFor(() => expect(location.hash).toBe('#/login'))
+  })
+
+  it('explica a entrega: a plataforma não cuida de envios e a conversa é por e-mail ou telefone', async () => {
+    await abrir()
+    expect($('#titulo-entrega').textContent).toBe('Como funciona a entrega')
+    expect($('#titulo-entrega').closest('section').textContent).toMatch(/não cuida de envios/)
+    expect($('#retirada-endereco')).toBeNull()
+    expect($('#ver-mapa')).toBeNull()
+    expect($('#form-mensagem')).toBeNull()
+  })
+
+  it('tem dúvidas frequentes, todas fechadas no início', async () => {
+    await abrir()
+    const duvidas = [...document.querySelectorAll('.contato__duvida')]
+    expect(duvidas.length).toBeGreaterThan(0)
+    expect(duvidas.every((d) => d.querySelector('summary') && !d.open)).toBe(true)
   })
 })

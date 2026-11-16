@@ -3,10 +3,7 @@ package aacd.http;
 import aacd.dao.ConteudoSolicitacaoDao;
 import aacd.dao.EmpresaDao;
 import aacd.dao.SolicitacaoDao;
-import aacd.model.ConteudoSolicitacao;
-import aacd.model.Empresa;
-import aacd.model.Sessao;
-import aacd.model.SolicitacaoImpressao;
+import aacd.model.*;
 import aacd.service.GerenciadorSessoes;
 import aacd.storage.ArmazenamentoArquivo;
 import aacd.storage.ArmazenamentoException;
@@ -23,6 +20,7 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -94,9 +92,13 @@ class ArquivoSolicitacaoHandlerTest {
 
     // ---------- apoio ----------
 
+    private Material material() {
+        return Material.values()[0];
+    }
+
     private ConteudoSolicitacao conteudo(String nomeArquivo) {
-        return new ConteudoSolicitacao(MONGO_ID, "Titulo", "Descricao", 1, 180, 60, 40,
-                ARQUIVO_ID, nomeArquivo);
+        return new ConteudoSolicitacao(MONGO_ID, "Titulo", "Descricao", 1, material(),
+                180, 60, 40, LocalDate.now().plusDays(7), ARQUIVO_ID, nomeArquivo);
     }
 
     private void pedir(String query) {

@@ -277,8 +277,13 @@ export async function iniciar() {
   just.addEventListener('input', verificarCancelamento);
   $('cancelar-confirmar').addEventListener('click', async () => {
     if (!pedidoSelecionado) return;
-    const r = await api.cancelarSolicitacao(pedidoSelecionado.id, `${motivo.value}: ${just.value.trim()}`);
-    if (!r.ok) { alert(r.corpo?.erro ?? 'Não foi possível cancelar.'); return; }
+    const r = await api.responderSolicitacao({
+      id: pedidoSelecionado.id,
+      decisao: 'FALHAR',
+      justificativa: `${motivo.value}: ${just.value.trim()}`,
+    });
+    if (r.status === 401) { location.hash = '#/login'; return; }
+    if (!r.ok) { alert(r.corpo?.erro ?? 'Não foi possível cancelar a impressão.'); return; }
     modalCancelar.hide();
     carregar();
   });

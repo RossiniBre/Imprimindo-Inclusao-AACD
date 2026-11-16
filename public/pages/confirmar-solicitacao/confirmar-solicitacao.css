@@ -1,17 +1,39 @@
 /* Nova solicitação de impressão, passo 3 (Confirmar e enviar).
-   O casco (painel vermelho + área de conteúdo), os chips e a checagem vêm do arquivo compartilhado. */
+   O casco (painel vermelho + área de conteúdo) e a checagem vêm do arquivo compartilhado.
+   Layout compacto: a tela inteira cabe sem rolar na maioria dos monitores. */
 
 @import url("/shared/css/passos-solicitacao.css");
 
+/* ---------- Casco: painel vermelho fixo; a área da direita só rola se a janela for baixa ---------- */
+
+.confirmar-solicitacao {
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+.confirmar-solicitacao .ns__area {
+  min-height: 0;
+  overflow-y: auto;
+}
+
 .cs__caixa {
-  max-width: 46rem;
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  max-width: 62rem;
+}
+
+.cs__caixa #revisao > h2 {
+  font-size: 1.625rem;
+  line-height: 1.2;
 }
 
 .cs__voltar {
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
-  margin-bottom: 1.25rem;
+  margin-bottom: 0.625rem;
   font-size: 0.8125rem;
   font-weight: 600;
   color: var(--cor-texto);
@@ -23,19 +45,49 @@
 }
 
 .cs__descricao {
-  margin: 0.25rem 0 1.25rem;
+  margin: 0.125rem 0 0.875rem;
   font-size: 0.875rem;
   color: var(--cor-texto-suave);
 }
 
-/* ---------- Blocos de detalhe ---------- */
+/* ---------- Grade: conteúdo à esquerda, card de confirmação à direita (mesma altura) ---------- */
 
-.cs__bloco {
-  margin-bottom: 0.875rem;
-  padding: 1rem 1.125rem;
+.cs__grade {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 19rem;
+  gap: 0.875rem;
+  align-items: stretch;
+}
+
+.cs__coluna {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Card vertical: dados em cima, botões presos ao pé */
+.cs__resumo {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
   border: 1px solid var(--cor-borda);
   border-radius: 0.625rem;
   background: var(--cor-superficie);
+}
+
+/* ---------- Blocos ---------- */
+
+.cs__bloco {
+  padding: 0.875rem 1rem;
+  border: 1px solid var(--cor-borda);
+  border-radius: 0.625rem;
+  background: var(--cor-superficie);
+}
+
+.cs__bloco--observacao {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
 }
 
 .cs__bloco-topo {
@@ -43,15 +95,12 @@
   align-items: baseline;
   justify-content: space-between;
   gap: 0.75rem;
-  margin-bottom: 0.625rem;
+  margin-bottom: 0.375rem;
 }
 
 .cs__bloco-topo h3 {
-  font-size: 0.6875rem;
+  font-size: 0.9375rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--cor-texto-suave);
 }
 
 .cs__bloco-topo a {
@@ -60,82 +109,247 @@
   color: var(--cor-texto);
 }
 
+.cs__rotulo {
+  margin: 0;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cor-texto-suave);
+}
+
+.cs__nota {
+  margin-top: 0.375rem;
+  font-size: 0.6875rem;
+  color: var(--cor-texto-suave);
+}
+
+.cs__nota--centro {
+  text-align: center;
+}
+
+/* ---------- Impressora escolhida ---------- */
+
+.cs__impressora-topo {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
 .cs__modelo {
-  font-size: 1.1875rem;
+  margin-top: 0.125rem;
+  font-size: 1.25rem;
   font-weight: 700;
   line-height: 1.3;
   overflow-wrap: anywhere;
 }
 
 .cs__local {
-  margin-bottom: 0.625rem;
   font-size: 0.8125rem;
   color: var(--cor-texto-suave);
 }
 
-.cs__chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.375rem;
+.cs__contorno {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  height: 2rem;
+  padding: 0 0.875rem;
+  border: 1px solid var(--cor-borda);
+  border-radius: 0.375rem;
+  background: var(--cor-superficie);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--cor-texto);
+  text-decoration: none;
+  transition: background 0.2s;
 }
 
-/* Tabela rótulo / valor */
+.cs__contorno:hover {
+  background: var(--cor-neutra-claro);
+}
+
+/* Tabela Requisito / A peça precisa / A impressora tem */
+.cs__tabela-rolagem {
+  overflow-x: auto;
+  border: 1px solid var(--cor-borda);
+  border-radius: 0.5rem;
+}
+
+.cs__tabela {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+}
+
+.cs__tabela th,
+.cs__tabela td {
+  padding: 0.5rem 0.75rem;
+  border-top: 1px solid var(--cor-neutra-claro);
+  text-align: left;
+}
+
+.cs__tabela td {
+  white-space: nowrap;
+}
+
+.cs__tabela thead th {
+  border-top: none;
+  background: var(--cor-fundo, #FAF8F5);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--cor-texto-suave);
+}
+
+.cs__requisito {
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.cs__tabela td.cs__estado {
+  width: 2rem;
+  text-align: center;
+  font-weight: 700;
+  color: #8a6500;
+}
+
+.cs__tabela td.cs__estado--ok {
+  color: var(--cor-sucesso);
+}
+
+.cs__tabela td.cs__estado--falha {
+  color: var(--cor-erro);
+}
+
+.cs__so-leitor {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+/* ---------- Observação ---------- */
+
+/* A descrição fica numa caixa cinza que ocupa todo o espaço livre do bloco.
+   flex-basis 0 + min-height: um texto longo rola dentro da caixa e não estica a página. */
+.cs__observacao {
+  flex: 1 1 0;
+  min-height: 4.5rem;
+  margin: 0;
+  padding: 0.625rem 0.75rem;
+  overflow-y: auto;
+  border: 1px solid var(--cor-neutra-claro);
+  border-radius: 0.5rem;
+  background: #F1F0ED;
+  font-size: 0.875rem;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+/* A nota fica no pé do bloco, abaixo da caixa */
+.cs__bloco--observacao .cs__nota {
+  margin-top: 0.5rem;
+}
+
+/* ---------- Card de confirmação ---------- */
+
+.cs__resumo-titulo {
+  margin: 0.125rem 0 0.5rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+/* Rótulo à esquerda, valor à direita */
 .cs__dados {
   display: grid;
-  grid-template-columns: 9.5rem minmax(0, 1fr);
-  margin: 0;
-  font-size: 0.875rem;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: 1rem;
+  margin: 0 0 0.75rem;
+  padding-bottom: 0.375rem;
+  border-bottom: 1px solid var(--cor-neutra-claro);
+  font-size: 0.8125rem;
 }
 
 .cs__dados dt,
 .cs__dados dd {
   margin: 0;
-  padding: 0.5rem 0;
-  border-top: 1px solid var(--cor-neutra-claro);
-}
-
-.cs__dados dt:first-of-type,
-.cs__dados dt:first-of-type + dd {
-  border-top: none;
-  padding-top: 0;
+  padding: 0.3125rem 0;
 }
 
 .cs__dados dt {
-  font-weight: 400;
   color: var(--cor-texto-suave);
 }
 
 .cs__dados dd {
-  font-weight: 600;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  font-weight: 700;
+  text-align: right;
   overflow-wrap: anywhere;
-  white-space: pre-line;
 }
 
-.cs__bloco .ns__checagem {
-  margin: 0;
+/* Responsável pelo pedido (usuário da sessão) */
+.cs__responsavel-bloco {
+  margin-bottom: 0.75rem;
+}
+
+.cs__responsavel {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  margin-top: 0.375rem;
+  padding: 0.5rem 0.625rem;
+  border: 1px solid rgba(239, 176, 0, 0.5);
+  border-radius: 0.5rem;
+  background: rgba(239, 176, 0, 0.12);
+}
+
+.cs__responsavel strong,
+.cs__responsavel small {
+  display: block;
+}
+
+.cs__responsavel strong {
+  font-size: 0.875rem;
+}
+
+.cs__responsavel small {
+  font-size: 0.75rem;
+  color: var(--cor-texto-suave);
+}
+
+.cs__avatar {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: #EFB000;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: #2B2B2B;
 }
 
 /* ---------- Erro e botões ---------- */
 
 .cs__erro {
-  margin-bottom: 1rem;
-  padding: 0.75rem 0.875rem;
+  margin-bottom: 0.75rem;
+  padding: 0.625rem 0.75rem;
   border-left: 4px solid var(--cor-erro);
   border-radius: 0.375rem;
   background: var(--cor-erro-claro);
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   color: var(--cor-erro);
-}
-
-.cs__rodape {
-  display: flex;
-  justify-content: space-between;
-  gap: 0.75rem;
-  margin-top: 1.25rem;
-}
-
-.cs__rodape--centro {
-  justify-content: center;
 }
 
 .cs__secundario,
@@ -165,8 +379,8 @@
 
 .cs__confirmar {
   border: 1px solid transparent;
-  background: var(--cor-sucesso);
-  color: var(--cor-superficie);
+  background: #EFB000;
+  color: #2B2B2B;
   font-weight: 700;
   transition: filter 0.2s;
 }
@@ -175,11 +389,45 @@
   filter: brightness(0.92);
 }
 
+/* Botões do card: largos, presos ao pé e mais baixos */
+.cs__acoes {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: auto;
+}
+
+.cs__acoes .cs__confirmar,
+.cs__acoes .cs__secundario {
+  width: 100%;
+  height: 2.5rem;
+  min-width: 0;
+}
+
+/* Rodapé da tela "Pedido enviado" */
+.cs__rodape {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+.cs__rodape--centro {
+  justify-content: center;
+}
+
 /* ---------- Pedido enviado ---------- */
 
+/* Centralizada na vertical e na horizontal dentro da área clara */
 .cs__sucesso {
-  padding-top: 4rem;
+  margin: auto 0;
+  padding-bottom: 2rem;   /* leve compensação óptica: o conjunto parece um pouco mais alto */
   text-align: center;
+}
+
+/* O display do .cs__sucesso não pode vencer o atributo hidden */
+.cs__sucesso[hidden] {
+  display: none;
 }
 
 .cs__sucesso h2:focus {
@@ -207,22 +455,26 @@
 
 /* ---------- Responsivo ---------- */
 
-@media (max-width: 37.5rem) {
-  .cs__dados {
+/* Painel vermelho empilha no topo: a página volta a rolar inteira e o card desce */
+@media (max-width: 56rem) {
+  .confirmar-solicitacao,
+  .confirmar-solicitacao .ns__area {
+    height: auto;
+    overflow: visible;
+  }
+
+  .cs__grade {
     grid-template-columns: 1fr;
   }
 
-  .cs__dados dd {
-    padding-top: 0;
-    border-top: none;
+  .cs__acoes {
+    margin-top: 0.5rem;
   }
+}
 
-  .cs__dados dt:first-of-type + dd {
-    padding-top: 0;
-  }
-
-  .cs__dados dt {
-    padding-bottom: 0.125rem;
+@media (max-width: 37.5rem) {
+  .cs__impressora-topo {
+    flex-direction: column;
   }
 
   .cs__rodape {

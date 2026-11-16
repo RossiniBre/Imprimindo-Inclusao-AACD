@@ -1,5 +1,6 @@
 package aacd.model;
 
+import java.time.LocalDate;
 import java.util.Set;
 
 public class ConteudoSolicitacao {
@@ -17,29 +18,33 @@ public class ConteudoSolicitacao {
     private int alturaMm;
     private String arquivoId;
     private String nomeArquivo;
+    private Material material;
+    private LocalDate prazoDesejado;
 
     // criação
-    public ConteudoSolicitacao(String titulo, String descricao, int quantidade,
-                               int comprimentoMm, int larguraMm, int alturaMm,
+    public ConteudoSolicitacao(String titulo, String descricao, int quantidade, Material material,
+                               int comprimentoMm, int larguraMm, int alturaMm, LocalDate prazoDesejado,
                                String arquivoId, String nomeArquivo)
     {
         setTitulo(titulo);
         setDescricao(descricao);
         setQuantidade(quantidade);
+        setMaterial(material);
         setComprimentoMm(comprimentoMm);
         setLarguraMm(larguraMm);
         setAlturaMm(alturaMm);
+        this.prazoDesejado = prazoDesejado;
         this.arquivoId = validarArquivoId(arquivoId);
         this.nomeArquivo = validarNomeArquivo(nomeArquivo);
     }
 
     // reconstrução
-    public ConteudoSolicitacao(String mongoId, String titulo, String descricao, int quantidade,
-                               int comprimentoMm, int larguraMm, int alturaMm,
+    public ConteudoSolicitacao(String mongoId, String titulo, String descricao, int quantidade, Material material,
+                               int comprimentoMm, int larguraMm, int alturaMm, LocalDate prazoDesejado,
                                String arquivoId, String nomeArquivo)
     {
-        this(titulo, descricao, quantidade, comprimentoMm, larguraMm, alturaMm,
-                arquivoId, nomeArquivo);
+        this(titulo, descricao, quantidade, material, comprimentoMm, larguraMm, alturaMm,
+                prazoDesejado, arquivoId, nomeArquivo);
         this.mongoId = validarObjectId(mongoId, "documento");
     }
 
@@ -53,6 +58,8 @@ public class ConteudoSolicitacao {
     public int getAlturaMm(){ return this.alturaMm; }
     public String getArquivoId(){ return this.arquivoId; }
     public String getNomeArquivo(){ return this.nomeArquivo; }
+    public Material getMaterial(){ return this.material; }
+    public LocalDate getPrazoDesejado(){ return this.prazoDesejado; }
 
     // setters
     public void setTitulo(String titulo){
@@ -63,6 +70,13 @@ public class ConteudoSolicitacao {
             throw new IllegalArgumentException("Título deve ter no máximo " + TITULO_MAX + " caracteres");
         }
         this.titulo = titulo;
+    }
+
+    public void setMaterial(Material material){
+        if (material == null){
+            throw new IllegalArgumentException("Material não pode ser vazio");
+        }
+        this.material = material;
     }
 
     public void setDescricao(String descricao){

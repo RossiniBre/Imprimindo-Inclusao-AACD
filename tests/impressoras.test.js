@@ -9,7 +9,9 @@ const api = vi.hoisted(() => ({
   editarImpressora: vi.fn(),
   removerImpressora: vi.fn(),
   alterarAtivoImpressora: vi.fn(),
-  cancelarSolicitacao: vi.fn(),
+  // A empresa encerra uma impressão em andamento respondendo FALHAR
+  // (o cancelarSolicitacao é só da AACD).
+  responderSolicitacao: vi.fn(),
 }))
 vi.mock('../public/shared/js/api.js', () => ({ api }))
 
@@ -72,13 +74,14 @@ beforeEach(async () => {
   vi.clearAllMocks()
   globalThis.bootstrap = { Modal: ModalFalso }
   globalThis.alert = vi.fn()
+  location.hash = ''
 
   responderCom(listaBase())
   api.cadastrarImpressora.mockResolvedValue(sucesso)
   api.editarImpressora.mockResolvedValue(sucesso)
   api.removerImpressora.mockResolvedValue(sucesso)
   api.alterarAtivoImpressora.mockResolvedValue(sucesso)
-  api.cancelarSolicitacao.mockResolvedValue(sucesso)
+  api.responderSolicitacao.mockResolvedValue(sucesso)
 
   carregarHtml('impressoras', 'impressoras')
   tela = await import('../public/pages/impressoras/impressoras.js')
@@ -212,6 +215,13 @@ describe('desativar e reativar', () => {
 })
 
 describe('cancelar impressão', () => {
+  // Abre o modal do primeiro pedido em impressão e preenche motivo + justificativa
+  function preencherCancelamento(motivo = 'Erro no arquivo', justificativa = 'Arquivo corrompido') {
+    $('#imprimindo [data-acao="cancelar"]').click()
+    digitar($('#cancelar-motivo'), motivo, 'change')
+    digitar($('#cancelar-just'), justificativa)
+  }
+
   it('só habilita o botão com motivo e justificativa', () => {
     $('#imprimindo [data-acao="cancelar"]').click()
 
@@ -228,19 +238,45 @@ describe('cancelar impressão', () => {
     expect($('#cancelar-contador').textContent).toBe('12/300')
   })
 
-  it('confirmar cancela o pedido no servidor e devolve a impressora para Livres', async () => {
+  it('confirmar avisa o servidor que a impressão falhou e devolve a impressora para Livres', async () => {
     responderCom(listaBase().map((i) => (i.id === 5 ? { ...i, solicitacoesAtivas: [] } : i)))
 
-    $('#imprimindo [data-acao="cancelar"]').click()
-    digitar($('#cancelar-motivo'), 'Erro no arquivo', 'change')
-    digitar($('#cancelar-just'), 'Arquivo corrompido')
+    preencherCancelamento('Erro no arquivo', 'Arquivo corrompido')
     $('#cancelar-confirmar').click()
     await esperar()
 
-    expect(api.cancelarSolicitacao)
-      .toHaveBeenCalledWith(6502, 'Erro no arquivo: Arquivo corrompido')
+    expect(api.responderSolicitacao).toHaveBeenCalledWith({
+      id: 6502,
+      decisao: 'FALHAR',
+      justificativa: 'Erro no arquivo: Arquivo corrompido',
+    })
     expect($$('#imprimindo .col').length).toBe(5)
     expect($$('#livres .col').length).toBe(5)
+  })
+
+  it('mostra o erro do servidor e não recarrega se o cancelamento falhar', async () => {
+    api.responderSolicitacao.mockResolvedValue({
+      ok: false, status: 409, corpo: { erro: 'Esta solicitação não está em andamento!' },
+    })
+    const chamadasAntes = api.impressoras.mock.calls.length
+
+    preencherCancelamento('Falha na impressora', 'Bico entupiu')
+    $('#cancelar-confirmar').click()
+    await esperar()
+
+    expect(globalThis.alert).toHaveBeenCalledWith('Esta solicitação não está em andamento!')
+    expect(api.impressoras.mock.calls.length).toBe(chamadasAntes)
+  })
+
+  it('sessão expirada manda para o login', async () => {
+    api.responderSolicitacao.mockResolvedValue({ ok: false, status: 401, corpo: null })
+
+    preencherCancelamento('Falha na impressora', 'Bico entupiu')
+    $('#cancelar-confirmar').click()
+    await esperar()
+
+    expect(location.hash).toBe('#/login')
+    expect(globalThis.alert).not.toHaveBeenCalled()
   })
 })
 

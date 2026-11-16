@@ -249,4 +249,32 @@ public class UsuarioDao {
             }
         }
     }
+
+    public record ContatoAacd(String nome, String email, String cargo, String setor) {}
+    
+    public Optional<ContatoAacd> buscarContatoAacd(String perfilAdmin) throws SQLException {
+        String sql = "SELECT u.nome, f.email, f.cargo, f.setor "
+                + "FROM usuario u "
+                + "JOIN funcionario f ON f.usuario_id = u.idusuario "
+                + "WHERE u.perfil = ? AND u.ativo = TRUE "
+                + "ORDER BY u.idusuario "
+                + "LIMIT 1";
+
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, perfilAdmin);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return Optional.of(new ContatoAacd(
+                            rs.getString("nome"),
+                            rs.getString("email"),
+                            rs.getString("cargo"),
+                            rs.getString("setor")));
+                }
+                return Optional.empty();
+            }
+        }
+    }
 }

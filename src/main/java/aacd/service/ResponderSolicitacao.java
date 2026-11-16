@@ -136,18 +136,18 @@ public class ResponderSolicitacao {
 
     public void concluir(Usuario ator, int solicitacaoId) throws SQLException {
         validarAtor(ator);
-        finalizar(ator, solicitacaoId, StatusSolicitacao.CONCLUIDA, "Concluída pela empresa");
+        finalizar(ator, solicitacaoId, StatusSolicitacao.CONCLUIDA, null, "Concluída pela empresa");
     }
 
     public void falhar(Usuario ator, int solicitacaoId, String motivo) throws SQLException {
         validarAtor(ator);
-        String observacao = (motivo == null || motivo.isBlank())
-                ? "Falhou" : lerJustificativa(motivo);
-        finalizar(ator, solicitacaoId, StatusSolicitacao.FALHOU, observacao);
+        String justificativa = (motivo == null || motivo.isBlank()) ? null : lerJustificativa(motivo);
+        finalizar(ator, solicitacaoId, StatusSolicitacao.FALHOU, justificativa,
+                justificativa != null ? justificativa : "Falhou");
     }
 
     private void finalizar(Usuario ator, int solicitacaoId, StatusSolicitacao novoStatus,
-                           String observacao) throws SQLException {
+                           String justificativa, String observacao) throws SQLException {
         try (Connection conn = ConnectionFactory.getConnection()) {
             conn.setAutoCommit(false);
             try {
@@ -160,7 +160,7 @@ public class ResponderSolicitacao {
                 if (solicitacao.getStatus() != StatusSolicitacao.EM_ANDAMENTO) {
                     throw new IllegalStateException("Esta solicitação não está em andamento!");
                 }
-                if (!solicitacaoDao.finalizar(conn, solicitacaoId, novoStatus)) {
+                if (!solicitacaoDao.finalizar(conn, solicitacaoId, novoStatus, justificativa)) {
                     throw new IllegalStateException("Esta solicitação não está em andamento!");
                 }
 

@@ -5,6 +5,7 @@ import aacd.dao.EmpresaDao;
 import aacd.dao.SolicitacaoDao;
 import aacd.dao.UsuarioDao;
 import aacd.model.Empresa;
+import aacd.model.Material;
 import aacd.model.Sessao;
 import aacd.model.Usuario;
 import aacd.service.CriarSolicitacao;
@@ -23,6 +24,8 @@ import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 
 public class SolicitacaoHandler implements HttpHandler {
@@ -123,6 +126,25 @@ public class SolicitacaoHandler implements HttpHandler {
                     return;
                 }
 
+                Material material;
+                try {
+                    material = Material.valueOf(campos.getOrDefault("material", "").trim().toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    Http.erro(ex, 400, "Material inválido.");
+                    return;
+                }
+
+                LocalDate prazoDesejado = null;
+                String textoPrazo = campos.getOrDefault("prazoDesejado", "").trim();
+                if (!textoPrazo.isEmpty()) {
+                    try {
+                        prazoDesejado = LocalDate.parse(textoPrazo);
+                    } catch (DateTimeParseException e) {
+                        Http.erro(ex, 400, "Prazo desejado inválido. Use AAAA-MM-DD.");
+                        return;
+                    }
+                }
+
                 Usuario ator = usuarioDao.buscarPorId(sessao.get().getUsuarioId());
                 if (ator == null) {
                     Http.erro(ex, 401, "Não autenticado.");
@@ -134,12 +156,12 @@ public class SolicitacaoHandler implements HttpHandler {
                 if ("ADMIN".equals(ator.getPerfil())) {
                     id = criarSolicitacao.criarComoAdmin(ator, impressoraId,
                             campos.get("titulo"), campos.get("descricao"),
-                            quantidade, comprimentoMm, larguraMm, alturaMm,
+                            quantidade, material, comprimentoMm, larguraMm, alturaMm, prazoDesejado,
                             item.getName(), limitado);
                 } else {
                     id = criarSolicitacao.criar(ator.getId(), impressoraId,
                             campos.get("titulo"), campos.get("descricao"),
-                            quantidade, comprimentoMm, larguraMm, alturaMm,
+                            quantidade, material, comprimentoMm, larguraMm, alturaMm, prazoDesejado,
                             item.getName(), limitado);
                 }
 

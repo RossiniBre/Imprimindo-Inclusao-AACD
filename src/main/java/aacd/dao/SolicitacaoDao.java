@@ -111,7 +111,7 @@ public class SolicitacaoDao {
                 return new SolicitacaoImpressao(
                         rs.getInt("idsolicitacao_impressao"),
                         rs.getInt("empresa_id"),
-                        rs.getInt("criado_por"),
+                        rs.getObject("criado_por", Integer.class),
                         rs.getObject("impressora_id", Integer.class),
                         rs.getString("titulo"),
                         rs.getString("mongo_id"),
@@ -255,11 +255,19 @@ public class SolicitacaoDao {
     }
 
     public boolean finalizar(Connection conn, int id, StatusSolicitacao novoStatus) throws SQLException {
-        String sql = "UPDATE solicitacao_impressao SET status = ?, data_finalizacao = NOW() "
+        return finalizar(conn, id, novoStatus, null);
+    }
+
+    public boolean finalizar(Connection conn, int id, StatusSolicitacao novoStatus,
+                             String justificativa) throws SQLException {
+        String sql = "UPDATE solicitacao_impressao "
+                + "SET status = ?, justificativa = ?, data_finalizacao = NOW() "
                 + "WHERE idsolicitacao_impressao = ? AND status = 'EM_ANDAMENTO'";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, novoStatus.name());
-            ps.setInt(2, id);
+            if (justificativa == null) ps.setNull(2, Types.VARCHAR);
+            else ps.setString(2, justificativa);
+            ps.setInt(3, id);
             return ps.executeUpdate() == 1;
         }
     }

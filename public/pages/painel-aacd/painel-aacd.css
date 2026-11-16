@@ -577,18 +577,6 @@ main:has(> .painel) {
   white-space: normal;
 }
 
-.modal__alternativa {
-  margin-bottom: 1.125rem;
-  font-size: 0.75rem;
-  line-height: 1.5;
-  color: var(--cor-texto-suave);
-}
-
-.modal__alternativa a {
-  font-weight: 700;
-  color: var(--cor-cabecalho);
-}
-
 .modal__erro-geral {
   margin-bottom: 1rem;
   padding: 0.75rem 0.875rem;
@@ -1010,4 +998,9 @@ main:has(> .painel) {
 .painel .cartao__rodape {
   min-width: 0;
   overflow-wrap: anywhere;
+}
+
+#modal-confirmar > .modal {
+  display: block;
+  height: auto;
 }

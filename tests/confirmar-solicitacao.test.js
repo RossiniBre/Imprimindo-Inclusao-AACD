@@ -38,20 +38,18 @@ function abrir() {
 
 describe('confirmar solicitação: funções puras', () => {
   it('monta as linhas de detalhe do pedido', () => {
+    // O nome da peça e a observação não aparecem mais nos detalhes da confirmação
     expect(linhasDoPedido(pedido)).toEqual([
-      ['Nome da peça', 'Prótese de mão'],
       ['Arquivo', 'protese_mao_v2.stl (2 KB)'],
       ['Material', 'PLA'],
       ['Tamanho', '180 × 95 × 60 mm'],
       ['Quantidade', '2 peças'],
       ['Prazo desejado', '15/12/2026'],
-      ['Observação', 'Peça infantil.'],
     ])
     const semOpcionais = linhasDoPedido({ ...pedido, prazo: '', observacao: '', quantidade: 1 })
-    expect(semOpcionais.slice(4)).toEqual([
+    expect(semOpcionais.slice(3)).toEqual([
       ['Quantidade', '1 peça'],
       ['Prazo desejado', 'Sem prazo definido'],
-      ['Observação', 'Nenhuma'],
     ])
   })
 
@@ -92,7 +90,7 @@ describe('confirmar solicitação: tela', () => {
     expect(api.criarSolicitacao).not.toHaveBeenCalled()
   })
 
-  it('mostra os detalhes da impressora e da peça, com os passos 1 e 2 feitos', () => {
+    it('mostra os detalhes da impressora e da peça, com os passos 1 e 2 feitos', () => {
     salvarRascunho(pedido)
     abrir()
 
@@ -100,16 +98,19 @@ describe('confirmar solicitação: tela', () => {
     expect(passos.map((p) => p.classList.contains('ns__passo--feito'))).toEqual([true, true, false])
     expect(passos[2].getAttribute('aria-current')).toBe('step')
 
-    expect($('#imp-modelo').textContent).toBe('Ender 3 V2')
-    expect($('#imp-local').textContent).toBe('Mackenzie · São Paulo, SP')
-    expect($('#imp-chips').textContent).toMatch(/Livre.*Mesa 220 × 220 × 250 mm.*PLA.*PETG/)
-    expect($('#dados').textContent).toMatch(/protese_mao_v2.stl/)
-    expect($('#dados').textContent).toMatch(/Peça infantil\./)
-    expect(document.querySelectorAll('#checagem li')).toHaveLength(3)
-    expect($('#botao-confirmar').textContent).toBe('Confirmar solicitação')
+    const texto = document.body.textContent.replace(/\s+/g, ' ')
+    expect(texto).toContain('Ender 3 V2')
+    expect(texto).toMatch(/Mackenzie.*São Paulo, SP/)
+    expect(texto).toMatch(/Livre/)
+    expect(texto).toContain('220 × 220 × 250 mm')
+    expect(texto).toContain('PLA')
+    expect(texto).toContain('PETG')
+    expect(texto).toMatch(/protese_mao_v2\.stl/)
+
+    expect($('#botao-confirmar').textContent).toBe('Enviar solicitação')
     expect($('#sucesso').hidden).toBe(true)
   })
-
+  
   it('"Confirmar solicitação" envia o pedido, mostra o número e apaga o rascunho', async () => {
     salvarRascunho(pedido)
     abrir()

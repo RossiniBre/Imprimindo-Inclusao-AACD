@@ -104,4 +104,35 @@
     </div>
   </div>
 
+  <!-- Modal: detalhes da impressora (mesmo visual do passo "Escolher impressora", só leitura) -->
+  <div class="ei__modal-fundo" id="modal-detalhes" hidden>
+    <div class="ei__modal" role="dialog" aria-modal="true" aria-labelledby="detalhes-titulo">
+
+      <div class="ei__modal-topo">
+        <div>
+          <h2 id="detalhes-titulo"></h2>
+          <p class="ei__modal-local" id="detalhes-local"></p>
+        </div>
+        <button type="button" class="ei__modal-fechar" data-fechar aria-label="Fechar">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="6" y1="6" x2="18" y2="18"/>
+            <line x1="18" y1="6" x2="6" y2="18"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="ei__modal-chips" id="detalhes-chips"></div>
+
+      <dl class="ei__modal-dados" id="detalhes-lista"></dl>
+
+      <h3 class="ei__modal-subtitulo">Esta impressora</h3>
+      <ul class="ei__checagem" id="detalhes-checagem"></ul>
+
+      <div class="ei__modal-rodape">
+        <button type="button" class="ei__secundario" data-fechar>Fechar</button>
+      </div>
+
+    </div>
+  </div>
+
 </section>

@@ -36,7 +36,6 @@ const ROTULO_STATUS = {
 // Mesmo endpoint de arquivo que a empresa usa
 const URL_ARQUIVO = '/api/solicitacao/arquivo';
 
-
 export function agrupar(lista) {
   const grupos = { esperando: [], imprimindo: [], prontas: [], recusadas: [] };
   for (const s of lista) {
@@ -127,7 +126,7 @@ export function iniciar(container) {
   let grupos = agrupar([]);
   let prazos = {};
   let filtro = null;
-  const expandidos = new Set(); 
+  const expandidos = new Set();
 
   const contadores = container.querySelectorAll('.contador');
   const secoes = container.querySelectorAll('.grupo');
@@ -143,12 +142,11 @@ export function iniciar(container) {
   const modalTitulo = container.querySelector('#modal-titulo');
   const modalTexto = container.querySelector('#modal-texto');
   const modalPedido = container.querySelector('#modal-pedido');
-  const modalAlternativa = container.querySelector('#modal-alternativa');
   const erroModal = container.querySelector('#erro-modal');
   const botaoConfirmar = container.querySelector('#botao-confirmar-modal');
   const botaoVoltar = container.querySelector('#botao-voltar-modal');
   let acaoPendente = null;
-  let elementoAnterior = null;  
+  let elementoAnterior = null;
 
   // ----- Avisos -----
 
@@ -246,8 +244,17 @@ export function iniciar(container) {
     }
 
     if (grupo === 'recusadas') {
-      cartao.appendChild(elemento('p', 'cartao__motivo',
-        pedido.justificativa ? `Motivo: ${pedido.justificativa}` : 'Motivo não informado.'));
+      let motivo;
+      if (pedido.status === 'CANCELADA') {
+        motivo = pedido.justificativa
+          ? `Cancelado pela AACD. Motivo: ${pedido.justificativa}`
+          : 'Cancelado pela AACD';
+      } else {
+        motivo = pedido.justificativa
+          ? `Motivo: ${pedido.justificativa}`
+          : 'Motivo não informado.';
+      }
+      cartao.appendChild(elemento('p', 'cartao__motivo', motivo));
     }
 
     // Ações
@@ -256,19 +263,17 @@ export function iniciar(container) {
       acoes.appendChild(botao('Cancelar pedido', 'cancelar', pedido, 'botao-linha--perigo'));
     } else if (grupo === 'imprimindo') {
       acoes.appendChild(elemento('span', 'cartao__nota', 'A empresa avisa quando terminar.'));
-    } else if (grupo === 'prontas') {
-      acoes.appendChild(botao('Remover', 'remover', pedido));
     } else {
-      const outra = elemento('a', 'botao-linha botao-linha--principal', 'Escolher outra empresa');
-      outra.href = `#/reescolher-empresa?pedido=${pedido.id}`;
-      acoes.appendChild(outra);
+      // prontas e recusadas/canceladas/falhas
       acoes.appendChild(botao('Remover', 'remover', pedido));
     }
     acoes.appendChild(botao('Ver detalhes', 'detalhes', pedido));
     cartao.appendChild(acoes);
 
     cartao.appendChild(elemento('p', 'cartao__rodape',
-      pedido.criadoPor ? `Enviado por ${pedido.criadoPor}` : 'Enviado pela AACD'));
+    (pedido.criadoPorNome ?? pedido.criadoPor)
+      ? `Enviado por ${pedido.criadoPorNome ?? pedido.criadoPor}`
+      : 'Enviado pela AACD'));
 
     return cartao;
   }
@@ -383,16 +388,12 @@ export function iniciar(container) {
 
   const ACOES = {
     cancelar: {
-      titulo: 'Cancelar o pedido de impressão?',
-      texto: 'A empresa deixa de ver este pedido e ele vai para a lista de recusadas. Depois você pode criar um novo pedido.',
-      botao: 'Sim, cancelar',
+      textos: textosDoCancelamento,
       voltar: 'Voltar',
       chamar: (id) => api.cancelarSolicitacao(id),
     },
     remover: {
-      titulo: 'Remover o pedido de impressão?',
-      texto: 'Este pedido será removido, sem que seja direcionado para outra empresa.',
-      botao: 'Sim, remover',
+      textos: textosDaRemocao,
       voltar: 'Cancelar',
       chamar: (id) => api.excluirSolicitacao(id),
     },
@@ -400,15 +401,14 @@ export function iniciar(container) {
 
   function abrirModal(acao, pedido) {
     const cfg = ACOES[acao];
-    acaoPendente = { acao, pedido };
+    const textos = cfg.textos(pedido);
+    acaoPendente = { acao, pedido, textos };
     elementoAnterior = document.activeElement;
 
-    modalTitulo.textContent = cfg.titulo;
-    modalTexto.textContent = cfg.texto;
-    modalPedido.textContent = `Pedido ${pedido.id} · ${pedido.titulo}`;
-    modalAlternativa.hidden = !(acao === 'remover' && GRUPO_DO_STATUS[pedido.status] === 'recusadas');
-    modalAlternativa.querySelector('a').href = `#/reescolher-empresa?pedido=${pedido.id}`;
-    botaoConfirmar.textContent = cfg.botao;
+    modalTitulo.textContent = textos.titulo;
+    modalTexto.textContent = textos.texto;
+    modalPedido.textContent = textos.pedido;
+    botaoConfirmar.textContent = textos.confirmar;
     botaoVoltar.textContent = cfg.voltar;
     botaoConfirmar.disabled = false;
     erroModal.hidden = true;
@@ -426,11 +426,11 @@ export function iniciar(container) {
     elementoAnterior = null;
   }
 
-    function aoApertarEsc(evento) {
-      if (evento.key !== 'Escape') return;
-      if (!modalDetalhes.hidden) fecharDetalhes();
-      else if (!modal.hidden) fecharModal();
-    }
+  function aoApertarEsc(evento) {
+    if (evento.key !== 'Escape') return;
+    if (!modalDetalhes.hidden) fecharDetalhes();
+    else if (!modal.hidden) fecharModal();
+  }
 
   container.querySelector('#botao-fechar-modal').addEventListener('click', fecharModal);
   botaoVoltar.addEventListener('click', fecharModal);
@@ -441,10 +441,10 @@ export function iniciar(container) {
 
   botaoConfirmar.addEventListener('click', async () => {
     if (!acaoPendente) return;
-    const { acao, pedido } = acaoPendente;
+    const { acao, pedido, textos } = acaoPendente;
     erroModal.hidden = true;
     botaoConfirmar.disabled = true;
-    botaoConfirmar.textContent = acao === 'cancelar' ? 'Cancelando...' : 'Removendo...';
+    botaoConfirmar.textContent = textos.ocupado;
 
     try {
       const resposta = await ACOES[acao].chamar(pedido.id);
@@ -460,7 +460,7 @@ export function iniciar(container) {
     }
     erroModal.hidden = false;
     botaoConfirmar.disabled = false;
-    botaoConfirmar.textContent = ACOES[acao].botao;
+    botaoConfirmar.textContent = textos.confirmar;
   });
 
   // ----- Modal: detalhes (só leitura) -----
@@ -538,7 +538,8 @@ export function iniciar(container) {
     }
 
     // Motivo (recusa / falha / cancelamento)
-    const motivo = d?.justificativa || pedido.justificativa;
+    const motivo = d?.justificativa || pedido.justificativa
+      || (pedido.status === 'CANCELADA' ? 'Cancelado pela AACD' : '');
     if (motivo) {
       nos.push(secaoDetalhes('Motivo', elemento('p', 'det-texto det-texto--nota', motivo)));
     }
@@ -631,4 +632,29 @@ export function iniciar(container) {
   };
 
   carregar();
+}
+
+// Textos do modal de cancelamento da AACD
+export function textosDoCancelamento(pedido) {
+  const imprimindo = pedido.status === 'EM_ANDAMENTO';
+  return {
+    titulo: 'Cancelar solicitação?',
+    texto: imprimindo
+      ? 'Tem certeza? A empresa já aceitou e está imprimindo. Se você cancelar, ela não verá mais esta solicitação e o pedido será encerrado. Essa ação não pode ser desfeita.'
+      : 'Tem certeza? A empresa não vai mais ver esta solicitação. Ela será cancelada e essa ação não pode ser desfeita.',
+    pedido: `Pedido ${pedido.id} · ${pedido.titulo}`,
+    confirmar: 'Sim, cancelar solicitação',
+    ocupado: 'Cancelando...',
+  };
+}
+
+// Textos do modal de remoção (pedidos concluídos, recusados, cancelados ou com falha)
+export function textosDaRemocao(pedido) {
+  return {
+    titulo: 'Remover a solicitação?',
+    texto: 'Esta solicitação será removida da lista.',
+    pedido: `Pedido ${pedido.id} · ${pedido.titulo}`,
+    confirmar: 'Sim, remover',
+    ocupado: 'Removendo...',
+  };
 }

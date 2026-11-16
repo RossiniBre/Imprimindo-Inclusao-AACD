@@ -143,7 +143,8 @@ describe('escolher impressora: tela', () => {
     expect(rascunhoAtual().impressora).toMatchObject({ id: 11, modelo: 'Ender 3 V2', comprimentoMm: 220 })
     expect(rascunhoAtual().titulo).toBe('Prótese de mão')
     expect($('button[data-id="11"]').getAttribute('aria-pressed')).toBe('true')
-    expect($('button[data-id="11"]').textContent).toBe('Selecionada')
+    // o botão selecionado ganhou um ✓ no texto
+    expect($('button[data-id="11"]').textContent).toMatch(/^Selecionada/)
     expect($('button[data-id="13"]').getAttribute('aria-pressed')).toBe('false')
   })
 

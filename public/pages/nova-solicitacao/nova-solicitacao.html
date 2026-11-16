@@ -105,9 +105,9 @@
         <fieldset class="ns__campo">
           <legend>Tamanho da peça (comprimento × largura × altura, mm)</legend>
           <div class="ns__medidas">
-            <input type="number" id="campo-comprimento" name="comprimentoMm" min="1" placeholder="180" inputmode="numeric" aria-label="Comprimento em milímetros">
-            <input type="number" id="campo-largura" name="larguraMm" min="1" placeholder="95" inputmode="numeric" aria-label="Largura em milímetros">
-            <input type="number" id="campo-altura" name="alturaMm" min="1" placeholder="60" inputmode="numeric" aria-label="Altura em milímetros">
+            <input type="number" id="campo-comprimento" name="comprimentoMm" min="1" placeholder="120" inputmode="numeric" aria-label="Comprimento em milímetros">
+            <input type="number" id="campo-largura" name="larguraMm" min="1" placeholder="80" inputmode="numeric" aria-label="Largura em milímetros">
+            <input type="number" id="campo-altura" name="alturaMm" min="1" placeholder="40" inputmode="numeric" aria-label="Altura em milímetros">
           </div>
           <p class="ns__erro" id="erro-medidas" aria-live="polite"></p>
         </fieldset>
@@ -119,8 +119,9 @@
       </div>
 
       <div class="ns__campo">
-        <label for="campo-observacao">Observação <span class="ns__opcional">(opcional)</span></label>
-        <textarea id="campo-observacao" name="observacao" rows="3" maxlength="1800" placeholder="Peça para paciente infantil. Se possível, imprimir com 20% de preenchimento."></textarea>
+        <label for="campo-observacao">Observação</label>
+        <textarea id="campo-observacao" name="observacao" rows="2" maxlength="1800" placeholder="Peça para paciente infantil. Se possível, imprimir com 20% de preenchimento."></textarea>
+        <p class="ns__erro" id="erro-observacao" aria-live="polite"></p>
         <p class="ns__dica ns__contador"><span id="contador-observacao">0</span> / 1800</p>
       </div>
 

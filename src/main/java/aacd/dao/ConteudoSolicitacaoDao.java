@@ -1,6 +1,7 @@
 package aacd.dao;
 
 import aacd.model.ConteudoSolicitacao;
+import aacd.model.Material;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
@@ -8,6 +9,7 @@ import com.mongodb.client.model.Projections;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
+import java.time.LocalDate;
 import java.util.*;
 
 public class ConteudoSolicitacaoDao {
@@ -23,11 +25,15 @@ public class ConteudoSolicitacaoDao {
         Document doc = new Document("titulo", conteudo.getTitulo())
                 .append("descricao", conteudo.getDescricao())
                 .append("quantidade", conteudo.getQuantidade())
+                .append("material", conteudo.getMaterial().name())
                 .append("comprimentoMm", conteudo.getComprimentoMm())
                 .append("larguraMm", conteudo.getLarguraMm())
                 .append("alturaMm", conteudo.getAlturaMm())
                 .append("arquivoId", conteudo.getArquivoId())
                 .append("nomeArquivo", conteudo.getNomeArquivo());
+        if (conteudo.getPrazoDesejado() != null) {
+            doc.append("prazoDesejado", conteudo.getPrazoDesejado().toString());   // AAAA-MM-DD
+        }
         colecao.insertOne(doc);
         return doc.getObjectId("_id").toHexString();
     }
@@ -60,14 +66,17 @@ public class ConteudoSolicitacaoDao {
         if (doc == null) {
             return Optional.empty();
         }
+        String prazo = doc.getString("prazoDesejado");
         return Optional.of(new ConteudoSolicitacao(
                 mongoId,
                 doc.getString("titulo"),
                 doc.getString("descricao"),
                 doc.getInteger("quantidade"),
+                Material.valueOf(doc.getString("material")),
                 doc.getInteger("comprimentoMm"),
                 doc.getInteger("larguraMm"),
                 doc.getInteger("alturaMm"),
+                prazo == null ? null : LocalDate.parse(prazo),
                 doc.getString("arquivoId"),
                 doc.getString("nomeArquivo")));
     }

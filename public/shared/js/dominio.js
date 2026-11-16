@@ -53,3 +53,18 @@ export function cabeNaImpressora(peca, impressora) {
 export function codigosMateriais(impressora) {
   return (impressora?.materiais ?? []).map((m) => (typeof m === 'string' ? m : m.codigo));
 }
+
+// Aceita máscara e DDI 55; se não reconhecer o formato, devolve o texto como veio.
+export function formatarTelefone(valor) {
+  const original = String(valor ?? '').trim();
+  let digitos = original.replace(/\D/g, '');
+  if (digitos.length > 11 && digitos.startsWith('55')) digitos = digitos.slice(2);
+
+  if (digitos.length === 11) {
+    return `(${digitos.slice(0, 2)}) ${digitos.slice(2, 7)}-${digitos.slice(7)}`;
+  }
+  if (digitos.length === 10) {
+    return `(${digitos.slice(0, 2)}) ${digitos.slice(2, 6)}-${digitos.slice(6)}`;
+  }
+  return original;
+}

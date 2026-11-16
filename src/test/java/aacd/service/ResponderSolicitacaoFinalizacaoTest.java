@@ -65,7 +65,8 @@ class ResponderSolicitacaoFinalizacaoTest {
 
         when(solicitacaoDao.buscarSolicitacaoPorId(conn, SOLICITACAO_ID)).thenReturn(solicitacao);
         when(impressoraDao.buscarPorId(conn, IMPRESSORA_ID)).thenReturn(impressora);
-        when(solicitacaoDao.finalizar(eq(conn), eq(SOLICITACAO_ID), any())).thenReturn(true);
+        // 4 argumentos: conn, id, novoStatus, justificativa (pode ser null)
+        when(solicitacaoDao.finalizar(eq(conn), eq(SOLICITACAO_ID), any(), any())).thenReturn(true);
 
         service = new ResponderSolicitacao(solicitacaoDao, eventosDao, impressoraDao, permissao);
     }
@@ -81,7 +82,7 @@ class ResponderSolicitacaoFinalizacaoTest {
     void concluirMudaStatusRegistraEventoEComita() throws Exception {
         service.concluir(ator, SOLICITACAO_ID);
 
-        verify(solicitacaoDao).finalizar(conn, SOLICITACAO_ID, StatusSolicitacao.CONCLUIDA);
+        verify(solicitacaoDao).finalizar(conn, SOLICITACAO_ID, StatusSolicitacao.CONCLUIDA, null);
         verify(eventosDao).registrarEvento(eq(SOLICITACAO_ID), eq(StatusSolicitacao.EM_ANDAMENTO),
                 eq(StatusSolicitacao.CONCLUIDA), eq(ATOR_ID), eq("Concluída pela empresa"), isNull());
         verify(conn).commit();
@@ -120,7 +121,7 @@ class ResponderSolicitacaoFinalizacaoTest {
 
         assertThrows(IllegalArgumentException.class, () -> service.concluir(ator, SOLICITACAO_ID));
 
-        verify(solicitacaoDao, never()).finalizar(any(), anyInt(), any());
+        verify(solicitacaoDao, never()).finalizar(any(), anyInt(), any(), any());
         verify(conn).rollback();
         verify(conn, never()).commit();
     }
@@ -131,7 +132,7 @@ class ResponderSolicitacaoFinalizacaoTest {
 
         assertThrows(IllegalArgumentException.class, () -> service.concluir(ator, SOLICITACAO_ID));
 
-        verify(solicitacaoDao, never()).finalizar(any(), anyInt(), any());
+        verify(solicitacaoDao, never()).finalizar(any(), anyInt(), any(), any());
         verify(conn).rollback();
     }
 
@@ -141,7 +142,7 @@ class ResponderSolicitacaoFinalizacaoTest {
 
         assertThrows(IllegalStateException.class, () -> service.concluir(ator, SOLICITACAO_ID));
 
-        verify(solicitacaoDao, never()).finalizar(any(), anyInt(), any());
+        verify(solicitacaoDao, never()).finalizar(any(), anyInt(), any(), any());
         verifyNoInteractions(eventosDao);
         verify(conn).rollback();
         verify(conn, never()).commit();
@@ -149,7 +150,7 @@ class ResponderSolicitacaoFinalizacaoTest {
 
     @Test
     void concluirFalhaSeCancelamentoSimultaneoGanhouACorrida() throws Exception {
-        when(solicitacaoDao.finalizar(eq(conn), eq(SOLICITACAO_ID), any())).thenReturn(false);
+        when(solicitacaoDao.finalizar(eq(conn), eq(SOLICITACAO_ID), any(), any())).thenReturn(false);
 
         assertThrows(IllegalStateException.class, () -> service.concluir(ator, SOLICITACAO_ID));
 
@@ -175,7 +176,7 @@ class ResponderSolicitacaoFinalizacaoTest {
     void falharMudaStatusRegistraMotivoEComita() throws Exception {
         service.falhar(ator, SOLICITACAO_ID, "  filamento acabou  ");
 
-        verify(solicitacaoDao).finalizar(conn, SOLICITACAO_ID, StatusSolicitacao.FALHOU);
+        verify(solicitacaoDao).finalizar(conn, SOLICITACAO_ID, StatusSolicitacao.FALHOU, "filamento acabou");
         verify(eventosDao).registrarEvento(eq(SOLICITACAO_ID), eq(StatusSolicitacao.EM_ANDAMENTO),
                 eq(StatusSolicitacao.FALHOU), eq(ATOR_ID), eq("filamento acabou"), isNull());
         verify(conn).commit();
@@ -185,6 +186,7 @@ class ResponderSolicitacaoFinalizacaoTest {
     void falharSemMotivoUsaObservacaoPadrao() throws Exception {
         service.falhar(ator, SOLICITACAO_ID, "   ");
 
+        verify(solicitacaoDao).finalizar(conn, SOLICITACAO_ID, StatusSolicitacao.FALHOU, null);
         verify(eventosDao).registrarEvento(eq(SOLICITACAO_ID), eq(StatusSolicitacao.EM_ANDAMENTO),
                 eq(StatusSolicitacao.FALHOU), eq(ATOR_ID), eq("Falhou"), isNull());
         verify(conn).commit();
@@ -194,6 +196,7 @@ class ResponderSolicitacaoFinalizacaoTest {
     void falharComMotivoNuloUsaObservacaoPadrao() throws Exception {
         service.falhar(ator, SOLICITACAO_ID, null);
 
+        verify(solicitacaoDao).finalizar(conn, SOLICITACAO_ID, StatusSolicitacao.FALHOU, null);
         verify(eventosDao).registrarEvento(eq(SOLICITACAO_ID), eq(StatusSolicitacao.EM_ANDAMENTO),
                 eq(StatusSolicitacao.FALHOU), eq(ATOR_ID), eq("Falhou"), isNull());
     }
@@ -211,8 +214,11 @@ class ResponderSolicitacaoFinalizacaoTest {
 
     @Test
     void falharAceitaMotivoComExatamente500Caracteres() throws Exception {
-        service.falhar(ator, SOLICITACAO_ID, "x".repeat(500));
+        String motivo = "x".repeat(500);
 
+        service.falhar(ator, SOLICITACAO_ID, motivo);
+
+        verify(solicitacaoDao).finalizar(conn, SOLICITACAO_ID, StatusSolicitacao.FALHOU, motivo);
         verify(conn).commit();
     }
 
@@ -233,7 +239,7 @@ class ResponderSolicitacaoFinalizacaoTest {
         assertThrows(IllegalStateException.class,
                 () -> service.falhar(ator, SOLICITACAO_ID, "motivo"));
 
-        verify(solicitacaoDao, never()).finalizar(any(), anyInt(), any());
+        verify(solicitacaoDao, never()).finalizar(any(), anyInt(), any(), any());
         verify(conn).rollback();
     }
 }

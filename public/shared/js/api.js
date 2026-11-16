@@ -74,6 +74,8 @@ export const api = {
     requisitar('GET', `/api/solicitacao/detalhe?id=${encodeURIComponent(id)}`),
   responderSolicitacao: (dados) =>
     requisitar('POST', '/api/solicitacao/responder', dados),
+    // Contato da AACD (admin responsável pelo projeto), visível para a empresa
+  contatoAacd: () => requisitar('GET', '/api/contato-aacd'),
   
   editarNomeUsuario: (dados) => requisitar('POST', '/api/usuario/nome', dados),
   editarIdentificadorUsuario: (dados) => requisitar('POST', '/api/usuario/identificador', dados),

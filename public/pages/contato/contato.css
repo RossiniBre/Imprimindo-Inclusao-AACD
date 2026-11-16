@@ -294,3 +294,56 @@
     width: 100%;
   }
 }
+
+.contato__colunas {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  align-items: stretch; /* antes: start */
+}
+
+.contato__cartao {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 1.25rem 1.375rem;
+  border: 1px solid var(--cor-borda);
+  border-radius: 0.75rem;
+  background: var(--cor-superficie);
+}
+
+/* botão sempre na base do cartão, na mesma altura entre cartões vizinhos */
+.contato__cartao > .contato__botao {
+  align-self: flex-start;
+  margin-top: auto;
+}
+
+/* mantém o espaço entre o último texto e o botão quando o cartão é o mais alto */
+.contato__cartao > :nth-last-child(2) {
+  margin-bottom: 0.875rem;
+}
+
+.contato__texto {
+  margin-top: 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--cor-texto);
+}
+
+.contato__duvida {
+  border-top: 1px solid var(--cor-borda);
+}
+
+.contato__duvida summary {
+  padding: 0.875rem 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.contato__duvida p {
+  padding-bottom: 0.875rem;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--cor-texto-suave);
+}

@@ -44,9 +44,15 @@
 /* ---------- Cartões ---------- */
 
 .ei__cartoes {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-content: start;
   gap: 0.875rem;
+  padding: 3px;
+  margin: 0 -3px;
 }
 
 .ei__cartao {
@@ -65,8 +71,8 @@
 
 .ei__cartao--escolhida,
 .ei__cartao--escolhida:hover {
-  border-color: var(--cor-sucesso);
-  box-shadow: 0 0 0 2px var(--cor-sucesso-claro);
+  border-color: var(--cor-botao-principal);
+  box-shadow: 0 0 0 2px rgba(239, 176, 0, 0.3);
 }
 
 .ei__cartao-topo {
@@ -148,6 +154,28 @@
   color: var(--cor-superficie);
 }
 
+.ei__selecionar {
+  min-width: 7.5rem;
+  border: 1px solid var(--cor-botao-principal);
+  background: var(--cor-superficie);
+  color: var(--cor-texto);
+  font-weight: 700;
+  transition: background 0.2s;
+}
+
+.ei__selecionar:hover {
+  background: rgba(239, 176, 0, 0.15);
+}
+
+.ei__selecionar[aria-pressed="true"] {
+  background: var(--cor-botao-principal);
+  color: var(--cor-texto);
+}
+
+.ei__selecionar[aria-pressed="true"]:hover {
+  background: var(--cor-botao-principal-hover);
+}
+
 /* ---------- Avisos, lista vazia e rodapé ---------- */
 
 .ei__rodape {
@@ -204,25 +232,17 @@
 /* ---------- Barra do "Continuar" (presa ao pé da janela) ---------- */
 
 .ei__barra {
-  position: sticky;
-  bottom: 1rem;
-  z-index: 5;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  margin-top: 1.25rem;
+  margin-top: 1rem;
   padding: 0.75rem 0.875rem 0.75rem 1.125rem;
-  border: 1px solid var(--cor-sucesso);
+  border: 1px solid var(--cor-botao-principal);
   border-radius: 0.625rem;
   background: var(--cor-superficie);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-}
-
-.ei__barra p {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
 }
 
 .ei__barra small {
@@ -230,7 +250,13 @@
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--cor-sucesso);
+  color: #8a6500;
+}
+
+.ei__barra p {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
 }
 
 .ei__barra strong {
@@ -247,15 +273,15 @@
   padding: 0 1.5rem;
   border: 1px solid transparent;
   border-radius: 0.375rem;
-  background: var(--cor-sucesso);
-  color: var(--cor-superficie);
+  background: var(--cor-botao-principal);
+  color: var(--cor-texto);
   font-size: 0.875rem;
   font-weight: 700;
-  transition: filter 0.2s;
+  transition: background 0.2s;
 }
 
 .ei__continuar:hover:not(:disabled) {
-  filter: brightness(0.92);
+  background: var(--cor-botao-principal-hover);
 }
 
 /* ---------- Modal de detalhes ---------- */
@@ -404,5 +430,45 @@
   .ei__barra {
     flex-direction: column;
     align-items: stretch;
+  }
+}
+
+.escolher-impressora {
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+.escolher-impressora .ns__area {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.ei__caixa {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  max-height: 100%;
+  max-width: 52rem;
+}
+
+@media (max-width: 56rem) {
+  .escolher-impressora {
+    height: auto;
+    overflow: visible;
+  }
+
+  .escolher-impressora .ns__area {
+    overflow: visible;
+  }
+
+  .ei__cartoes {
+    overflow: visible;
+  }
+
+  .ei__barra {
+    position: sticky;
+    bottom: 1rem;
+    z-index: 5;
   }
 }

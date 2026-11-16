@@ -16,6 +16,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -38,6 +39,7 @@ class CriarSolicitacaoTest {
     private static final String ARQUIVO_ID = "arquivo-gridfs-1";
     private static final String MONGO_ID = "6ac6a60e2cc2f73b96ef0dff";
     private static final String NOME = "peca.stl";
+    private static final String ADMIN_NOME = "admin.master";
 
     private FuncionarioDao funcionarioDao;
     private ImpressoraDao impressoraDao;
@@ -46,6 +48,8 @@ class CriarSolicitacaoTest {
     private ArmazenamentoArquivo armazenamento;
     private Connection conn;
     private Impressora impressora;
+    private Material material;
+    private LocalDate prazo;
     private CriarSolicitacao service;
 
     @BeforeEach
@@ -56,6 +60,10 @@ class CriarSolicitacaoTest {
         conteudoDao = mock(ConteudoSolicitacaoDao.class);
         armazenamento = mock(ArmazenamentoArquivo.class);
         conn = mock(Connection.class);
+
+        // Se Material for enum, troque por Material.values()[0]
+        material = mock(Material.class);
+        prazo = LocalDate.now().plusDays(7);
 
         Funcionario funcionario = mock(Funcionario.class);
         when(funcionario.getId()).thenReturn(FUNCIONARIO_ID);
@@ -77,14 +85,21 @@ class CriarSolicitacaoTest {
                 conteudoDao, armazenamento, () -> conn);
     }
 
+    // ---------- apoio ----------
+
     private InputStream arquivo() {
         return new ByteArrayInputStream("solid teste".getBytes());
     }
 
     private int criar(int usuarioId, int impressoraId, String titulo, int quantidade, String nome)
             throws Exception {
-        return service.criar(usuarioId, impressoraId, titulo, "Descricao", quantidade,
-                COMPRIMENTO_MM, LARGURA_MM, ALTURA_MM, nome, arquivo());
+        return service.criar(usuarioId, impressoraId, titulo, "Descricao", quantidade, material,
+                COMPRIMENTO_MM, LARGURA_MM, ALTURA_MM, prazo, nome, arquivo());
+    }
+
+    private int criarCom(int comprimento, int largura, int altura) throws Exception {
+        return service.criar(USUARIO_ID, IMPRESSORA_ID, "Titulo", "Descricao", 1, material,
+                comprimento, largura, altura, prazo, NOME, arquivo());
     }
 
     private void assertNadaGravado() throws Exception {
@@ -118,6 +133,8 @@ class CriarSolicitacaoTest {
         verify(conteudoDao).inserir(conteudo.capture());
         assertEquals("Titulo", conteudo.getValue().getTitulo());
         assertEquals(2, conteudo.getValue().getQuantidade());
+        assertSame(material, conteudo.getValue().getMaterial());
+        assertEquals(prazo, conteudo.getValue().getPrazoDesejado());
         assertEquals(COMPRIMENTO_MM, conteudo.getValue().getComprimentoMm());
         assertEquals(LARGURA_MM, conteudo.getValue().getLarguraMm());
         assertEquals(ALTURA_MM, conteudo.getValue().getAlturaMm());
@@ -130,6 +147,14 @@ class CriarSolicitacaoTest {
         assertEquals(FUNCIONARIO_ID, sol.getValue().getCriadoPor());
         assertEquals(IMPRESSORA_ID, sol.getValue().getImpressoraId());
         assertEquals(MONGO_ID, sol.getValue().getMongoId());
+    }
+
+    @Test
+    void prazoNuloEhAceito() throws Exception {
+        int id = service.criar(USUARIO_ID, IMPRESSORA_ID, "Titulo", "Descricao", 1, material,
+                COMPRIMENTO_MM, LARGURA_MM, ALTURA_MM, null, NOME, arquivo());
+
+        assertEquals(42, id);
     }
 
     // ---------- recusas antes de gravar ----------
@@ -183,15 +208,40 @@ class CriarSolicitacaoTest {
 
     @Test
     void medidaInvalidaEhRecusadaAntesDeQualquerAcesso() throws Exception {
-        assertThrows(IllegalArgumentException.class, () -> service.criar(USUARIO_ID, IMPRESSORA_ID,
-                "Titulo", "Descricao", 1, 0, LARGURA_MM, ALTURA_MM, NOME, arquivo()));
-        assertThrows(IllegalArgumentException.class, () -> service.criar(USUARIO_ID, IMPRESSORA_ID,
-                "Titulo", "Descricao", 1, COMPRIMENTO_MM, -1, ALTURA_MM, NOME, arquivo()));
-        assertThrows(IllegalArgumentException.class, () -> service.criar(USUARIO_ID, IMPRESSORA_ID,
-                "Titulo", "Descricao", 1, COMPRIMENTO_MM, LARGURA_MM, 0, NOME, arquivo()));
+        assertThrows(IllegalArgumentException.class, () -> criarCom(0, LARGURA_MM, ALTURA_MM));
+        assertThrows(IllegalArgumentException.class, () -> criarCom(COMPRIMENTO_MM, -1, ALTURA_MM));
+        assertThrows(IllegalArgumentException.class, () -> criarCom(COMPRIMENTO_MM, LARGURA_MM, 0));
 
         verifyNoInteractions(funcionarioDao, impressoraDao);
         assertNadaGravado();
+    }
+
+    @Test
+    void materialNuloEhRecusadoAntesDeQualquerAcesso() throws Exception {
+        assertThrows(IllegalArgumentException.class, () -> service.criar(USUARIO_ID, IMPRESSORA_ID,
+                "Titulo", "Descricao", 1, null, COMPRIMENTO_MM, LARGURA_MM, ALTURA_MM,
+                prazo, NOME, arquivo()));
+
+        verifyNoInteractions(funcionarioDao, impressoraDao);
+        assertNadaGravado();
+    }
+
+    @Test
+    void prazoNoPassadoEhRecusadoAntesDeQualquerAcesso() throws Exception {
+        assertThrows(IllegalArgumentException.class, () -> service.criar(USUARIO_ID, IMPRESSORA_ID,
+                "Titulo", "Descricao", 1, material, COMPRIMENTO_MM, LARGURA_MM, ALTURA_MM,
+                LocalDate.now().minusDays(1), NOME, arquivo()));
+
+        verifyNoInteractions(funcionarioDao, impressoraDao);
+        assertNadaGravado();
+    }
+
+    @Test
+    void prazoDeHojeEhAceito() throws Exception {
+        int id = service.criar(USUARIO_ID, IMPRESSORA_ID, "Titulo", "Descricao", 1, material,
+                COMPRIMENTO_MM, LARGURA_MM, ALTURA_MM, LocalDate.now(), NOME, arquivo());
+
+        assertEquals(42, id);
     }
 
     // ---------- validação de volume ----------
@@ -200,8 +250,7 @@ class CriarSolicitacaoTest {
     void pecaMaiorQueAImpressoraEhRecusadaSemGravarNada() throws Exception {
         // 300 > maior eixo da impressora (250), não cabe em nenhuma rotação
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> service.criar(USUARIO_ID, IMPRESSORA_ID, "Titulo", "Descricao", 1,
-                        300, 100, 100, NOME, arquivo()));
+                () -> criarCom(300, 100, 100));
 
         assertTrue(ex.getMessage().contains("não cabe"));
         assertNadaGravado();
@@ -211,28 +260,20 @@ class CriarSolicitacaoTest {
     @Test
     void pecaComDuasDimensoesGrandesEhRecusada() throws Exception {
         // 250 x 250 x 10: dois eixos acima de 220
-        assertThrows(IllegalArgumentException.class,
-                () -> service.criar(USUARIO_ID, IMPRESSORA_ID, "Titulo", "Descricao", 1,
-                        250, 250, 10, NOME, arquivo()));
+        assertThrows(IllegalArgumentException.class, () -> criarCom(250, 250, 10));
         assertNadaGravado();
     }
 
     @Test
     void pecaQueSoCabeGiradaEhAceita() throws Exception {
         // 250 x 60 x 40 só cabe com o lado de 250 na altura da impressora
-        int id = service.criar(USUARIO_ID, IMPRESSORA_ID, "Titulo", "Descricao", 1,
-                250, 60, 40, NOME, arquivo());
-
-        assertEquals(42, id);
+        assertEquals(42, criarCom(250, 60, 40));
         verify(conn).commit();
     }
 
     @Test
     void pecaIgualAoVolumeDaImpressoraEhAceita() throws Exception {
-        int id = service.criar(USUARIO_ID, IMPRESSORA_ID, "Titulo", "Descricao", 1,
-                IMP_COMPRIMENTO_MM, IMP_LARGURA_MM, IMP_ALTURA_MM, NOME, arquivo());
-
-        assertEquals(42, id);
+        assertEquals(42, criarCom(IMP_COMPRIMENTO_MM, IMP_LARGURA_MM, IMP_ALTURA_MM));
     }
 
     // ---------- falhas durante a gravação (compensação) ----------
@@ -302,20 +343,25 @@ class CriarSolicitacaoTest {
         verify(conn).close();
     }
 
-    private static final String ADMIN_IDENTIFICADOR = "admin.master";
+    // ---------- criarComoAdmin ----------
 
     private Usuario usuario(String perfil, boolean ativo) {
         Usuario u = mock(Usuario.class);
         when(u.getPerfil()).thenReturn(perfil);
         when(u.isAtivo()).thenReturn(ativo);
-        when(u.getIdentificador()).thenReturn(ADMIN_IDENTIFICADOR);
+        when(u.getNome()).thenReturn(ADMIN_NOME);
         return u;
     }
 
     private int criarComoAdmin(Usuario admin, int impressoraId, String titulo, int quantidade, String nome)
             throws Exception {
-        return service.criarComoAdmin(admin, impressoraId, titulo, "Descricao", quantidade,
-                COMPRIMENTO_MM, LARGURA_MM, ALTURA_MM, nome, arquivo());
+        return service.criarComoAdmin(admin, impressoraId, titulo, "Descricao", quantidade, material,
+                COMPRIMENTO_MM, LARGURA_MM, ALTURA_MM, prazo, nome, arquivo());
+    }
+
+    private int criarComoAdminCom(int comprimento, int largura, int altura) throws Exception {
+        return service.criarComoAdmin(usuario("ADMIN", true), IMPRESSORA_ID, "Titulo", "Descricao", 1,
+                material, comprimento, largura, altura, prazo, NOME, arquivo());
     }
 
     // ---------- criarComoAdmin: caminho feliz ----------
@@ -335,20 +381,20 @@ class CriarSolicitacaoTest {
     }
 
     @Test
-    void adminGravaCriadoPorNuloEIdentificadorDoAdmin() throws Exception {
+    void adminGravaCriadoPorNuloENomeDoAdmin() throws Exception {
         criarComoAdmin(usuario("ADMIN", true), IMPRESSORA_ID, "Titulo", 2, NOME);
 
         ArgumentCaptor<SolicitacaoImpressao> sol = ArgumentCaptor.forClass(SolicitacaoImpressao.class);
         verify(solicitacaoDao).inserir(eq(conn), sol.capture());
         assertNull(sol.getValue().getCriadoPor());
-        assertEquals(ADMIN_IDENTIFICADOR, sol.getValue().getCriadoPorNome());
+        assertEquals(ADMIN_NOME, sol.getValue().getCriadoPorNome());
         assertEquals(EMPRESA_ID, sol.getValue().getEmpresaId());
         assertEquals(IMPRESSORA_ID, sol.getValue().getImpressoraId());
         assertEquals(MONGO_ID, sol.getValue().getMongoId());
     }
 
     @Test
-    void adminGravaAsMedidasNoConteudo() throws Exception {
+    void adminGravaMedidasMaterialEPrazoNoConteudo() throws Exception {
         criarComoAdmin(usuario("ADMIN", true), IMPRESSORA_ID, "Titulo", 2, NOME);
 
         ArgumentCaptor<ConteudoSolicitacao> conteudo = ArgumentCaptor.forClass(ConteudoSolicitacao.class);
@@ -356,6 +402,8 @@ class CriarSolicitacaoTest {
         assertEquals(COMPRIMENTO_MM, conteudo.getValue().getComprimentoMm());
         assertEquals(LARGURA_MM, conteudo.getValue().getLarguraMm());
         assertEquals(ALTURA_MM, conteudo.getValue().getAlturaMm());
+        assertSame(material, conteudo.getValue().getMaterial());
+        assertEquals(prazo, conteudo.getValue().getPrazoDesejado());
     }
 
     @Test
@@ -413,9 +461,28 @@ class CriarSolicitacaoTest {
 
     @Test
     void adminComMedidaInvalidaEhRecusadoAntesDeQualquerAcesso() throws Exception {
+        assertThrows(IllegalArgumentException.class,
+                () -> criarComoAdminCom(COMPRIMENTO_MM, 0, ALTURA_MM));
+
+        verifyNoInteractions(funcionarioDao, impressoraDao);
+        assertNadaGravado();
+    }
+
+    @Test
+    void adminComMaterialNuloEhRecusado() throws Exception {
         assertThrows(IllegalArgumentException.class, () -> service.criarComoAdmin(
-                usuario("ADMIN", true), IMPRESSORA_ID, "Titulo", "Descricao", 1,
-                COMPRIMENTO_MM, 0, ALTURA_MM, NOME, arquivo()));
+                usuario("ADMIN", true), IMPRESSORA_ID, "Titulo", "Descricao", 1, null,
+                COMPRIMENTO_MM, LARGURA_MM, ALTURA_MM, prazo, NOME, arquivo()));
+
+        verifyNoInteractions(funcionarioDao, impressoraDao);
+        assertNadaGravado();
+    }
+
+    @Test
+    void adminComPrazoNoPassadoEhRecusado() throws Exception {
+        assertThrows(IllegalArgumentException.class, () -> service.criarComoAdmin(
+                usuario("ADMIN", true), IMPRESSORA_ID, "Titulo", "Descricao", 1, material,
+                COMPRIMENTO_MM, LARGURA_MM, ALTURA_MM, LocalDate.now().minusDays(1), NOME, arquivo()));
 
         verifyNoInteractions(funcionarioDao, impressoraDao);
         assertNadaGravado();
@@ -442,8 +509,7 @@ class CriarSolicitacaoTest {
     @Test
     void adminComPecaMaiorQueAImpressoraEhRecusadoSemGravarNada() throws Exception {
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> service.criarComoAdmin(usuario("ADMIN", true), IMPRESSORA_ID,
-                        "Titulo", "Descricao", 1, 300, 100, 100, NOME, arquivo()));
+                () -> criarComoAdminCom(300, 100, 100));
 
         assertTrue(ex.getMessage().contains("não cabe"));
         assertNadaGravado();

@@ -1,12 +1,13 @@
 // Impressoras da rede (lado AACD): lista TODAS as impressoras das empresas parceiras, separadas
-// em seções (Livres, Em uso e Desativadas) e filtra por UF e material. "Ver detalhes" leva para
-// a tela Nova solicitação (#/nova-solicitacao), que substituiu o modal que ficava aqui.
+// em seções (Livres, Em uso e Desativadas) e filtra por UF e material. "Ver detalhes" abre um
+// modal só de leitura com os dados da impressora.
 // As funções puras de validação continuam neste arquivo e são usadas pelas telas
 // nova-solicitacao e reescolher-empresa.
 
 import { api } from '../../shared/js/api.js';
 import {
   MATERIAIS, DISPONIBILIDADE, cidadeUf, medidas, cabeNaImpressora, codigosMateriais, rotuloMaterial,
+  formatarTelefone,
 } from '../../shared/js/dominio.js';
 import { elemento, chip, criarModal } from '../../shared/js/ui.js';
 
@@ -19,7 +20,7 @@ export const QUANTIDADE_MAX = 1000;
 // ---------- Funções puras (testadas em tests/impressoras-aacd.test.js) ----------
 
 export function normalizar(texto) {
-  return String(texto ?? '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+  return String(texto ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 }
 
 // 'São Paulo, SP' -> 'SP'
@@ -186,10 +187,13 @@ export function checagens(dados, impressora) {
 // ---------- Tela ----------
 
 let modalFiltros = null;
+let modalDetalhes = null;
 
 export function destruir() {
   modalFiltros?.destruir();
   modalFiltros = null;
+  modalDetalhes?.destruir();
+  modalDetalhes = null;
 }
 
 export function iniciar(container, { params } = {}) {
@@ -233,7 +237,15 @@ export function iniciar(container, { params } = {}) {
   const resultadoFiltros = container.querySelector('#filtros-resultado');
   const limparFiltros = container.querySelector('#limpar-filtros');
 
+  const fundoDetalhes = container.querySelector('#modal-detalhes');
+  const detalhesTitulo = container.querySelector('#detalhes-titulo');
+  const detalhesLocal = container.querySelector('#detalhes-local');
+  const detalhesChips = container.querySelector('#detalhes-chips');
+  const detalhesLista = container.querySelector('#detalhes-lista');
+  const detalhesChecagem = container.querySelector('#detalhes-checagem');
+
   modalFiltros = criarModal(fundoFiltros, {});
+  modalDetalhes = criarModal(fundoDetalhes, {});
 
   // ----- Avisos -----
 
@@ -318,7 +330,7 @@ export function iniciar(container, { params } = {}) {
     const rodape = elemento('div', 'cartao__rodape');
     rodape.appendChild(elemento('span', 'cartao__mesa', `Impressora ${i.id}`));
     if (desativada) {
-      // Desativada: aparece na lista, mas não dá para solicitar impressão nela
+      // Desativada: aparece na lista, mas não há o que detalhar para pedidos
       rodape.appendChild(elemento('span', 'cartao__indisponivel', 'Sem pedidos'));
     } else {
       const botao = elemento('button', 'botao-principal', 'Ver detalhes');
@@ -386,6 +398,10 @@ export function iniciar(container, { params } = {}) {
         ...i,
         cidade,
         uf: ufDaCidade(cidade),
+        contato: {
+          email: parceirosPorId[i.empresa?.id]?.email ?? '',
+          telefone: parceirosPorId[i.empresa?.id]?.telefone ?? '',
+        },
         // Sem o campo, a impressora conta como ativa; só `false` (ou 0) é desativada
         ativo: !(i.ativo === false || i.ativo === 0),
       };
@@ -417,12 +433,91 @@ export function iniciar(container, { params } = {}) {
     renderizar();
   });
 
-  // ----- Nova solicitação -----
+  // ----- Modal: detalhes da impressora (só leitura) -----
 
-  // O pedido é criado na tela Nova solicitação; a impressora clicada vai como preferência
+  // A rota do painel não traz as medidas da mesa: elas vêm por empresa.
+  // Busca uma vez por empresa, só quando alguém abre os detalhes.
+  const empresasBuscadas = new Set();
+
+  async function completarMesa(i) {
+    const empresaId = i.empresa?.id;
+    if (!empresaId || medidas(i) || empresasBuscadas.has(empresaId)) return;
+    empresasBuscadas.add(empresaId);
+    try {
+      const resposta = await api.impressorasDoParceiro(empresaId);
+      if (resposta.ok && Array.isArray(resposta.corpo)) {
+        resposta.corpo.forEach((m) => {
+          const alvo = impressoras.find((x) => x.id === m.id);
+          if (alvo) {
+            Object.assign(alvo, {
+              comprimentoMm: m.comprimentoMm, larguraMm: m.larguraMm, alturaMm: m.alturaMm,
+            });
+          }
+        });
+      }
+    } catch {
+      empresasBuscadas.delete(empresaId); // tenta de novo na próxima abertura
+    }
+  }
+
+  function linhaResumo(estado, icone, rotulo, valor) {
+    const li = elemento('li', estado);
+    li.appendChild(elemento('span', 'ei__checagem-icone', icone));
+    li.appendChild(elemento('span', '', rotulo));
+    li.appendChild(elemento('span', '', valor));
+    return li;
+  }
+
+  async function abrirDetalhes(i) {
+    await completarMesa(i);
+
+    const nomeEmpresa = i.empresa?.nome ?? 'Empresa parceira';
+    const mesa = medidas(i);
+    const materiais = codigosMateriais(i).map(rotuloMaterial);
+    const disp = DISPONIBILIDADE[i.disponibilidade]
+      ?? { rotulo: i.disponibilidade, classe: 'chip--neutro' };
+
+    detalhesTitulo.textContent = i.modelo;
+    detalhesLocal.textContent = [nomeEmpresa, i.cidade].filter(Boolean).join(' · ');
+
+    detalhesChips.replaceChildren(
+      chip(disp.classe, disp.rotulo),
+      chip('chip--neutro', mesa ? `Mesa ${mesa}` : 'Mesa não informada'),
+      ...codigosMateriais(i).map((m) => chip('chip--contorno', rotuloMaterial(m))),
+    );
+
+    const linhas = [
+      ['Empresa', i.empresa?.nome],
+      ['Cidade', i.cidade],
+      ['E-mail', i.contato?.email],
+      ['Telefone', i.contato?.telefone ? formatarTelefone(i.contato.telefone) : ''],
+      ['Mesa de impressão', mesa || 'Não informada'],
+      ['Materiais', materiais.join(', ') || 'Não informados'],
+      ['Código na rede', `Impressora ${i.id}`],
+    ].filter(([, valor]) => valor);
+    detalhesLista.replaceChildren(...linhas.flatMap(([rotulo, valor]) => [
+      elemento('dt', '', rotulo),
+      elemento('dd', '', valor),
+    ]));
+
+    // Mesma tabela do passo "Escolher impressora", só com o que a impressora oferece
+    // (sem peça para comparar, então só a disponibilidade ganha ✓ ou ?)
+    const livre = i.disponibilidade === 'OCIOSA';
+    detalhesChecagem.replaceChildren(
+      linhaResumo('neutro', '•', 'Material', materiais.join(', ') || 'Não informados'),
+      linhaResumo('neutro', '•', 'Tamanho', mesa ? `Mesa até ${mesa}` : 'Mesa não informada'),
+      linhaResumo(livre ? 'ok' : 'duvida', livre ? '✓' : '?', 'Disponibilidade',
+        livre ? 'Livre agora' : 'Em uso: a empresa pode demorar para aceitar'),
+    );
+
+    modalDetalhes.abrir(fundoDetalhes.querySelector('[data-fechar]') ?? undefined);
+  }
+
   areaGrupos.addEventListener('click', (evento) => {
     const botao = evento.target.closest('button[data-id]');
-    if (botao) location.hash = `#/nova-solicitacao?impressora=${encodeURIComponent(botao.dataset.id)}`;
+    if (!botao) return;
+    const impressora = impressoras.find((i) => String(i.id) === botao.dataset.id);
+    if (impressora) abrirDetalhes(impressora);
   });
 
   // ----- Parâmetro da URL (#/impressoras-aacd?empresa=3) -----

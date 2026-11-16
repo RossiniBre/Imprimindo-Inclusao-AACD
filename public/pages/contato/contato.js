@@ -1,28 +1,22 @@
-// Contato (lado da empresa parceira): telefone, e-mail e responsável da AACD, onde e quando
-// retirar as peças e o formulário "Envie uma mensagem".
-// O back não tem rota de mensagem: "Enviar mensagem" abre o e-mail (Gmail, como na tela de
-// Doações) com destinatário, assunto e texto já preenchidos, e a empresa só confirma o envio.
+// Contato (lado da empresa parceira): telefone, e-mail e responsável da AACD e
+// explicação de como funciona a entrega. Não há formulário de mensagem: a conversa
+// é por e-mail ou telefone, e os cartões abrem o e-mail (Gmail) já endereçado.
 
 import { api } from '../../shared/js/api.js';
 import { copiarTexto } from '../../shared/js/ui.js';
 
-// Dados de contato da AACD. ATENÇÃO: são os valores de exemplo do Figma.
-// Troquem pelos dados reais antes de publicar (é o único lugar em que eles aparecem).
+// Dados oficiais da AACD que não mudam (telefone e ramal).
+// O e-mail do projeto e o responsável vêm do back (admin da AACD), nunca daqui.
+// Retirada: preencha com os dados reais. Campo vazio some da tela.
 export const CONTATO_AACD = {
   telefone: '(11) 5576-0000',
   telefoneHorario: 'Segunda a sexta, 8h às 17h',
   ramal: '2214',
-  email: 'projeto3d@aacd.org.br',
-  responsavel: {
-    nome: 'Ana Martins',
-    setor: 'Coordenação de Inovação',
-    email: 'ana.martins@aacd.org.br',
-  },
   retirada: {
-    endereco: 'Av. Exemplo, 1000 · São Paulo, SP',
-    entrada: 'Entrada pela portaria B, térreo',
-    horario: 'Segunda a sexta, 9h às 16h',
-    fechado: 'Fechado em feriados',
+    endereco: '',
+    entrada: '',
+    horario: '',
+    fechado: '',
   },
 };
 
@@ -67,6 +61,19 @@ export function validarMensagem(texto) {
   return null;
 }
 
+// Responsável pelo projeto = admin da AACD. Sem nome ou e-mail, devolve null.
+export function responsavelDoPerfil(perfil) {
+  const nome = String(perfil?.nome ?? '').trim();
+  const email = String(perfil?.email ?? '').trim();
+  if (!nome || !email) return null;
+  return {
+    nome,
+    email,
+    setor: String(perfil.setor ?? perfil.cargo ?? '').trim(),
+    ramal: String(perfil.ramal ?? '').trim(),
+  };
+}
+
 // Assunto e corpo do e-mail. O número do pedido vai no assunto, como a AACD pede.
 // `pedido` é o rótulo da opção escolhida ('Pedido 6502 · Prótese de mão') ou ''.
 export function montarEmail({ assunto, pedido = '', mensagem, empresa = {} }) {
@@ -90,27 +97,11 @@ export function iniciar(container) {
   const q = (seletor) => container.querySelector(seletor);
   const escrever = (seletor, texto) => { q(seletor).textContent = texto; };
 
-  let empresa = {};
-
-  // ----- Cartões de contato -----
+  // ----- Cartão do telefone (dado oficial fixo) -----
 
   escrever('#telefone', c.telefone);
   escrever('#telefone-horario', c.telefoneHorario);
   escrever('#telefone-ramal', `Ramal do projeto: ${c.ramal}`);
-  escrever('#email', c.email);
-  escrever('#responsavel', c.responsavel.nome);
-  escrever('#responsavel-setor', c.responsavel.setor);
-  escrever('#responsavel-contato', `${c.responsavel.email} · ramal ${c.ramal}`);
-  escrever('#escrever-responsavel', `Escrever para ${c.responsavel.nome.split(' ')[0]}`);
-
-  escrever('#retirada-endereco', c.retirada.endereco);
-  escrever('#retirada-entrada', c.retirada.entrada);
-  escrever('#retirada-horario', c.retirada.horario);
-  escrever('#retirada-fechado', c.retirada.fechado);
-
-  q('#escrever-email').href = linkDeEmail({ para: c.email });
-  q('#escrever-responsavel').href = linkDeEmail({ para: c.responsavel.email });
-  q('#ver-mapa').href = linkDoMapa(c.retirada.endereco);
 
   const botaoCopiar = q('#copiar-telefone');
   botaoCopiar.addEventListener('click', async () => {
@@ -118,66 +109,39 @@ export function iniciar(container) {
     if (!copiou) botaoCopiar.textContent = 'Não foi possível copiar';
   });
 
-  // ----- Formulário -----
+  // ----- E-mail do projeto e responsável: vêm do admin da AACD (back) -----
 
-  const form = q('#form-mensagem');
-  const campoAssunto = q('#campo-assunto');
-  const campoPedido = q('#campo-pedido');
-  const campoMensagem = q('#campo-mensagem');
-  const erro = q('#erro-mensagem');
-  const aviso = q('#aviso-envio');
+  const cartaoEmail = q('#email').closest('.contato__cartao');
+  const cartaoResponsavel = q('#responsavel').closest('.contato__cartao');
+  cartaoEmail.hidden = true;        // só aparecem quando os dados chegarem
+  cartaoResponsavel.hidden = true;
 
-  campoAssunto.replaceChildren(...ASSUNTOS.map((texto) => new Option(texto, texto)));
+  function mostrarEmailAacd(email) {
+    if (!email) return;
+    escrever('#email', email);
+    q('#escrever-email').href = linkDeEmail({ para: email });
+    cartaoEmail.hidden = false;
+  }
 
-  campoMensagem.addEventListener('input', () => {
-    aviso.hidden = true;
-    if (erro.textContent) {
-      erro.textContent = validarMensagem(campoMensagem.value) ?? '';
-      campoMensagem.classList.toggle('com-erro', Boolean(erro.textContent));
-    }
-  });
+  function mostrarResponsavel(resp) {
+    if (!resp) return;
+    escrever('#responsavel', resp.nome);
+    escrever('#responsavel-setor', resp.setor);
+    escrever('#responsavel-contato', resp.ramal ? `${resp.email} · ramal ${resp.ramal}` : resp.email);
+    escrever('#escrever-responsavel', `Escrever para ${resp.nome.split(' ')[0]}`);
+    q('#escrever-responsavel').href = linkDeEmail({ para: resp.email });
+    cartaoResponsavel.hidden = false;
+  }
 
-  form.addEventListener('submit', (evento) => {
-    evento.preventDefault();
-    aviso.hidden = true;
-
-    const problema = validarMensagem(campoMensagem.value);
-    erro.textContent = problema ?? '';
-    campoMensagem.classList.toggle('com-erro', Boolean(problema));
-    if (problema) {
-      campoMensagem.focus();
-      return;
-    }
-
-    const { assunto, corpo } = montarEmail({
-      assunto: campoAssunto.value,
-      pedido: campoPedido.value ? campoPedido.selectedOptions[0].textContent : '',
-      mensagem: campoMensagem.value,
-      empresa,
-    });
-    window.open(linkDeEmail({ para: c.email, assunto, corpo }), '_blank', 'noopener');
-
-    aviso.textContent = 'Abrimos o seu e-mail em outra aba com a mensagem pronta. Confira e clique em enviar por lá.';
-    aviso.hidden = false;
-  });
-
-  // ----- Dados da empresa logada: e-mail de resposta e pedidos -----
-
-  api.perfilEmpresa().then((resposta) => {
-    if (resposta.status === 401) {
-      location.hash = '#/login';
-      return;
-    }
-    if (!resposta.ok || !resposta.corpo) return;
-    empresa = resposta.corpo;
-    if (empresa.email) {
-      escrever('#resposta-email', empresa.email);
-      q('#resposta-para').hidden = false;
-    }
-  }).catch(() => { /* sem o perfil, a mensagem vai sem a assinatura da empresa */ });
-
-  api.solicitacoes().then((resposta) => {
-    if (!resposta.ok) return;
-    campoPedido.append(...opcoesDePedidos(resposta.corpo).map((o) => new Option(o.rotulo, o.valor)));
-  }).catch(() => { /* sem a lista, o campo fica só com "Nenhum pedido" */ });
+  api.contatoAacd()
+    .then((resposta) => {
+      if (resposta.status === 401) {
+        location.hash = '#/login';
+        return;
+      }
+      const resp = responsavelDoPerfil(resposta.ok ? resposta.corpo : null);
+      mostrarResponsavel(resp);
+      mostrarEmailAacd(resp?.email);
+    })
+    .catch(() => { /* sem o contato, os cartões de e-mail e responsável ficam ocultos */ });
 }

@@ -64,6 +64,7 @@ public final class Rotas {
         rota(servidor, "/api/funcionarios",
                 new FuncionarioHandler(sessoes, usuarioDao, new CadastrarFuncionario()));
         rota(servidor, "/api/funcionario/editar", new EditarFuncionarioHandler(sessoes));
+        rota(servidor, "/api/contato-aacd", new ContatoAacdHandler(sessoes, usuarioDao));
 
         // Parceiros (AACD)
         rota(servidor, "/api/parceiros", new ParceiroHandler(sessoes));

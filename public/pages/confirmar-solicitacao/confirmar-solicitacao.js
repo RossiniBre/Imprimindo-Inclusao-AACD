@@ -1,41 +1,61 @@
 // Nova solicitação de impressão, passo 3 de 3 (Confirmar e enviar), lado AACD.
-// Mostra os detalhes do rascunho (peça do passo 1 + impressora do passo 2) e, em
-// "Confirmar solicitação", cria o pedido no back (POST /api/solicitacoes, multipart).
 
 import { api } from '../../shared/js/api.js';
-import { medidas, rotuloMaterial } from '../../shared/js/dominio.js';
+import { medidas, rotuloMaterial, codigosMateriais, DISPONIBILIDADE } from '../../shared/js/dominio.js';
 import { elemento } from '../../shared/js/ui.js';
-import { formatarPrazo, montarDescricao } from '../impressoras-aacd/impressoras-aacd.js';
+import { formatarPrazo, montarDescricao, checagens } from '../impressoras-aacd/impressoras-aacd.js';
 import { mostrarQuemPreenche, formatarTamanho } from '../nova-solicitacao/nova-solicitacao.js';
-import { chipsDaImpressora, desenharChecagem } from '../escolher-impressora/escolher-impressora.js';
 import { rascunhoAtual, limparRascunho } from '../../shared/js/rascunho-solicitacao.js';
 
-// ---------- Funções puras (testadas em tests/confirmar-solicitacao.test.js) ----------
-
-// Linhas da tabela "Dados da peça": [rótulo, valor]
+// Linhas do "Resumo do pedido": [rótulo, valor]. O nome da peça vira o título do card
 export function linhasDoPedido(pedido) {
   const quantidade = Number(pedido.quantidade);
   return [
-    ['Nome da peça', pedido.titulo],
     ['Arquivo', `${pedido.arquivo.name} (${formatarTamanho(pedido.arquivo.size)})`],
     ['Material', rotuloMaterial(pedido.material)],
     ['Tamanho', medidas(pedido)],
     ['Quantidade', `${quantidade} peça${quantidade === 1 ? '' : 's'}`],
     ['Prazo desejado', pedido.prazo ? formatarPrazo(pedido.prazo) : 'Sem prazo definido'],
-    ['Observação', pedido.observacao || 'Nenhuma'],
   ];
 }
 
-// Campos que o back espera (SolicitacaoHandler.java). Material e prazo não têm campo
-// próprio: vão no começo da descrição, montada por montarDescricao.
+export function linhasDaChecagem(pedido, impressora) {
+  const estados = Object.fromEntries(checagens(pedido, impressora).map((c) => [c.rotulo, c.estado]));
+  const materiais = codigosMateriais(impressora).map(rotuloMaterial).join(', ');
+  const mesa = medidas(impressora);
+  const disp = DISPONIBILIDADE[impressora.disponibilidade]?.rotulo ?? impressora.disponibilidade;
+  return [
+    {
+      rotulo: 'Material',
+      precisa: rotuloMaterial(pedido.material),
+      tem: materiais || 'Não informados',
+      estado: estados.Material ?? 'incerto',
+    },
+    {
+      rotulo: 'Tamanho',
+      precisa: medidas(pedido),
+      tem: mesa ? `Mesa até ${mesa}` : 'Mesa não informada',
+      estado: estados.Tamanho ?? 'incerto',
+    },
+    {
+      rotulo: 'Disponibilidade',
+      precisa: pedido.prazo ? `Entrega até ${formatarPrazo(pedido.prazo)}` : 'Sem prazo definido',
+      tem: disp ?? 'Não informada',
+      estado: estados.Disponibilidade ?? 'incerto',
+    },
+  ];
+}
+
 export function montarFormulario(pedido) {
   const formData = new FormData();
   formData.append('titulo', pedido.titulo);
   formData.append('descricao', montarDescricao(pedido));
   formData.append('quantidade', String(pedido.quantidade));
+  formData.append('material', pedido.material);
   formData.append('comprimentoMm', String(pedido.comprimentoMm));
   formData.append('larguraMm', String(pedido.larguraMm));
   formData.append('alturaMm', String(pedido.alturaMm));
+  if (pedido.prazo) formData.append('prazoDesejado', pedido.prazo);
   formData.append('impressoraId', String(pedido.impressora.id));
   formData.append('arquivo', pedido.arquivo, pedido.arquivo.name);
   return formData;
@@ -49,10 +69,11 @@ export function mensagemDeErro(resposta) {
 
 // ---------- Tela ----------
 
+const ROTULO_BOTAO = 'Enviar solicitação';
+
 export function iniciar(container) {
   const pedido = rascunhoAtual();
 
-  // Sem rascunho (página recarregada ou link direto) volta ao começo; sem impressora, ao passo 2
   if (!pedido?.arquivo) {
     location.hash = '#/nova-solicitacao';
     return;
@@ -69,29 +90,66 @@ export function iniciar(container) {
   const erro = container.querySelector('#erro-envio');
   const botao = container.querySelector('#botao-confirmar');
 
-  mostrarQuemPreenche(container);
+  // ----- Impressora e tabela de requisitos -----
 
   container.querySelector('#imp-modelo').textContent = impressora.modelo;
   container.querySelector('#imp-local').textContent = [empresa, impressora.cidade].filter(Boolean).join(' · ');
-  container.querySelector('#imp-chips').replaceChildren(...chipsDaImpressora(impressora));
 
-  container.querySelector('#dados').replaceChildren(...linhasDoPedido(pedido).flatMap(([rotulo, valor]) => [
-    elemento('dt', '', rotulo),
-    elemento('dd', '', valor),
-  ]));
+  container.querySelector('#checagem').replaceChildren(...linhasDaChecagem(pedido, impressora).map((l) => {
+    const linha = elemento('tr', '');
 
-  desenharChecagem(container.querySelector('#checagem'), pedido, impressora);
+    const requisito = elemento('th', 'cs__requisito', l.rotulo);
+    requisito.scope = 'row';
+    linha.appendChild(requisito);
+
+    linha.appendChild(elemento('td', '', l.precisa));
+    linha.appendChild(elemento('td', '', l.tem));
+
+    const sinal = { ok: '✓', falha: '✕' }[l.estado] ?? '?';
+    const legenda = { ok: 'Atende', falha: 'Não atende' }[l.estado] ?? 'A confirmar';
+    const estado = elemento('td', `cs__estado cs__estado--${l.estado}`, sinal);
+    estado.setAttribute('aria-label', legenda);
+    linha.appendChild(estado);
+
+    return linha;
+  }));
+
+  // ----- Observação -----
+
+  container.querySelector('#observacao-texto').textContent = pedido.observacao || 'Nenhuma observação.';
+
+  // ----- Resumo do pedido -----
+
+  container.querySelector('#resumo-titulo').textContent = pedido.titulo;
+  container.querySelector('#dados').replaceChildren(...linhasDoPedido(pedido).flatMap(([rotulo, valor]) => {
+    const dd = elemento('dd', '', valor);
+    dd.title = valor; 
+    return [elemento('dt', '', rotulo), dd];
+  }));
+
+  function mostrarResponsavel() {
+    const texto = (seletor) => container.querySelector(seletor)?.textContent.trim() ?? '';
+    const nome = texto('#ns-usuario-nome');
+    if (!nome) return;
+    container.querySelector('#resp-nome').textContent = nome;
+    container.querySelector('#resp-papel').textContent = texto('#ns-usuario-papel');
+    container.querySelector('#resp-iniciais').textContent = texto('#ns-usuario-iniciais');
+    container.querySelector('#responsavel').hidden = false;
+  }
+  Promise.resolve(mostrarQuemPreenche(container)).then(mostrarResponsavel);
+
+  // ----- Envio -----
 
   function mostrarErro(texto) {
     erro.textContent = texto;
     erro.hidden = false;
     botao.disabled = false;
-    botao.textContent = 'Confirmar solicitação';
+    botao.textContent = ROTULO_BOTAO;
   }
 
   botao.addEventListener('click', async () => {
     erro.hidden = true;
-    botao.disabled = true;   // evita criar o pedido duas vezes com dois cliques
+    botao.disabled = true;
     botao.textContent = 'Enviando...';
 
     let resposta;
@@ -111,7 +169,6 @@ export function iniciar(container) {
       return;
     }
 
-    // Pedido criado: o rascunho acabou (voltar no navegador não reenvia nada)
     limparRascunho();
     const numero = resposta.corpo?.id;
     const titulo = container.querySelector('#sucesso-titulo');

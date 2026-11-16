@@ -60,79 +60,53 @@
     <div class="contato__colunas">
 
       <!-- Retirada das peças -->
-      <section class="contato__cartao" aria-labelledby="titulo-retirada">
-        <h2 class="contato__titulo" id="titulo-retirada">Retirada das peças</h2>
+      <!-- Como funciona a entrega -->
+      <section class="contato__cartao" aria-labelledby="titulo-entrega">
+        <h2 class="contato__titulo" id="titulo-entrega">Como funciona a entrega</h2>
 
-        <div class="contato__item">
-          <span class="contato__icone" aria-hidden="true">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 22s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12z"/>
-              <circle cx="12" cy="10" r="2.5"/>
-            </svg>
-          </span>
-          <div>
-            <p class="contato__rotulo">Endereço</p>
-            <p class="contato__valor" id="retirada-endereco"></p>
-            <p class="contato__detalhe" id="retirada-entrada"></p>
-          </div>
-        </div>
-
-        <div class="contato__item">
-          <span class="contato__icone" aria-hidden="true">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="9"/>
-              <polyline points="12 7 12 12 15.5 14"/>
-            </svg>
-          </span>
-          <div>
-            <p class="contato__rotulo">Horário</p>
-            <p class="contato__valor" id="retirada-horario"></p>
-            <p class="contato__detalhe" id="retirada-fechado"></p>
-          </div>
-        </div>
+        <p class="contato__texto">
+          A plataforma não cuida de envios nem de transporte das peças. Ela conecta a empresa e a AACD, e a entrega é combinada diretamente entre vocês.
+        </p>
+        <p class="contato__texto">
+          Essa conversa acontece por e-mail ou por telefone, usando os contatos acima. Use esses canais para combinar como a peça chega até a AACD: retirada, envio ou outra forma que funcione para os dois lados.
+        </p>
 
         <div class="contato__lembrete">
-          <strong>Antes de vir, avise a AACD por telefone ou e-mail.</strong>
-          <p>Assim a peça já fica separada na portaria e você não espera.</p>
+          <strong>Cite sempre o número do pedido.</strong>
+          <p>Assim a AACD identifica a peça rapidamente e responde por e-mail ou telefone.</p>
         </div>
-
-        <a class="contato__botao" id="ver-mapa" target="_blank" rel="noopener">Ver no mapa</a>
       </section>
 
-      <!-- Envie uma mensagem -->
-      <section class="contato__cartao" aria-labelledby="titulo-mensagem">
-        <h2 class="contato__titulo" id="titulo-mensagem">Envie uma mensagem</h2>
-        <p class="contato__detalhe contato__detalhe--abaixo">A equipe da AACD responde por e-mail em até 1 dia útil.</p>
+      <!-- Dúvidas frequentes -->
+    <section class="contato__cartao" aria-labelledby="titulo-duvidas">
+      <h2 class="contato__titulo" id="titulo-duvidas">Dúvidas frequentes</h2>
+      <p class="contato__detalhe contato__detalhe--abaixo">Veja se a resposta já está aqui antes de entrar em contato.</p>
 
-        <form id="form-mensagem" novalidate>
-          <div class="contato__linha">
-            <div class="contato__campo">
-              <label for="campo-assunto">Assunto</label>
-              <select id="campo-assunto" name="assunto"></select>
-            </div>
-            <div class="contato__campo">
-              <label for="campo-pedido">Pedido relacionado <span class="contato__opcional">(opcional)</span></label>
-              <select id="campo-pedido" name="pedido">
-                <option value="">Nenhum pedido</option>
-              </select>
-            </div>
-          </div>
+      <details class="contato__duvida">
+        <summary>Quem cuida do envio da peça?</summary>
+        <p>A plataforma não faz envios nem transporte. A empresa e a AACD combinam a entrega diretamente, por e-mail ou telefone.</p>
+      </details>
 
-          <div class="contato__campo">
-            <label for="campo-mensagem">Mensagem</label>
-            <textarea id="campo-mensagem" name="mensagem" rows="5" maxlength="1500" placeholder="Descreva sua dúvida. Se for sobre um pedido, diga o número e o que aconteceu." aria-describedby="erro-mensagem"></textarea>
-            <p class="contato__erro" id="erro-mensagem" aria-live="polite"></p>
-          </div>
+      <details class="contato__duvida">
+        <summary>Qual o prazo de resposta?</summary>
+        <p>Por e-mail, a AACD responde em até 1 dia útil. Por telefone, o atendimento é de segunda a sexta, das 8h às 17h.</p>
+      </details>
 
-          <p class="contato__resposta" id="resposta-para" hidden>
-            A resposta será enviada para <strong id="resposta-email"></strong>
-          </p>
+      <details class="contato__duvida">
+        <summary>O que escrever no e-mail?</summary>
+        <p>Cite o número do pedido no assunto e descreva o que aconteceu. Quanto mais claro, mais rápido a AACD resolve.</p>
+      </details>
 
-          <p class="contato__aviso" id="aviso-envio" role="status" hidden></p>
+      <details class="contato__duvida">
+        <summary>Tive um problema com impressora ou material</summary>
+        <p>Escreva para o e-mail do projeto informando o modelo da impressora, o material usado e o que ocorreu durante a impressão.</p>
+      </details>
 
-          <button type="submit" class="contato__enviar" id="botao-enviar">Enviar mensagem</button>
-        </form>
-      </section>
+      <details class="contato__duvida">
+        <summary>Preciso falar com alguém de imediato</summary>
+        <p>Ligue para o telefone da AACD e informe o ramal do projeto. Se for sobre um pedido, tenha o número em mãos.</p>
+      </details>
+    </section>
 
     </div>
 

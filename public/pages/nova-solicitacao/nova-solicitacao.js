@@ -15,7 +15,7 @@ export const PROXIMO_PASSO = '#/escolher-impressora';
 const PAPEIS = { ADMIN: 'Administrador AACD', FUNCIONARIO: 'Funcionário AACD' };
 
 // Ordem em que os erros aparecem na tela (o primeiro com erro recebe o foco)
-const ORDEM_ERROS = ['arquivo', 'titulo', 'prazo', 'material', 'medidas', 'quantidade'];
+const ORDEM_ERROS = ['arquivo', 'titulo', 'prazo', 'material', 'medidas', 'quantidade', 'observacao'];
 
 // 2516582 -> '2,4 MB'; 51200 -> '50 KB'
 export function formatarTamanho(bytes) {
@@ -104,6 +104,7 @@ export function iniciar(container, { params } = {}) {
     [campos.comprimentoMm, campos.larguraMm, campos.alturaMm].forEach((c) =>
       c.classList.toggle('com-erro', Boolean(errosVisiveis.medidas)));
     arquivoVazio.classList.toggle('com-erro', Boolean(errosVisiveis.arquivo));
+    observacao.classList.toggle('com-erro', Boolean(errosVisiveis.observacao));
   }
 
   function focarPrimeiroErro() {
@@ -115,6 +116,7 @@ export function iniciar(container, { params } = {}) {
       material: form.querySelector('input[name="material"]'),
       medidas: campos.comprimentoMm,
       quantidade: campos.quantidade,
+      observacao: observacao,
     };
     alvos[primeiro]?.focus();
   }
@@ -196,7 +198,11 @@ export function iniciar(container, { params } = {}) {
 
     const dados = lerFormulario();
     // Ainda não há impressora escolhida: aqui só valem as regras da própria peça
-    mostrarErros(validar(dados, null));
+    const erros = { ...validar(dados, null) };
+    if (!dados.observacao.trim()) {
+      erros.observacao = 'Descreva a peça ou deixe uma instrução para a empresa.';
+    }
+    mostrarErros(erros);
     if (Object.keys(errosVisiveis).length > 0) {
       focarPrimeiroErro();
       return;

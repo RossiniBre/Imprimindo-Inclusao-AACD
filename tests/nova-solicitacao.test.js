@@ -129,14 +129,20 @@ describe('nova solicitação: passo 1 (dados da peça)', () => {
 })
 
 describe('nova solicitação: rascunho e impressora de origem', () => {
-  beforeEach(() => limparRascunho())
+  beforeEach(() => {
+    limparRascunho()
+    location.hash = ''
+  })
 
   it('guarda a impressora que veio na URL (?impressora=12)', () => {
     abrir('impressora=12')
     escolherArquivo()
     preencher()
+    $('#campo-observacao').value = 'Peça infantil.'
     enviar()
+
     expect(rascunhoAtual().impressoraId).toBe(12)
+    expect(location.hash).toBe('#/escolher-impressora')
   })
 
   it('reabre com o que já estava no rascunho, inclusive o arquivo', () => {

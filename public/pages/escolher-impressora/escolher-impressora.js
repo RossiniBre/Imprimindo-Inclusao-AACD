@@ -1,26 +1,19 @@
 // Nova solicitação de impressão, passo 2 de 3 (Escolher impressora), lado AACD.
-// Lê o rascunho do passo 1 e mostra só as impressoras da rede que atendem ao pedido:
-// ativas, que trabalham com o material e em que a peça cabe na mesa.
-// "Ver detalhes" abre a ficha da impressora; "Selecionar" guarda a impressora no rascunho e
-// libera o "Continuar", que leva ao passo 3 (confirmar-solicitacao), onde o pedido é enviado.
 
 import { api } from '../../shared/js/api.js';
 import {
   DISPONIBILIDADE, cidadeUf, medidas, cabeNaImpressora, codigosMateriais, rotuloMaterial,
+  formatarTelefone,
 } from '../../shared/js/dominio.js';
 import { elemento, chip, criarModal } from '../../shared/js/ui.js';
 import { formatarPrazo, checagens } from '../impressoras-aacd/impressoras-aacd.js';
 import { mostrarQuemPreenche } from '../nova-solicitacao/nova-solicitacao.js';
 import { salvarRascunho, rascunhoAtual } from '../../shared/js/rascunho-solicitacao.js';
 
-// Rota do passo 3 (Confirmar e enviar)
 export const PROXIMO_PASSO = '#/confirmar-solicitacao';
 
 // ---------- Funções puras (testadas em tests/escolher-impressora.test.js) ----------
 
-// Por que a impressora NÃO atende ao pedido: 'desativada', 'material', 'tamanho' ou null (atende).
-// Sem a lista de materiais ou sem as medidas da mesa não dá para descartar: a impressora
-// continua na lista e o cartão avisa o que falta conferir.
 export function motivoDeNaoAtender(impressora, pedido) {
   if (impressora.ativo === false) return 'desativada';
   const materiais = codigosMateriais(impressora);
@@ -163,11 +156,11 @@ export function iniciar(container) {
     detalhes.setAttribute('aria-label', `Ver detalhes: ${i.modelo}, ${nomeDaEmpresa(i)}`);
     base.appendChild(detalhes);
 
-    const botao = elemento('button', 'ei__selecionar', escolhida ? 'Selecionada' : 'Selecionar');
+    const botao = elemento('button', 'ei__selecionar', escolhida ? 'Selecionada ✓' : 'Selecionar');
     botao.type = 'button';
     botao.dataset.id = i.id;
     botao.setAttribute('aria-pressed', String(escolhida));
-    botao.setAttribute('aria-label', `${escolhida ? 'Selecionada' : 'Selecionar'}: ${i.modelo}, ${nomeDaEmpresa(i)}`);
+    botao.setAttribute('aria-label', `${escolhida ? 'Desmarcar' : 'Selecionar'}: ${i.modelo}, ${nomeDaEmpresa(i)}`);
     base.appendChild(botao);
 
     cartao.appendChild(base);
@@ -182,7 +175,9 @@ export function iniciar(container) {
   }
 
   function desenharCartoes() {
+    const rolagem = cartoes.scrollTop;
     cartoes.replaceChildren(...compativeis.map(montarCartao));
+    cartoes.scrollTop = rolagem;
     desenharBarra();
   }
 
@@ -215,6 +210,12 @@ export function iniciar(container) {
     desenharCartoes();
   }
 
+  function desmarcar() {
+    escolhidaId = null;
+    salvarRascunho({ ...rascunhoAtual(), impressoraId: null, impressora: null });
+    desenharCartoes();
+  }
+
   container.querySelector('#botao-continuar').addEventListener('click', () => {
     if (rascunhoAtual()?.impressora) location.hash = PROXIMO_PASSO;
   });
@@ -231,7 +232,7 @@ export function iniciar(container) {
       ['Empresa', i.empresa?.nome],
       ['Cidade', i.cidade],
       ['E-mail', i.contato?.email],
-      ['Telefone', i.contato?.telefone],
+      ['Telefone', formatarTelefone(i.contato?.telefone)],
       ['Mesa de impressão', medidas(i) || 'Não informada'],
       ['Materiais', codigosMateriais(i).map(rotuloMaterial).join(', ') || 'Não informados'],
       ['Código na rede', `Impressora ${i.id}`],
@@ -244,8 +245,8 @@ export function iniciar(container) {
     desenharChecagem(fundoModal.querySelector('#modal-checagem'), pedido, i);
 
     const jaEscolhida = i.id === escolhidaId;
-    modalSelecionar.textContent = jaEscolhida ? 'Impressora selecionada' : 'Selecionar esta impressora';
-    modalSelecionar.disabled = jaEscolhida;
+    modalSelecionar.textContent = jaEscolhida ? 'Desmarcar esta impressora' : 'Selecionar esta impressora';
+    modalSelecionar.disabled = false;
     modal.abrir(fundoModal.querySelector('[data-fechar]'));
   }
 
@@ -253,8 +254,12 @@ export function iniciar(container) {
     const impressora = emDetalhe;
     if (!impressora) return;
     modal.fechar();
-    selecionar(impressora);
-    container.querySelector('#botao-continuar').focus();
+    if (impressora.id === escolhidaId) {
+      desmarcar();
+    } else {
+      selecionar(impressora);
+      container.querySelector('#botao-continuar').focus();
+    }
   });
 
   cartoes.addEventListener('click', (evento) => {
@@ -268,8 +273,13 @@ export function iniciar(container) {
       abrirDetalhes(impressora);
       return;
     }
-    selecionar(impressora);
+    if (impressora.id === escolhidaId) {
+      desmarcar();
+    } else {
+      selecionar(impressora);
+    }
     cartoes.querySelector(`button[data-id="${impressora.id}"]`)?.focus();
+
   });
 
   // ----- Carregar -----

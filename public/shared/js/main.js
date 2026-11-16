@@ -25,7 +25,6 @@ rota('/nova-solicitacao',   { pagina: 'nova-solicitacao',   publica: false, titu
 rota('/escolher-impressora', { pagina: 'escolher-impressora', publica: false, titulo: 'Escolher impressora' });
 rota('/confirmar-solicitacao', { pagina: 'confirmar-solicitacao', publica: false, titulo: 'Confirmar solicitação' });
 rota('/contato',            { pagina: 'contato',            publica: false, titulo: 'Contato' });
-rota('/reescolher-empresa', { pagina: 'reescolher-empresa', publica: false, titulo: 'Escolher empresa' });
 
 window.addEventListener('hashchange', desenharMenu);
 desenharMenu();
