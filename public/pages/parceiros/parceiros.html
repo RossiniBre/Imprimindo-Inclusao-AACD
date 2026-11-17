@@ -77,11 +77,35 @@
       <ul class="impressoras" id="impressoras-lista"></ul>
 
       <div class="modal__rodape">
+        <div class="modal__admin" id="acoes-admin" hidden>
+          <button type="button" class="botao-perigo botao-perigo--contorno" id="botao-desativar">Desativar empresa</button>
+          <button type="button" class="botao-perigo" id="botao-apagar">Apagar empresa</button>
+        </div>
         <button type="button" class="modal__secundario" data-fechar>Fechar</button>
-        <a class="botao-principal botao-principal--alto" id="link-solicitar" href="#/impressoras-aacd">Solicitar impressão</a>
       </div>
 
     </div>
   </div>
+
+  <!-- Modal: confirmar desativar / apagar empresa -->
+<div class="modal-fundo modal-fundo--topo" id="modal-confirmar" hidden>
+  <div class="modal modal--confirmar" role="alertdialog" aria-modal="true"
+       aria-labelledby="confirmar-titulo" aria-describedby="confirmar-texto">
+    <h2 id="confirmar-titulo"></h2>
+    <p class="confirmar__texto" id="confirmar-texto"></p>
+
+    <label class="confirmar__campo" id="confirmar-campo-senha" hidden>
+      <span>Sua senha de administrador</span>
+      <input type="password" id="confirmar-senha" autocomplete="current-password">
+    </label>
+
+    <p class="confirmar__erro" id="confirmar-erro" role="alert" hidden></p>
+
+    <div class="confirmar__botoes">
+      <button type="button" class="modal__secundario" id="confirmar-voltar">Voltar</button>
+      <button type="button" class="botao-perigo" id="confirmar-ok"></button>
+    </div>
+  </div>
+</div>
 
 </section>

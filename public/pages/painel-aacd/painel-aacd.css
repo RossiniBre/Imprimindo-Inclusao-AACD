@@ -775,6 +775,8 @@ main:has(> .painel) {
 }
 
 #modal-detalhes .det-fechar {
+  display: grid;
+  place-items: center;
   flex-shrink: 0;
   width: 2rem;
   height: 2rem;
@@ -784,8 +786,6 @@ main:has(> .painel) {
   border-radius: 50%;
   background: var(--cor-neutra-claro);
   color: var(--cor-texto);
-  font-size: 1.25rem;
-  line-height: 1;
   cursor: pointer;
 }
 

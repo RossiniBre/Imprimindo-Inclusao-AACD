@@ -1,5 +1,5 @@
 // Parceiros da AACD: empresas parceiras em cartões, números da rede e modal de detalhes
-// com as impressoras da empresa (cada uma leva à tela Nova solicitação).
+// com as impressoras da empresa. O admin também pode desativar ou apagar a empresa.
 
 import { api } from '../../shared/js/api.js';
 import { DISPONIBILIDADE, cidadeUf, medidas, codigosMateriais, rotuloMaterial } from '../../shared/js/dominio.js';
@@ -83,10 +83,25 @@ export function iniciar(container) {
   const impressorasContagem = container.querySelector('#impressoras-contagem');
   const impressorasEstado = container.querySelector('#impressoras-estado');
   const impressorasLista = container.querySelector('#impressoras-lista');
-  const linkSolicitar = container.querySelector('#link-solicitar');
+  const acoesAdmin = container.querySelector('#acoes-admin');
+  const botaoDesativar = container.querySelector('#botao-desativar');
+  const botaoApagar = container.querySelector('#botao-apagar');
+  const fundoConfirmar = container.querySelector('#modal-confirmar');
+  const confirmarTitulo = container.querySelector('#confirmar-titulo');
+  const confirmarTexto = container.querySelector('#confirmar-texto');
+  const campoSenha = container.querySelector('#confirmar-campo-senha');
+  const confirmarSenha = container.querySelector('#confirmar-senha');
+  const confirmarErro = container.querySelector('#confirmar-erro');
+  const confirmarVoltar = container.querySelector('#confirmar-voltar');
+  const confirmarOk = container.querySelector('#confirmar-ok');
+  let acaoConfirmada = null;
   let parceiroAberto = null;
 
   modal = criarModal(fundo, { aoFechar: () => { parceiroAberto = null; } });
+
+  api.eu()
+    .then((r) => { acoesAdmin.hidden = !(r.ok && r.corpo?.perfil === 'ADMIN'); })
+    .catch(() => {});
 
   function mostrarAviso(texto) {
     avisoGeral.textContent = texto;
@@ -204,9 +219,6 @@ export function iniciar(container) {
     codigosMateriais(i).forEach((m) => chips.appendChild(chip('chip--contorno', rotuloMaterial(m))));
     li.appendChild(chips);
 
-    const link = elemento('a', 'botao-linha', 'Solicitar');
-    link.href = `#/nova-solicitacao?impressora=${i.id}`;
-    li.appendChild(link);
     return li;
   }
 
@@ -264,11 +276,104 @@ export function iniciar(container) {
       dado('E-mail corporativo', linkDe('mailto:', p.email)),
       dado('Telefone', linkDe('tel:', p.telefone)),
     );
-    linkSolicitar.href = `#/impressoras-aacd?empresa=${p.id}`;
 
     modal.abrir(fundo.querySelector('.modal__fechar'));
     listarImpressoras(p);
   }
+
+  // ----- Ações de admin (desativar / apagar empresa) -----
+
+  const idConta = (p) => p.contaId ?? p.id;
+
+  function abrirConfirmacao({ titulo, texto, rotulo, pedirSenha = false, executar }) {
+    confirmarTitulo.textContent = titulo;
+    confirmarTexto.textContent = texto;
+    confirmarOk.textContent = rotulo;
+    confirmarOk.disabled = false;
+    confirmarSenha.value = '';
+    campoSenha.hidden = !pedirSenha;
+    confirmarErro.hidden = true;
+    acaoConfirmada = executar;
+    fundoConfirmar.hidden = false;
+    (pedirSenha ? confirmarSenha : confirmarVoltar).focus();
+  }
+
+  function fecharConfirmacao() {
+    fundoConfirmar.hidden = true;
+    confirmarSenha.value = '';
+    acaoConfirmada = null;
+  }
+
+  function erroConfirmacao(texto) {
+    confirmarErro.textContent = texto;
+    confirmarErro.hidden = false;
+    confirmarOk.disabled = false;
+  }
+
+  confirmarVoltar.addEventListener('click', fecharConfirmacao);
+
+  fundoConfirmar.addEventListener('click', (evento) => {
+    if (evento.target === fundoConfirmar) fecharConfirmacao();
+  });
+
+  fundoConfirmar.addEventListener('keydown', (evento) => {
+    if (evento.key === 'Escape') {
+      evento.stopPropagation();   // não fecha o modal do parceiro junto
+      fecharConfirmacao();
+    }
+    if (evento.key === 'Enter' && evento.target === confirmarSenha) confirmarOk.click();
+  });
+
+  confirmarOk.addEventListener('click', async () => {
+    if (!acaoConfirmada) return;
+    const senha = confirmarSenha.value;
+    if (!campoSenha.hidden && !senha) {
+      erroConfirmacao('Digite a sua senha para continuar.');
+      return;
+    }
+
+    confirmarOk.disabled = true;
+    confirmarErro.hidden = true;
+
+    let resposta;
+    try {
+      resposta = await acaoConfirmada(senha);
+    } catch {
+      erroConfirmacao('Sem conexão com o servidor.');
+      return;
+    }
+    if (!resposta.ok) {
+      erroConfirmacao(resposta.corpo?.erro ?? 'Não foi possível concluir a ação.');
+      return;
+    }
+
+    fecharConfirmacao();
+    fundo.querySelector('[data-fechar]')?.click();   // fecha o modal do parceiro
+    carregar();
+  });
+
+  botaoDesativar.addEventListener('click', () => {
+    if (!parceiroAberto) return;
+    const p = parceiroAberto;
+    abrirConfirmacao({
+      titulo: 'Desativar empresa?',
+      texto: `"${p.nome}" deixa de receber solicitações. Você pode reativar depois.`,
+      rotulo: 'Desativar',
+      executar: () => api.desativarConta(idConta(p)),
+    });
+  });
+
+  botaoApagar.addEventListener('click', () => {
+    if (!parceiroAberto) return;
+    const p = parceiroAberto;
+    abrirConfirmacao({
+      titulo: 'Apagar empresa?',
+      texto: `"${p.nome}" será apagada e isso não pode ser desfeito. Digite a sua senha para confirmar.`,
+      rotulo: 'Apagar',
+      pedirSenha: true,
+      executar: (senha) => api.excluirConta(idConta(p), senha),
+    });
+  });
 
   cartoes.addEventListener('click', (evento) => {
     const botao = evento.target.closest('button[data-id]');
