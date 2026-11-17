@@ -39,7 +39,14 @@
     <p class="tela__vazio" id="lista-carregando">Carregando parceiros...</p>
     <p class="tela__vazio" id="lista-vazia" hidden>Nenhum parceiro encontrado.</p>
 
+    <h2 class="secao-titulo">Empresas ativas <span class="modal__contagem" id="contagem-ativas"></span></h2>
     <div class="cartoes" id="cartoes"></div>
+
+    <div id="secao-desativadas" hidden>
+      <h2 class="secao-titulo">Empresas desativadas <span class="modal__contagem" id="contagem-desativadas"></span></h2>
+      <p class="tela__dica">Não recebem solicitações. Abra os detalhes para reativar.</p>
+      <div class="cartoes" id="cartoes-desativados"></div>
+    </div>
 
   </div>
 
@@ -95,9 +102,23 @@
     <p class="confirmar__texto" id="confirmar-texto"></p>
 
     <label class="confirmar__campo" id="confirmar-campo-senha" hidden>
-      <span>Sua senha de administrador</span>
-      <input type="password" id="confirmar-senha" autocomplete="current-password">
-    </label>
+    <span>Sua senha de administrador</span>
+    <div class="campo-senha">
+      <input type="text" id="confirmar-senha" class="senha-oculta" autocomplete="off">
+      <button type="button" class="campo-senha__olho" id="confirmar-olho"
+              aria-label="Mostrar senha" aria-pressed="false">
+        <svg class="olho-aberto" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/>
+          <circle cx="12" cy="12" r="3"/>
+        </svg>
+        <svg class="olho-fechado" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" hidden>
+          <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/>
+          <circle cx="12" cy="12" r="3"/>
+          <line x1="3" y1="3" x2="21" y2="21"/>
+        </svg>
+      </button>
+    </div>
+  </label>
 
     <p class="confirmar__erro" id="confirmar-erro" role="alert" hidden></p>
 

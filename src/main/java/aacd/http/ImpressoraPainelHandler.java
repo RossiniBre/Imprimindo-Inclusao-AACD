@@ -65,10 +65,6 @@ public class ImpressoraPainelHandler implements HttpHandler {
             List<ListarImpressoras.Item> itens =
                     listarImpressoras.listar(empresaId, disponibilidade, material);
 
-            if (!ehEmpresa) {
-                itens = itens.stream().filter(i -> i.impressora().ativo()).toList();
-            }
-
             List<String> json = new ArrayList<>();
             for (ListarImpressoras.Item item : itens) {
                 json.add(paraJson(item));

@@ -584,3 +584,71 @@
     width: 100%;
   }
 }
+.secao-titulo {
+  margin: 2rem 0 1rem;
+  font-size: 1.125rem;
+}
+
+.cartao--desativado {
+  opacity: 0.75;
+}
+
+/* Botão "Reativar empresa": mesmo formato do contorno vermelho, só que verde */
+.botao-perigo.botao-perigo--contorno.botao-perigo--sucesso {
+  border-color: var(--cor-sucesso);
+  color: var(--cor-sucesso);
+}
+
+.botao-perigo.botao-perigo--contorno.botao-perigo--sucesso:hover {
+  background: var(--cor-sucesso-claro);
+}
+
+.botao-perigo.botao-perigo--verde,
+.botao-perigo.botao-perigo--verde:hover:not(:disabled) {
+  background: var(--cor-sucesso);
+  border-color: var(--cor-sucesso);
+  color: var(--cor-superficie);
+}
+
+.botao-perigo.botao-perigo--verde:hover:not(:disabled) {
+  filter: brightness(0.92);
+}
+
+.campo-senha {
+  position: relative;
+}
+
+.confirmar__campo .campo-senha input {
+  width: 100%;
+  padding-right: 3rem;
+}
+
+.campo-senha__olho {
+  position: absolute;
+  top: 50%;
+  right: 0.375rem;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.375rem;
+  height: 2.375rem;
+  padding: 0;
+  border: none;
+  border-radius: 0.375rem;
+  background: transparent;
+  color: var(--cor-texto-suave);
+}
+
+.campo-senha__olho:hover {
+  background: var(--cor-neutra-claro);
+  color: var(--cor-texto);
+}
+
+.campo-senha__olho [hidden] {
+  display: none !important;
+}
+
+.senha-oculta:not(.visivel) {
+  -webkit-text-security: disc;
+}

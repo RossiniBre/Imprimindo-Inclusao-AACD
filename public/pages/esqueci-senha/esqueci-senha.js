@@ -97,6 +97,15 @@ export function iniciar(container, { params } = {}) {
   const erroGeral = container.querySelector('#erro-geral');
   const botao = container.querySelector('#botao-enviar');
 
+  const linkVoltar = container.querySelector('#link-voltar');
+
+  linkVoltar.addEventListener('click', (evento) => {
+    if (history.length > 1) {
+      evento.preventDefault();
+      history.back();
+    }
+  });
+
   function mostrarErro(texto) {
     erroEmail.textContent = texto;
     campoEmail.classList.add('com-erro');

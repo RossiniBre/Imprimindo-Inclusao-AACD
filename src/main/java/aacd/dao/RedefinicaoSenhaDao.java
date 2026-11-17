@@ -72,4 +72,15 @@ public class RedefinicaoSenhaDao {
             return ps.executeUpdate() > 0;
         }
     }
+
+    public void devolverTentativa(int usuarioId) throws SQLException {
+        String sql = "UPDATE redefinicao_senha SET tentativas = GREATEST(tentativas - 1, 0) "
+                + "WHERE usuario_id = ? AND usado = FALSE";
+
+        try (Connection conn = ConnectionFactory.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, usuarioId);
+            ps.executeUpdate();
+        }
+    }
 }

@@ -5,6 +5,7 @@ import { carregarHtml } from './helpers/carregarTela.js'
 vi.mock('../public/shared/js/api.js', () => ({
   api: {
     esqueciSenha: vi.fn(() => Promise.resolve({ ok: true, status: 200, corpo: { mensagem: 'ok' } })),
+    validarCodigoSenha: vi.fn(() => Promise.resolve({ ok: true, status: 200, corpo: { mensagem: 'ok' } })),
     redefinirSenha: vi.fn(() => Promise.resolve({ ok: true, status: 200, corpo: { mensagem: 'Senha redefinida com sucesso.' } })),
   },
 }))
@@ -194,13 +195,14 @@ describe('passo 2: código recebido por e-mail', () => {
     expect(codigoGuardado()).toBe('')
   })
 
-  it('"Continuar" com as seis caixas preenchidas guarda o código e vai para a nova senha', () => {
-    abrirCodigo()
-    digitar('123456')
-    enviar('#form-codigo')
-    expect(codigoGuardado()).toBe('123456')
-    expect(location.hash).toBe('#/redefinir-senha')
-  })
+ it('"Continuar" com as seis caixas preenchidas confere o código, guarda e vai para a nova senha', async () => {
+  abrirCodigo()
+  digitar('123456')
+  enviar('#form-codigo')
+  await vi.waitFor(() => expect(location.hash).toBe('#/redefinir-senha'))
+  expect(api.validarCodigoSenha).toHaveBeenCalledWith(EMAIL, '123456')
+  expect(codigoGuardado()).toBe('123456')
+})
 
   it('voltando do passo 3 por conta própria, o código continua nas caixas', () => {
     guardarCodigo('654321')
@@ -221,14 +223,14 @@ describe('passo 2: código recebido por e-mail', () => {
     expect(caixas()[0].classList.contains('com-erro')).toBe(false)
   })
 
-  it('?perfil=aacd usa os textos do funcionário e mantém o perfil nos links', () => {
-    abrirCodigo('perfil=aacd')
-    expect($('#codigo-painel-rodape').textContent).toBe('Portal do funcionário')
-    expect($('#link-novo-codigo').getAttribute('href')).toBe('#/esqueci-senha?perfil=aacd')
-    digitar('123456')
-    enviar('#form-codigo')
-    expect(location.hash).toBe('#/redefinir-senha?perfil=aacd')
-  })
+  it('?perfil=aacd usa os textos do funcionário e mantém o perfil nos links', async () => {
+  abrirCodigo('perfil=aacd')
+  expect($('#codigo-painel-rodape').textContent).toBe('Portal do funcionário')
+  expect($('#link-novo-codigo').getAttribute('href')).toBe('#/esqueci-senha?perfil=aacd')
+  digitar('123456')
+  enviar('#form-codigo')
+  await vi.waitFor(() => expect(location.hash).toBe('#/redefinir-senha?perfil=aacd'))
+})
 })
 
 describe('passo 3: nova senha', () => {
@@ -332,4 +334,5 @@ describe('passo 3: nova senha', () => {
     expect($('#redefinir-painel-rodape').textContent).toBe('Portal do funcionário')
     expect($('#link-codigo').getAttribute('href')).toBe('#/codigo-senha?perfil=aacd')
   })
+  
 })

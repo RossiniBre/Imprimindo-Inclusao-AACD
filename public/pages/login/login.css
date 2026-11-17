@@ -21,6 +21,18 @@ main:has(> .login) {
   min-height: 100vh;
 }
 
+.login__olho-fechado {
+  display: none;
+}
+
+.login__senha input.visivel ~ .login__olho .login__olho-aberto {
+  display: none;
+}
+
+.login__senha input.visivel ~ .login__olho .login__olho-fechado {
+  display: block;
+}
+
 /* ---------- Painel vermelho ---------- */
 
 .login__painel {

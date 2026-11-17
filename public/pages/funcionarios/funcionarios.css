@@ -579,6 +579,53 @@ main:has(> .funcionarios) {
   line-height: 1.5;
 }
 
+.campo-senha-oculta.visivel {
+  -webkit-text-security: none;
+}
+
+.campo-senha {
+  position: relative;
+}
+
+.campo-senha input {
+  width: 100%;
+  padding-right: 48px; /* espaço para o olho não ficar sobre o texto */
+}
+
+.campo-senha__olho {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  border-radius: 8px;
+  color: #6b6b6b;
+  cursor: pointer;
+}
+
+.campo-senha__olho:hover {
+  background: rgba(0, 0, 0, 0.06);
+  color: #2b2b2b;
+}
+
+.campo-senha__olho:focus-visible {
+  outline: 2px solid #efb000;
+  outline-offset: 1px;
+}
+
+.campo-senha__olho svg[hidden] {
+  display: none;
+}
+
 .modal__perigo {
   padding: 10px 18px;
   border: 0;

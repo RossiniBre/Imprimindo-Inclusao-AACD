@@ -16,6 +16,7 @@ public class RemoverImpressora {
     private final ImpressoraMateriaisDao materiaisDao = new ImpressoraMateriaisDao();
     private final PermissaoImpressora permissao = new PermissaoImpressora();
     private final SolicitacaoAtivaDao solicitacaoDao = new SolicitacaoAtivaDao();
+    private final CancelarSolicitacao cancelarSolicitacao = new CancelarSolicitacao();
 
     public void executar(Usuario ator, int impressoraId) throws SQLException {
         if (ator == null || !ator.isAtivo()) {
@@ -37,6 +38,10 @@ public class RemoverImpressora {
             if (solicitacaoDao.existeAtivo(conn, impressoraId)) {
                 throw new IllegalStateException(
                         "Impressora com impressão em andamento não pode ser removida.");
+            }
+
+            for (int solicitacaoId : solicitacaoDao.idsPendentes(conn, impressoraId)) {
+                cancelarSolicitacao.cancelarPorRemocaoDeImpressora(ator, solicitacaoId);
             }
 
             impressoraDao.apagar(conn, impressoraId);

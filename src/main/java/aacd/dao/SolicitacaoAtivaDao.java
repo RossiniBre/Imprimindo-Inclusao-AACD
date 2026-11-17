@@ -70,4 +70,18 @@ public class SolicitacaoAtivaDao {
     private static String marcadores(int quantidade) {
         return String.join(",", Collections.nCopies(quantidade, "?"));
     }
+
+    public List<Integer> idsPendentes(Connection conn, int impressoraId) throws SQLException {
+        String sql = "SELECT idsolicitacao_impressao FROM solicitacao_impressao "
+                + "WHERE impressora_id = ? AND status = 'PENDENTE' "
+                + "ORDER BY idsolicitacao_impressao";
+        List<Integer> ids = new ArrayList<>();
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, impressoraId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) ids.add(rs.getInt(1));
+            }
+        }
+        return ids;
+    }
 }

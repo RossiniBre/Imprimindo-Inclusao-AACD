@@ -68,8 +68,6 @@ export function iniciar(container, { params } = {}) {
   const erroGeral = container.querySelector('#erro-geral');
   const botaoEntrar = container.querySelector('#botao-entrar');
   const botaoOlho = container.querySelector('#botao-olho');
-  const olhoAberto = botaoOlho.querySelector('.login__olho-aberto');
-  const olhoFechado = botaoOlho.querySelector('.login__olho-fechado');
 
   function mostrarErro(campo, elemento, texto) {
     elemento.textContent = texto;
@@ -82,10 +80,8 @@ export function iniciar(container, { params } = {}) {
   }
 
   // Mostrar / esconder a senha
-  botaoOlho.addEventListener('click', () => {
+    botaoOlho.addEventListener('click', () => {
     const mostrando = campoSenha.classList.toggle('visivel');
-    olhoAberto.hidden = mostrando;
-    olhoFechado.hidden = !mostrando;
     botaoOlho.setAttribute('aria-pressed', String(mostrando));
     botaoOlho.setAttribute('aria-label', mostrando ? 'Esconder senha' : 'Mostrar senha');
     campoSenha.focus();

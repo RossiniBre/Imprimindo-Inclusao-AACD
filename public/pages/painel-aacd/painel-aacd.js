@@ -247,7 +247,7 @@ export function iniciar(container) {
       let motivo;
       if (pedido.status === 'CANCELADA') {
         motivo = pedido.justificativa
-          ? `Cancelado pela AACD. Motivo: ${pedido.justificativa}`
+          ? `Motivo: ${pedido.justificativa}`
           : 'Cancelado pela AACD';
       } else {
         motivo = pedido.justificativa

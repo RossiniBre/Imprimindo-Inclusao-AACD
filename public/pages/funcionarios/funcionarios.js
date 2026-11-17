@@ -581,11 +581,27 @@ export function iniciar(container) {
 
   const campoSenhaExcluir = container.querySelector('#excluir-senha');
 
+  const olhoExcluir = container.querySelector('#excluir-olho');
+
+  function definirSenhaVisivel(visivel) {
+    campoSenhaExcluir.classList.toggle('visivel', visivel);
+    olhoExcluir.querySelector('.olho-aberto').toggleAttribute('hidden', visivel);
+    olhoExcluir.querySelector('.olho-fechado').toggleAttribute('hidden', !visivel);
+    olhoExcluir.setAttribute('aria-pressed', String(visivel));
+    olhoExcluir.setAttribute('aria-label', visivel ? 'Esconder senha' : 'Mostrar senha');
+  }
+
+  olhoExcluir.addEventListener('click', () => {
+    definirSenhaVisivel(!campoSenhaExcluir.classList.contains('visivel'));
+    campoSenhaExcluir.focus();
+  });
+
   function abrirModalExcluir(f) {
     if (!f) return;
     excluindoId = f.id;
     nomeExcluir.textContent = f.nome;
     campoSenhaExcluir.value = '';
+    definirSenhaVisivel(false);
     erroExcluir.hidden = true;
     modalExcluir.hidden = false;
     document.body.style.overflow = 'hidden';
@@ -596,6 +612,7 @@ export function iniciar(container) {
     modalExcluir.hidden = true;
     document.body.style.overflow = '';
     campoSenhaExcluir.value = '';
+    definirSenhaVisivel(false);
     erroExcluir.hidden = true;
     botaoConfirmarExcluir.disabled = false;
     botaoConfirmarExcluir.textContent = 'Excluir funcionário';
@@ -639,6 +656,7 @@ export function iniciar(container) {
       erroExcluir.textContent = resposta.corpo?.erro ?? 'Não foi possível excluir. Tente de novo.';
       erroExcluir.hidden = false;
       campoSenhaExcluir.value = '';
+      definirSenhaVisivel(false);
       campoSenhaExcluir.focus();
     } catch {
       erroExcluir.textContent = 'Sem conexão com o servidor. Tente de novo em instantes.';

@@ -1,14 +1,10 @@
 // Tela "Confira seu e-mail": segundo passo da recuperação de senha.
-//   1. esqueci-senha   -> a pessoa informa o e-mail e o back envia um código de 6 dígitos
-//   2. codigo-senha    -> (aqui) a pessoa informa o código, uma caixa por número
-//   3. redefinir-senha -> a pessoa escolhe a nova senha
-// O back NÃO tem rota para conferir só o código: ele é conferido junto com a nova senha, no
-// passo 3. Aqui a tela confere o formato (6 números) e guarda o código. Se o back recusar o
-// código no passo 3, a pessoa volta para cá com o aviso de código inválido.
 
 import {
   VARIANTES, variante, emailGuardado, codigoGuardado, guardarCodigo, pegarAvisoDoCodigo,
 } from '../esqueci-senha/esqueci-senha.js';
+
+import { api } from '../../shared/js/api.js';
 
 export const TAMANHO_CODIGO = 6;
 
@@ -132,7 +128,7 @@ export function iniciar(container, { params } = {}) {
     marcarErro(true);
   }
 
-  formulario.addEventListener('submit', (evento) => {
+  formulario.addEventListener('submit', async (evento) => {
     evento.preventDefault();
     aviso.hidden = true;
 
@@ -141,12 +137,37 @@ export function iniciar(container, { params } = {}) {
     erro.textContent = problema ?? '';
     marcarErro(Boolean(problema));
     if (problema) {
-      // Foco na primeira caixa que ficou vazia
       focar(Math.max(0, caixas.findIndex((caixa) => caixa.value === '')));
       return;
     }
 
-    guardarCodigo(codigo);
-    location.hash = `#/redefinir-senha${sufixo}`;
+    const botao = formulario.querySelector('button[type="submit"]');
+    botao.disabled = true;
+    botao.textContent = 'Conferindo...';
+
+    try {
+      const resposta = await api.validarCodigoSenha(email, codigo);
+
+      if (resposta.ok) {
+        guardarCodigo(codigo);
+        location.hash = `#/redefinir-senha${sufixo}`;
+        return;
+      }
+
+      // Código errado ou vencido: fica nesta tela, limpa as caixas e avisa
+      aviso.textContent = resposta.status === 400
+        ? 'Código inválido ou expirado. Confira o código no e-mail ou peça outro.'
+        : (resposta.corpo?.erro ?? 'Não foi possível conferir o código. Tente de novo.');
+      aviso.hidden = false;
+      marcarErro(true);
+      caixas.forEach((caixa) => { caixa.value = ''; });
+      focar(0);
+    } catch {
+      aviso.textContent = 'Sem conexão com o servidor. Tente de novo em instantes.';
+      aviso.hidden = false;
+    }
+
+    botao.disabled = false;
+    botao.textContent = 'Continuar';
   });
 }

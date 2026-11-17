@@ -83,4 +83,34 @@ public class CancelarSolicitacao {
         }
         return valor;
     }
+
+    public void cancelarPorRemocaoDeImpressora(Usuario ator, int solicitacaoId) throws SQLException {
+        String motivo = "Impressora removida pela empresa";
+
+        try (Connection conn = conexoes.abrir()) {
+            conn.setAutoCommit(false);
+            try {
+                Solicitacao s = solicitacaoDao.buscarSolicitacaoPorId(conn, solicitacaoId);
+                if (s == null || s.getStatus() != StatusSolicitacao.PENDENTE) {
+                    throw new IllegalStateException("O status da solicitação mudou. Tente novamente!");
+                }
+
+                if (!solicitacaoDao.cancelar(conn, solicitacaoId, StatusSolicitacao.PENDENTE,
+                        motivo, ator.getId())) {
+                    throw new IllegalStateException("O status da solicitação mudou. Tente novamente!");
+                }
+
+                eventosDao.registrarEvento(solicitacaoId, StatusSolicitacao.PENDENTE,
+                        StatusSolicitacao.CANCELADA, ator.getId(), motivo, null);
+                conn.commit();
+            } catch (SQLException | RuntimeException e) {
+                try {
+                    conn.rollback();
+                } catch (SQLException ignorada) {
+                    e.addSuppressed(ignorada);
+                }
+                throw e;
+            }
+        }
+    }
 }

@@ -97,6 +97,13 @@ export function iniciar(container) {
   let acaoConfirmada = null;
   let parceiroAberto = null;
 
+  const cartoesDesativados = container.querySelector('#cartoes-desativados');
+  const secaoDesativadas = container.querySelector('#secao-desativadas');
+  const contagemAtivas = container.querySelector('#contagem-ativas');
+  const contagemDesativadas = container.querySelector('#contagem-desativadas');
+
+  const confirmarOlho = container.querySelector('#confirmar-olho');
+
   modal = criarModal(fundo, { aoFechar: () => { parceiroAberto = null; } });
 
   api.eu()
@@ -111,7 +118,7 @@ export function iniciar(container) {
   // ----- Cartões -----
 
   function montarCartao(p) {
-    const cartao = elemento('article', 'cartao');
+    const cartao = elemento('article', p.ativo === false ? 'cartao cartao--desativado' : 'cartao');
     const cidade = cidadeUf(p.endereco);
 
     const topo = elemento('div', 'cartao__topo');
@@ -142,9 +149,16 @@ export function iniciar(container) {
 
   function renderizar() {
     const filtrados = filtrarParceiros(parceiros, busca.value);
+    const ativos = filtrados.filter((p) => p.ativo !== false);
+    const desativados = filtrados.filter((p) => p.ativo === false);
+
     carregando.hidden = true;
     vazia.hidden = filtrados.length > 0;
-    cartoes.replaceChildren(...filtrados.map(montarCartao));
+    cartoes.replaceChildren(...ativos.map(montarCartao));
+    cartoesDesativados.replaceChildren(...desativados.map(montarCartao));
+    contagemAtivas.textContent = ativos.length;
+    contagemDesativadas.textContent = desativados.length;
+    secaoDesativadas.hidden = desativados.length === 0;
   }
 
   async function carregar() {
@@ -178,7 +192,7 @@ export function iniciar(container) {
     impressorasPorEmpresa = contarImpressoras(impressoras);
     pecasPorNome = contarPecas(solicitacoes);
 
-    totalParceiros.textContent = parceiros.length;
+    totalParceiros.textContent = parceiros.filter((p) => p.ativo !== false).length;
     totalImpressoras.textContent = impressoras.length;
     totalPecas.textContent = Object.values(pecasPorNome).reduce((soma, n) => soma + n, 0);
 
@@ -214,8 +228,12 @@ export function iniciar(container) {
     li.appendChild(nome);
 
     const chips = elemento('span', 'impressoras__chips');
-    const disp = DISPONIBILIDADE[i.disponibilidade] ?? { rotulo: i.disponibilidade, classe: 'chip--neutro' };
-    chips.appendChild(chip(disp.classe, disp.rotulo));
+    if (i.ativo === false) {
+      chips.appendChild(chip('chip--neutro', 'Desativada'));
+    } else {
+      const disp = DISPONIBILIDADE[i.disponibilidade] ?? { rotulo: i.disponibilidade, classe: 'chip--neutro' };
+      chips.appendChild(chip(disp.classe, disp.rotulo));
+    }
     codigosMateriais(i).forEach((m) => chips.appendChild(chip('chip--contorno', rotuloMaterial(m))));
     li.appendChild(chips);
 
@@ -255,9 +273,14 @@ export function iniciar(container) {
     parceiroAberto = p;
     const e = p.endereco ?? {};
 
+    const local = cidadeUf(e) ? `Parceira em ${cidadeUf(e)}` : 'Empresa parceira';
+    const desativada = p.ativo === false;
+    modalSubtitulo.textContent = desativada ? `${local} (desativada)` : local;
+    botaoDesativar.textContent = desativada ? 'Reativar empresa' : 'Desativar empresa';
+    botaoDesativar.classList.toggle('botao-perigo--sucesso', desativada);
+
     modalAvatar.textContent = iniciais(p.nome);
     modalTitulo.textContent = p.nome;
-    modalSubtitulo.textContent = cidadeUf(e) ? `Parceira em ${cidadeUf(e)}` : 'Empresa parceira';
 
     dadosEmpresa.replaceChildren(
       dado('Razão social', p.nome),
@@ -281,16 +304,31 @@ export function iniciar(container) {
     listarImpressoras(p);
   }
 
+  function definirSenhaVisivel(visivel) {
+    confirmarSenha.classList.toggle('visivel', visivel);
+    confirmarOlho.querySelector('.olho-aberto').toggleAttribute('hidden', visivel);
+    confirmarOlho.querySelector('.olho-fechado').toggleAttribute('hidden', !visivel);
+    confirmarOlho.setAttribute('aria-pressed', String(visivel));
+    confirmarOlho.setAttribute('aria-label', visivel ? 'Esconder senha' : 'Mostrar senha');
+  }
+
+  confirmarOlho.addEventListener('click', () => {
+    definirSenhaVisivel(!confirmarSenha.classList.contains('visivel'));
+    confirmarSenha.focus();
+  });
+
   // ----- Ações de admin (desativar / apagar empresa) -----
 
-  const idConta = (p) => p.contaId ?? p.id;
+  const idConta = (p) => p.usuarioId;
 
-  function abrirConfirmacao({ titulo, texto, rotulo, pedirSenha = false, executar }) {
+  function abrirConfirmacao({ titulo, texto, rotulo, pedirSenha = false, positivo = false, executar }) {
     confirmarTitulo.textContent = titulo;
     confirmarTexto.textContent = texto;
     confirmarOk.textContent = rotulo;
+    confirmarOk.classList.toggle('botao-perigo--verde', positivo);
     confirmarOk.disabled = false;
     confirmarSenha.value = '';
+    definirSenhaVisivel(false);
     campoSenha.hidden = !pedirSenha;
     confirmarErro.hidden = true;
     acaoConfirmada = executar;
@@ -301,6 +339,7 @@ export function iniciar(container) {
   function fecharConfirmacao() {
     fundoConfirmar.hidden = true;
     confirmarSenha.value = '';
+    definirSenhaVisivel(false);
     acaoConfirmada = null;
   }
 
@@ -355,9 +394,21 @@ export function iniciar(container) {
   botaoDesativar.addEventListener('click', () => {
     if (!parceiroAberto) return;
     const p = parceiroAberto;
+
+    if (p.ativo === false) {
+      abrirConfirmacao({
+        titulo: 'Reativar empresa?',
+        texto: `"${p.nome}" volta a receber solicitações.`,
+        rotulo: 'Reativar',
+        positivo: true,
+        executar: () => api.reativarConta(idConta(p)),
+      });
+      return;
+    }
+
     abrirConfirmacao({
       titulo: 'Desativar empresa?',
-      texto: `"${p.nome}" deixa de receber solicitações. Você pode reativar depois.`,
+      texto: `"${p.nome}" deixa de receber solicitações. Isso também apaga todas as solicitações feitas à este parceiro, todas as impressoras associadas serão marcadas como desativadas e só podem ser reativadas pelo parceiro. Você pode reativar este parceiro depois.`,
       rotulo: 'Desativar',
       executar: () => api.desativarConta(idConta(p)),
     });
@@ -375,10 +426,13 @@ export function iniciar(container) {
     });
   });
 
-  cartoes.addEventListener('click', (evento) => {
+  function aoClicarNoCartao(evento) {
     const botao = evento.target.closest('button[data-id]');
     if (botao) abrirDetalhes(Number(botao.dataset.id));
-  });
+  }
+
+  cartoes.addEventListener('click', aoClicarNoCartao);
+  cartoesDesativados.addEventListener('click', aoClicarNoCartao);
 
   carregar();
 }

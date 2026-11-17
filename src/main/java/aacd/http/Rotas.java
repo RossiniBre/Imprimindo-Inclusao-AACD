@@ -44,6 +44,7 @@ public final class Rotas {
         rota(servidor, "/api/logout", new LogoutHandler(sessoes));
         rota(servidor, "/api/me", new MeHandler(sessoes, usuarioDao));
         rota(servidor, "/api/conta/excluir-minha", contaHandler);
+        rota(servidor, "/api/validar-codigo-senha", new ValidarCodigoSenhaHandler(redefinicao));
 
         // Empresa
         rota(servidor, "/api/empresas", new EmpresaHandler(new CadastrarEmpresa()));

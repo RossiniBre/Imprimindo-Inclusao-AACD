@@ -1,10 +1,4 @@
 // Tela "Crie uma nova senha": terceiro e último passo da recuperação de senha.
-//   1. esqueci-senha   -> a pessoa informa o e-mail e o back envia um código de 6 dígitos
-//   2. codigo-senha    -> a pessoa informa o código
-//   3. redefinir-senha -> (aqui) a pessoa escolhe a nova senha
-// O back só confere o código junto com a nova senha (POST /api/redefinir-senha recebe os três
-// de uma vez). Por isso, se o código estiver errado, é aqui que se descobre: a tela devolve a
-// pessoa ao passo 2 com o aviso.
 
 import { api } from '../../shared/js/api.js';
 import {
@@ -100,8 +94,8 @@ export function iniciar(container, { params } = {}) {
       campo.type = mostrando ? 'text' : 'password';
       olho.setAttribute('aria-pressed', String(mostrando));
       olho.setAttribute('aria-label', `${mostrando ? 'Esconder' : 'Mostrar'} ${rotulo}`);
-      olho.querySelector('.redefinir__olho-aberto').hidden = mostrando;
-      olho.querySelector('.redefinir__olho-fechado').hidden = !mostrando;
+      olho.querySelector('.redefinir__olho-aberto').toggleAttribute('hidden', mostrando);
+      olho.querySelector('.redefinir__olho-fechado').toggleAttribute('hidden', !mostrando);
     });
   });
 

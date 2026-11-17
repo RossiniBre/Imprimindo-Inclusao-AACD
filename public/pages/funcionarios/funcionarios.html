@@ -129,7 +129,7 @@
     </div>
   </div>
 
-    <!-- Modal: Editar funcionário -->
+  <!-- Modal: Editar funcionário -->
   <div class="modal-fundo" id="modal-editar" hidden>
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="editar-titulo">
       <div class="modal__cabecalho">
@@ -183,40 +183,54 @@
     </div>
   </div>
 
-    <!-- Modal: Excluir funcionário -->
-<div class="modal-fundo" id="modal-excluir" hidden>
-  <div class="modal" role="alertdialog" aria-modal="true" aria-labelledby="excluir-titulo" aria-describedby="excluir-texto">
-    <div class="modal__cabecalho">
-      <div>
-        <h2 id="excluir-titulo">Excluir funcionário</h2>
-        <p class="modal__subtitulo">Esta ação não pode ser desfeita</p>
+  <!-- Modal: Excluir funcionário -->
+  <div class="modal-fundo" id="modal-excluir" hidden>
+    <div class="modal" role="alertdialog" aria-modal="true" aria-labelledby="excluir-titulo" aria-describedby="excluir-texto">
+      <div class="modal__cabecalho">
+        <div>
+          <h2 id="excluir-titulo">Excluir funcionário</h2>
+          <p class="modal__subtitulo">Esta ação não pode ser desfeita</p>
+        </div>
+        <button type="button" class="modal__fechar" id="botao-fechar-excluir" aria-label="Fechar">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/>
+          </svg>
+        </button>
       </div>
-      <button type="button" class="modal__fechar" id="botao-fechar-excluir" aria-label="Fechar">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
-          <line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/>
-        </svg>
-      </button>
-    </div>
 
-    <p class="modal__texto" id="excluir-texto">
-      Tem certeza que deseja excluir <strong id="excluir-nome"></strong>?
-      A conta e os dados do funcionário serão apagados. Se for só uma pausa, use Desativar.
-    </p>
+      <p class="modal__texto" id="excluir-texto">
+        Tem certeza que deseja excluir <strong id="excluir-nome"></strong>?
+        A conta e os dados do funcionário serão apagados. Se for só uma pausa, use Desativar.
+      </p>
 
-    <div class="modal__campo">
-  <label for="excluir-senha">Sua senha, para confirmar</label>
-  <input type="text" id="excluir-senha" autocomplete="off"
-         autocapitalize="off" spellcheck="false"
-         class="campo-senha-oculta">
-</div>
+      <div class="modal__campo">
+        <label for="excluir-senha">Sua senha, para confirmar</label>
+        <div class="campo-senha">
+          <input type="text" id="excluir-senha" autocomplete="off"
+                 autocapitalize="off" spellcheck="false"
+                 class="campo-senha-oculta">
+          <button type="button" class="campo-senha__olho" id="excluir-olho"
+                  aria-label="Mostrar senha" aria-pressed="false">
+            <svg class="olho-aberto" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+            <svg class="olho-fechado" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" hidden>
+              <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/>
+              <circle cx="12" cy="12" r="3"/>
+              <line x1="3" y1="3" x2="21" y2="21"/>
+            </svg>
+          </button>
+        </div>
+      </div>
 
-    <p class="modal__erro-geral" id="erro-excluir" role="alert" hidden></p>
+      <p class="modal__erro-geral" id="erro-excluir" role="alert" hidden></p>
 
-    <div class="modal__rodape">
-      <button type="button" class="modal__secundario" id="botao-cancelar-excluir">Cancelar</button>
-      <button type="button" class="modal__perigo" id="botao-confirmar-excluir">Excluir funcionário</button>
+      <div class="modal__rodape">
+        <button type="button" class="modal__secundario" id="botao-cancelar-excluir">Cancelar</button>
+        <button type="button" class="modal__perigo" id="botao-confirmar-excluir">Excluir funcionário</button>
+      </div>
     </div>
   </div>
-</div>
 
 </section>

@@ -145,8 +145,13 @@ export function iniciar(container) {
       });
 
       if (resposta.ok) {
+        console.log('cadastro ok, mostrando aviso');
         limparRascunho();
-        location.hash = '#/login';
+        formulario.hidden = true;
+        campo('titulo-form').hidden = true;
+        campo('subT-Form').hidden = true;
+        campo('sucesso').hidden = false;
+        campo('sucesso-titulo').focus();
         return;
       }
       mostrarErro(resposta.corpo?.erro ?? 'Não foi possível cadastrar. Tente de novo.');

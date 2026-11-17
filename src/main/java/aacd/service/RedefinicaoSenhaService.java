@@ -71,10 +71,7 @@ public class RedefinicaoSenhaService {
         }
     }
 
-    public void redefinir(String emailInformado, String codigo, String novaSenha) throws SQLException {
-        if (novaSenha == null || novaSenha.isBlank()) {
-            throw new IllegalArgumentException("Senha não pode estar vazia");
-        }
+    private int conferirCodigo(String emailInformado, String codigo) throws SQLException {
         String email = EmailValidador.normalizar(emailInformado);
         if (email == null || codigo == null || !codigo.trim().matches("\\d{6}")) {
             throw new IllegalArgumentException(ERRO_CODIGO);
@@ -94,6 +91,19 @@ public class RedefinicaoSenhaService {
         if (hash == null || !Senha.confere(codigo, hash)) {
             throw new IllegalArgumentException(ERRO_CODIGO);
         }
+        return id;
+    }
+
+    public void validarCodigo(String emailInformado, String codigo) throws SQLException {
+        int id = conferirCodigo(emailInformado, codigo);
+        redefinicaoDao.devolverTentativa(id);
+    }
+
+    public void redefinir(String emailInformado, String codigo, String novaSenha) throws SQLException {
+        if (novaSenha == null || novaSenha.isBlank()) {
+            throw new IllegalArgumentException("Senha não pode estar vazia");
+        }
+        int id = conferirCodigo(emailInformado, codigo);
 
         try (Connection conn = ConnectionFactory.getConnection()) {
             conn.setAutoCommit(false);

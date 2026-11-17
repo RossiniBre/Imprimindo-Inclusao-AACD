@@ -329,15 +329,10 @@ export function iniciar(container, { params } = {}) {
 
     const rodape = elemento('div', 'cartao__rodape');
     rodape.appendChild(elemento('span', 'cartao__mesa', `Impressora ${i.id}`));
-    if (desativada) {
-      // Desativada: aparece na lista, mas não há o que detalhar para pedidos
-      rodape.appendChild(elemento('span', 'cartao__indisponivel', 'Sem pedidos'));
-    } else {
-      const botao = elemento('button', 'botao-principal', 'Ver detalhes');
-      botao.type = 'button';
-      botao.dataset.id = i.id;
-      rodape.appendChild(botao);
-    }
+    const botao = elemento('button', 'botao-principal', 'Ver detalhes');
+    botao.type = 'button';
+    botao.dataset.id = i.id;
+    rodape.appendChild(botao);
     cartao.appendChild(rodape);
 
     return cartao;
@@ -474,8 +469,10 @@ export function iniciar(container, { params } = {}) {
     const nomeEmpresa = i.empresa?.nome ?? 'Empresa parceira';
     const mesa = medidas(i);
     const materiais = codigosMateriais(i).map(rotuloMaterial);
-    const disp = DISPONIBILIDADE[i.disponibilidade]
-      ?? { rotulo: i.disponibilidade, classe: 'chip--neutro' };
+   const desativada = i.ativo === false;
+    const disp = desativada
+      ? { rotulo: 'Desativada', classe: 'chip--neutro' }
+      : (DISPONIBILIDADE[i.disponibilidade] ?? { rotulo: i.disponibilidade, classe: 'chip--neutro' });
 
     detalhesTitulo.textContent = i.modelo;
     detalhesLocal.textContent = [nomeEmpresa, i.cidade].filter(Boolean).join(' · ');
@@ -503,11 +500,15 @@ export function iniciar(container, { params } = {}) {
     // Mesma tabela do passo "Escolher impressora", só com o que a impressora oferece
     // (sem peça para comparar, então só a disponibilidade ganha ✓ ou ?)
     const livre = i.disponibilidade === 'OCIOSA';
+    const linhaDisponibilidade = desativada
+      ? linhaResumo('falha', '✕', 'Disponibilidade', 'Desativada: não recebe pedidos até ser reativada')
+      : linhaResumo(livre ? 'ok' : 'duvida', livre ? '✓' : '?', 'Disponibilidade',
+          livre ? 'Livre agora' : 'Em uso: a empresa pode demorar para aceitar');
+
     detalhesChecagem.replaceChildren(
       linhaResumo('neutro', '•', 'Material', materiais.join(', ') || 'Não informados'),
       linhaResumo('neutro', '•', 'Tamanho', mesa ? `Mesa até ${mesa}` : 'Mesa não informada'),
-      linhaResumo(livre ? 'ok' : 'duvida', livre ? '✓' : '?', 'Disponibilidade',
-        livre ? 'Livre agora' : 'Em uso: a empresa pode demorar para aceitar'),
+      linhaDisponibilidade,
     );
 
     modalDetalhes.abrir(fundoDetalhes.querySelector('[data-fechar]') ?? undefined);

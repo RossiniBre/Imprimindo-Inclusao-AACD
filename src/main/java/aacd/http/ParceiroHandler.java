@@ -29,7 +29,7 @@ public class ParceiroHandler implements HttpHandler {
     public void handle(HttpExchange ex) throws IOException {
         if (!"GET".equals(ex.getRequestMethod())) {
             ex.getResponseHeaders().set("Allow", "GET");
-            Http.json(ex, 405, Json.objeto().campo("Rota não encontrada.", "Método não permitido.").build());
+            Http.erro(ex, 405, "Método não permitido.");
             return;
         }
 
@@ -42,20 +42,29 @@ public class ParceiroHandler implements HttpHandler {
 
         try {
             if (resto.isEmpty() || resto.equals("/")) {
-                listarParceiros(ex);
+                listarParceiros(ex, sessao.get());
             } else if (resto.matches("/\\d+/impressoras")) {
-                listarImpressoras(ex, Integer.parseInt(resto.split("/")[1]));
+                listarImpressoras(ex, sessao.get(), Integer.parseInt(resto.split("/")[1]));
             } else {
                 Http.json(ex, 404, Json.objeto().campo("erro", "Rota não encontrada.").build());
             }
         } catch (SQLException e) {
-            Http.json(ex, 500, Json.objeto().campo("Rota não encontrada.", "Erro interno.").build());
+            Http.erro(ex, 500, "Erro interno.");
         }
     }
 
-    private void listarParceiros(HttpExchange ex) throws IOException, SQLException {
+    // Só o admin enxerga (e pode reativar) as empresas desativadas
+    private boolean ehAdmin(Sessao sessao) {
+        return "ADMIN".equals(sessao.getPerfil());
+    }
+
+    private void listarParceiros(HttpExchange ex, Sessao sessao) throws IOException, SQLException {
+        List<EmpresaResumo> empresas = ehAdmin(sessao)
+                ? empresaDao.listarTodas()
+                : empresaDao.listarAtivas();
+
         List<String> itens = new ArrayList<>();
-        for (EmpresaResumo e : empresaDao.listarAtivas()) {
+        for (EmpresaResumo e : empresas) {
             Endereco end = e.endereco();
             String endereco = Json.objeto()
                     .campo("cep", end.getCep())
@@ -68,6 +77,8 @@ public class ParceiroHandler implements HttpHandler {
 
             itens.add(Json.objeto()
                     .campo("id", e.id())
+                    .campo("usuarioId", e.usuarioId())
+                    .campo("ativo", e.ativo())
                     .campo("nome", e.nome())
                     .campo("email", e.email())
                     .campo("telefone", e.telefone())
@@ -77,24 +88,22 @@ public class ParceiroHandler implements HttpHandler {
         Http.json(ex, 200, Json.lista(itens));
     }
 
-    private void listarImpressoras(HttpExchange ex, int idEmpresa) throws IOException, SQLException {
-        if (!empresaDao.existeAtiva(idEmpresa)) {
-            Http.json(ex, 404, Json.objeto().campo("Rota não encontrada.", "Empresa não encontrada.").build());
+        private void listarImpressoras(HttpExchange ex, Sessao sessao, int idEmpresa) throws IOException, SQLException {
+        boolean podeVer = ehAdmin(sessao)
+                ? empresaDao.existe(idEmpresa)
+                : empresaDao.existeAtiva(idEmpresa);
+        if (!podeVer) {
+            Http.erro(ex, 404, "Empresa não encontrada.");
             return;
         }
 
-        List<Impressora> ativas = new ArrayList<>();
-        for (Impressora i : impressoraDao.listarPorEmpresa(idEmpresa)) {
-            if (i.isAtivo()) {
-                ativas.add(i);
-            }
-        }
+        List<Impressora> impressoras = impressoraDao.listarPorEmpresa(idEmpresa);
 
-        List<Integer> ids = ativas.stream().map(Impressora::getId).toList();
+        List<Integer> ids = impressoras.stream().map(Impressora::getId).toList();
         Map<Integer, Set<Material>> materiais = materiaisDao.buscarVarias(ids);
 
         List<String> itens = new ArrayList<>();
-        for (Impressora i : ativas) {
+        for (Impressora i : impressoras) {
             itens.add(ImpressoraHandler.paraJson(i, materiais.getOrDefault(i.getId(), Set.of())));
         }
         Http.json(ex, 200, Json.lista(itens));

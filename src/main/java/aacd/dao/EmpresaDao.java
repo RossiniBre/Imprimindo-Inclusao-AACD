@@ -132,14 +132,23 @@ public class EmpresaDao {
     }
 
     public List<EmpresaResumo> listarAtivas() throws SQLException {
-        String sql = "SELECT e.idempresa, u.nome, e.email, e.telefone, "
+        return listar(true);
+    }
+
+    public List<EmpresaResumo> listarTodas() throws SQLException {
+        return listar(false);
+    }
+
+    private List<EmpresaResumo> listar(boolean somenteAtivas) throws SQLException {
+        String sql = "SELECT e.idempresa, e.usuario_id, u.nome, u.ativo, e.email, e.telefone, "
                 + "e.cep, e.rua, e.numero, e.complemento, e.bairro, e.cidade, e.uf "
                 + "FROM empresa e JOIN usuario u ON u.idusuario = e.usuario_id "
-                + "WHERE u.ativo = TRUE ORDER BY u.nome";
+                + (somenteAtivas ? "WHERE u.ativo = TRUE " : "")
+                + "ORDER BY u.nome";
 
         try (Connection conn = ConnectionFactory.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery()) {
 
             List<EmpresaResumo> lista = new ArrayList<>();
             while (rs.next()) {
@@ -154,12 +163,25 @@ public class EmpresaDao {
 
                 lista.add(new EmpresaResumo(
                         rs.getInt("idempresa"),
+                        rs.getInt("usuario_id"),
                         rs.getString("nome"),
                         rs.getString("email"),
                         rs.getString("telefone"),
-                        endereco));
+                        endereco,
+                        rs.getBoolean("ativo")));
             }
             return lista;
+        }
+    }
+
+    public boolean existe(int idEmpresa) throws SQLException {
+        String sql = "SELECT 1 FROM empresa WHERE idempresa = ?";
+        try (Connection conn = ConnectionFactory.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, idEmpresa);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
         }
     }
 
