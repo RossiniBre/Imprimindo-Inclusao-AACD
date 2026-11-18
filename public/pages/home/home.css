@@ -1,0 +1,331 @@
+body {
+    background-color: var(--cor-fundo);
+    color: var(--cor-texto);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ===== Estrutura: header e rodapé cobrem a tela toda ===== */
+.home {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    overflow-x: clip;
+}
+
+.home .main-header,
+.home .rodape {
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+}
+
+.vista { flex: 1; }
+.vista[hidden] { display: none !important; }
+
+/* ===== Header ===== */
+.main-header {
+    background-color: var(--cor-superficie);
+    border-bottom: 2px solid #eef0f2;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+#imagem_aacd {
+    width: 40px;
+    height: 40px;
+}
+
+.nav-home { gap: 1.75rem; }
+
+.link-nav {
+    position: relative;
+    background: none;
+    border: 0;
+    padding: 0.25rem 0;
+    font-weight: 600;
+    color: var(--cor-texto);
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.link-nav::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    width: 0;
+    height: 2px;
+    background: var(--cor-cabecalho);
+    transition: width 0.2s;
+}
+
+.link-nav:hover,
+.link-nav:focus-visible { color: var(--cor-cabecalho); }
+
+.link-nav:hover::after,
+.link-nav:focus-visible::after { width: 100%; }
+
+.link-perfil {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 1rem;
+    border: 2px solid var(--cor-cabecalho);
+    border-radius: 999px;
+    color: var(--cor-cabecalho);
+    font-weight: 700;
+    text-decoration: none;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.link-perfil:hover {
+    background-color: var(--cor-cabecalho);
+    color: #fff;
+}
+
+/* ===== Botão principal (usado no "Quero doar") ===== */
+.btn-doe {
+    border-width: 2px;
+    background-color: var(--cor-cabecalho);
+    color: white;
+    font-weight: 600;
+}
+
+.btn-doe:hover {
+    background-color: #a3001b;
+    color: #FFFFFF;
+}
+
+/* ===== Imagem/texto de chamada PII ===== */
+.container-imagem {
+    position: relative;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+.imagem-PII {
+    border-radius: 3%;
+    max-width: 100%;
+    height: auto;
+}
+
+.texto-imagem {
+    position: absolute;
+    bottom: 5%;
+    left: 25%;
+    color: white;
+    z-index: 1;
+    font-size: 30px;
+    font-weight: 600;
+    text-align: center;
+}
+
+/* ===== Nossa atuação ===== */
+.section-title {
+    font-weight: 800;
+    color: var(--cor-texto);
+}
+
+.col-atuacao {
+    display: flex;
+    flex-direction: column;
+}
+
+.grade-atuacao {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.card-atuacao {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 160px;
+    background: var(--cor-superficie);
+    border: 1px solid var(--cor-borda);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+}
+
+.card-atuacao i {
+    font-size: 2rem;
+    color: var(--cor-cabecalho);
+    margin-bottom: 10px;
+}
+
+.card-atuacao h5 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin: 0;
+    color: var(--cor-texto);
+}
+
+.foto-atuacao { min-height: 380px; }
+
+.btn-link {
+    color: var(--cor-cabecalho);
+    text-decoration: none;
+}
+
+.btn-link:hover { color: #ac0b26; }
+
+/* ===== Banner curvo de doação ===== */
+.banner-curvo {
+    background: linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.25)), url('https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?auto=format&fit=crop&w=1200&q=80') center/cover;
+    border-radius: 24px;
+    min-height: 380px;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+}
+
+.curved-box {
+    background-color: var(--cor-superficie);
+    padding: 50px 40px;
+    border-radius: 0 160px 160px 0;
+    max-width: 520px;
+    box-shadow: 6px 0 20px rgba(0,0,0,0.12);
+}
+
+.aviso-doacao {
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+
+/* ===== Rodapé ===== */
+.rodape {
+    margin-top: auto;
+    background: #2B2B2B;
+    color: #fff;
+    border-top: 4px solid var(--cor-cabecalho);
+    padding: 2.5rem 0 1.75rem;
+}
+
+.rodape h6 {
+    margin-bottom: 1rem;
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--cor-botao-principal);
+}
+
+.rodape-link {
+    position: relative;
+    background: none;
+    border: 0;
+    padding: 0;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.rodape-link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    width: 0;
+    height: 2px;
+    background: var(--cor-botao-principal);
+    transition: width 0.2s;
+}
+
+.rodape-link:hover::after,
+.rodape-link:focus-visible::after { width: 100%; }
+
+.rodape-unidades {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    columns: 2;
+    column-gap: 2rem;
+    font-size: 0.95rem;
+    color: #d8d8d8;
+}
+
+.rodape-unidades li {
+    padding: 0.2rem 0;
+    break-inside: avoid;
+}
+
+/* ===== Botão voltar ao topo ===== */
+.btn-topo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.55rem 1.3rem;
+    border: 0;
+    border-radius: 999px;
+    background: var(--cor-botao-principal);
+    color: var(--cor-texto);
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s, background-color 0.2s;
+}
+
+.btn-topo:hover {
+    background: var(--cor-botao-principal-hover);
+    transform: translateY(-2px);
+}
+
+/* ===== Responsividade ===== */
+@media (max-width: 575.98px) {
+    .grade-atuacao { grid-template-columns: 1fr; }
+    .rodape-unidades { columns: 1; }
+    .texto-imagem { font-size: 18px; left: 10%; }
+    .curved-box { border-radius: 0 80px 80px 0; padding: 36px 28px; }
+}
+
+/* ===== Modo alto contraste ===== */
+body.high-contrast {
+    background-color: #000000 !important;
+    color: #FFFF00 !important;
+}
+
+body.high-contrast .main-header,
+body.high-contrast .card-atuacao,
+body.high-contrast .curved-box {
+    background-color: #121212 !important;
+    color: #FFFFFF !important;
+    border-color: #FFFF00 !important;
+}
+
+body.high-contrast .rodape {
+    background-color: #121212 !important;
+    border-top-color: #FFFF00 !important;
+}
+
+body.high-contrast .btn-doe,
+body.high-contrast .btn-topo {
+    background-color: #FFFF00 !important;
+    color: #000000 !important;
+}
+
+body.high-contrast .link-nav,
+body.high-contrast .link-perfil {
+    color: #FFFF00 !important;
+    border-color: #FFFF00;
+}
+
+html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+#conteudo {
+    margin: 0 !important;
+    padding: 0 !important;
+    max-width: none !important;
+    width: 100% !important;
+}
+
+.home .main-header,
+.home .rodape {
+    width: 100%;
+    margin-left: 0;
+}

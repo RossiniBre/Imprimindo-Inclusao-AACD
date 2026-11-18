@@ -3,8 +3,8 @@ import { desenharMenu } from './navbar.js';
 
 // Para criar uma tela nova: pasta pages/<nome>/ com os três arquivos
 // e uma linha de rota(...) aqui. Endereço desconhecido cai na 404.
-rota('/',              { pagina: 'login',          publica: true,  titulo: 'Entrar' });
-rota('/login',         { pagina: 'login',          publica: true,  titulo: 'Entrar' });
+rota('/',      { pagina: 'home',  publica: true, titulo: 'Home' });
+rota('/login', { pagina: 'login', publica: true, titulo: 'Entrar' });
 rota('/esqueci-senha', { pagina: 'esqueci-senha',  publica: true,  titulo: 'Recuperar senha' });
 rota('/codigo-senha',    { pagina: 'codigo-senha',    publica: true, titulo: 'Código de recuperação' });
 rota('/redefinir-senha', { pagina: 'redefinir-senha', publica: true, titulo: 'Nova senha' });
@@ -25,6 +25,7 @@ rota('/nova-solicitacao',   { pagina: 'nova-solicitacao',   publica: false, titu
 rota('/escolher-impressora', { pagina: 'escolher-impressora', publica: false, titulo: 'Escolher impressora' });
 rota('/confirmar-solicitacao', { pagina: 'confirmar-solicitacao', publica: false, titulo: 'Confirmar solicitação' });
 rota('/contato',            { pagina: 'contato',            publica: false, titulo: 'Contato' });
+rota('/home',          { pagina: 'home',           publica: true,  titulo: 'Home' });
 
 window.addEventListener('hashchange', desenharMenu);
 desenharMenu();
