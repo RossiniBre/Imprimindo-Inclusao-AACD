@@ -408,7 +408,7 @@ export function iniciar(container) {
 
     abrirConfirmacao({
       titulo: 'Desativar empresa?',
-      texto: `"${p.nome}" deixa de receber solicitações. Isso também apaga todas as solicitações feitas à este parceiro, todas as impressoras associadas serão marcadas como desativadas e só podem ser reativadas pelo parceiro. Você pode reativar este parceiro depois.`,
+      texto: `"${p.nome}" deixa de receber solicitações. As solicitações já feitas a ele serão apagadas e as impressoras ficam desativadas. Você pode reativar o parceiro depois.`,
       rotulo: 'Desativar',
       executar: () => api.desativarConta(idConta(p)),
     });

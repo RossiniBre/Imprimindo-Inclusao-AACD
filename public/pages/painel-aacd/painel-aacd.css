@@ -1004,3 +1004,146 @@ main:has(> .painel) {
   display: block;
   height: auto;
 }
+
+/* ---------- Lista de contatos (WhatsApp, e-mail, endereço) ---------- */
+
+.contatos {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.contatos li {
+  margin: 0;
+  padding: 0;
+}
+
+.contatos a,
+.contatos button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 14px;
+  box-sizing: border-box;
+  border: 1px solid var(--borda, #e4e0d8);
+  border-radius: 12px;
+  background: var(--superficie, #fff);
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.contatos a:hover,
+.contatos button:hover {
+  background: var(--superficie-suave, #f8f6f2);
+  border-color: var(--borda-forte, #cfcac0);
+}
+
+.contatos a:focus-visible,
+.contatos button:focus-visible {
+  outline: 2px solid var(--destaque, #8b1d2c);
+  outline-offset: 2px;
+}
+
+/* Ícone: tamanho fixo (resolve o SVG gigante) */
+.contatos__icone {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--superficie-suave, #f1eee8);
+  font-size: 16px;
+  line-height: 1;
+}
+
+.contatos__icone svg {
+  display: block;
+  width: 18px;
+  height: 18px;
+  max-width: none;
+}
+
+/* Texto principal + detalhe */
+.contatos a > span:nth-child(2),
+.contatos button > span:nth-child(2) {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.contatos small {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.8125rem;
+  font-weight: 400;
+  color: var(--texto-suave, #6b675f);
+}
+
+/* "Abrir no WhatsApp" / "Escrever e-mail" / "Ver no mapa" */
+.contatos__acao {
+  flex: 0 0 auto;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--destaque, #8b1d2c);
+  white-space: nowrap;
+}
+
+/* Feedback do botão copiar */
+.contatos__copiado {
+  flex: 0 0 auto;
+  font-size: 0.8125rem;
+  color: var(--sucesso, #1f8a4c);
+}
+
+@media (max-width: 480px) {
+  .contatos a,
+  .contatos button {
+    flex-wrap: wrap;
+  }
+  .contatos__acao {
+    margin-left: 48px;
+  }
+}
+
+.contatos a[href*="wa.me"] .contatos__icone {
+  background: #e3f6ea;
+  color: #1f8a4c;
+}
+
+/* respiro entre a seção de contato e o que vem depois */
+.det-secao {
+  margin-top: 20px;
+}
+.det-secao + .det-lista {
+  margin-top: 20px;
+}
+
+/* título da seção mais separado da lista */
+.det-secao__titulo {
+  margin: 0 0 10px;
+}
+
+/* itens de contato mais folgados */
+.contatos {
+  gap: 10px;
+}
+.contatos a,
+.contatos button {
+  padding: 12px 16px;
+}
+
+/* espaço embaixo da seção de contato */
+.det-secao:has(> .contatos) {
+  margin-bottom: 24px;
+}

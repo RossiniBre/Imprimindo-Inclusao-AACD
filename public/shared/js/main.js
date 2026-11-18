@@ -1,5 +1,8 @@
 import { rota, iniciar } from './router.js';
 import { desenharMenu } from './navbar.js';
+import('./guarda-senha.js').catch((erro) => {
+  console.warn('guarda-senha indisponível:', erro);
+});
 
 // Para criar uma tela nova: pasta pages/<nome>/ com os três arquivos
 // e uma linha de rota(...) aqui. Endereço desconhecido cai na 404.
@@ -29,4 +32,9 @@ rota('/home',          { pagina: 'home',           publica: true,  titulo: 'Home
 
 window.addEventListener('hashchange', desenharMenu);
 desenharMenu();
+
+if (!location.hash || location.hash === '#/login') {
+  location.hash = '#/';
+}
+
 iniciar(document.getElementById('conteudo'));

@@ -279,3 +279,29 @@ main:has(> .login) {
 .login__senha-oculta:not(.visivel) {
   -webkit-text-security: disc;
 }
+
+.login__voltar {
+  position: relative;
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  margin-top: 0.75rem;
+  margin-left: -0.5rem;
+  padding: 0.5rem 0.75rem 0.5rem 0.5rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--cor-superficie);
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.login__voltar:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.login__voltar:focus-visible {
+  outline: 3px solid var(--cor-superficie);
+  outline-offset: 2px;
+}

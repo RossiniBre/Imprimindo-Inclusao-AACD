@@ -78,6 +78,47 @@ export function iniciar(container) {
     }
   }
 
+    // ----- Modal: termos de uso -----
+  const fundoTermos = campo('modal-termos');
+  const checkTermos = campo('termos');
+  let focoAntesTermos = null;
+
+  function abrirTermos(evento) {
+    evento.preventDefault(); // o href="#" não pode mexer na rota
+    focoAntesTermos = document.activeElement;
+    fundoTermos.hidden = false;
+    document.body.style.overflow = 'hidden';
+    campo('termos-corpo').scrollTop = 0;
+    fundoTermos.querySelector('.termos-modal').focus();
+  }
+
+  function fecharTermos() {
+    fundoTermos.hidden = true;
+    document.body.style.overflow = '';
+    focoAntesTermos?.focus?.();
+    focoAntesTermos = null;
+  }
+
+  campo('link-termos').addEventListener('click', abrirTermos);
+
+    fundoTermos.querySelectorAll('[data-fechar-termos]').forEach((b) =>
+      b.addEventListener('click', fecharTermos));
+
+    fundoTermos.addEventListener('click', (evento) => {
+      if (evento.target === fundoTermos) fecharTermos();
+    });
+
+    fundoTermos.addEventListener('keydown', (evento) => {
+      if (evento.key === 'Escape') fecharTermos();
+    });
+
+    // "Li e aceito" marca o checkbox e avisa o formulário (rascunho, validação, barra)
+    campo('termos-aceitar').addEventListener('click', () => {
+      checkTermos.checked = true;
+      checkTermos.dispatchEvent(new Event('change', { bubbles: true }));
+      fecharTermos();
+    });
+
   campoCep.addEventListener('input', () => {
     campoCep.value = mascaraCep(campoCep.value);
     const digitos = soDigitos(campoCep.value);
@@ -164,3 +205,4 @@ export function iniciar(container) {
     botaoCadastrar.textContent = 'Cadastrar';
   });
 }
+

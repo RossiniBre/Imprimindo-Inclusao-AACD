@@ -1,6 +1,13 @@
 // Painel da AACD (funcionário e admin): acompanhamento dos pedidos de impressão.
 
 import { api } from '../../shared/js/api.js';
+import { ICONE_WHATSAPP, linkWhatsappGenerico, linkEmailGenerico, itemContato } from '../../shared/js/contato.js';
+
+export function mensagemConclusao(pedido, nomeEmpresa) {
+  const nome = nomeEmpresa ?? 'empresa parceira';
+  return `Olá, ${nome}! Aqui é da AACD. O pedido #${pedido.id} (${pedido.titulo}) foi concluído `
+    + 'e gostaríamos de combinar a retirada ou a entrega. Pode nos ajudar?';
+}
 
 // Regras do back (PrazosSolicitacao.java)
 export const DIAS_LIMPEZA = 60;
@@ -147,6 +154,25 @@ export function iniciar(container) {
   const botaoVoltar = container.querySelector('#botao-voltar-modal');
   let acaoPendente = null;
   let elementoAnterior = null;
+
+  let parceiros = null; // null = ainda não buscou
+
+  async function garantirParceiros() {
+    if (parceiros) return;
+    try {
+      const r = await api.parceiros();
+      parceiros = r.ok && Array.isArray(r.corpo) ? r.corpo : [];
+    } catch {
+      parceiros = [];
+    }
+  }
+
+  function acharEmpresa(pedido, d) {
+    const id = d?.empresaId ?? d?.empresa?.id;
+    const achada = (id != null && parceiros?.find((p) => p.id === id))
+      || parceiros?.find((p) => p.nome === pedido.empresa);
+    return achada ?? (typeof d?.empresa === 'object' ? d.empresa : null);
+  }
 
   // ----- Avisos -----
 
@@ -487,7 +513,7 @@ export function iniciar(container) {
     return s;
   }
 
-  function montarDetalhes(pedido, d, aviso) {
+  function montarDetalhes(pedido, d, aviso, empresa = null) {
     const nos = [];
 
     // Cartão-resumo
@@ -515,9 +541,34 @@ export function iniciar(container) {
       ]),
     );
 
+
     const resumo = elemento('div', 'det-resumo');
     resumo.append(esq, dados);
     nos.push(resumo);
+
+    // Contato com a empresa (só quando concluída)
+    if (pedido.status === 'CONCLUIDA' && empresa) {
+      const mensagem = mensagemConclusao(pedido, empresa.nome ?? pedido.empresa);
+      const contatos = [];
+
+      if (empresa.telefone) {
+        contatos.push(itemContato(
+          ICONE_WHATSAPP, empresa.telefone, null,
+          linkWhatsappGenerico(empresa.telefone, mensagem), 'Abrir no WhatsApp'));
+      }
+      if (empresa.email) {
+        contatos.push(itemContato(
+          '✉', empresa.email, null,
+          linkEmailGenerico(empresa.email, `Pedido #${pedido.id} concluído - AACD`, mensagem),
+          'Escrever e-mail'));
+      }
+
+      if (contatos.length) {
+        const ul = elemento('ul', 'contatos');
+        ul.append(...contatos);
+        nos.push(secaoDetalhes('Contato da empresa', ul));
+      }
+    }
 
     // Lista de detalhes
     const linhas = paresDeLinhas([
@@ -586,18 +637,24 @@ export function iniciar(container) {
     modalDetalhes.querySelector('.det-fechar').focus();
 
     try {
-      const resposta = await api.verSolicitacao(pedido.id);
-      if (minha !== aberturaDetalhes) return;
-      if (!resposta.ok) {
-        corpoDetalhes.replaceChildren(...montarDetalhes(
-          pedido, null, resposta.corpo?.erro ?? 'Não foi possível carregar os detalhes.'));
-        return;
-      }
-      corpoDetalhes.replaceChildren(...montarDetalhes(pedido, resposta.corpo ?? {}));
-    } catch {
-      if (minha !== aberturaDetalhes) return;
-      corpoDetalhes.replaceChildren(...montarDetalhes(pedido, null, 'Sem conexão com o servidor.'));
+    const precisaContato = pedido.status === 'CONCLUIDA';
+    const [resposta] = await Promise.all([
+      api.verSolicitacao(pedido.id),
+      precisaContato ? garantirParceiros() : null,
+    ]);
+    if (minha !== aberturaDetalhes) return;
+    if (!resposta.ok) {
+      corpoDetalhes.replaceChildren(...montarDetalhes(
+        pedido, null, resposta.corpo?.erro ?? 'Não foi possível carregar os detalhes.'));
+      return;
     }
+    const d = resposta.corpo ?? {};
+    const empresa = precisaContato ? acharEmpresa(pedido, d) : null;
+    corpoDetalhes.replaceChildren(...montarDetalhes(pedido, d, null, empresa));
+  } catch {
+    if (minha !== aberturaDetalhes) return;
+    corpoDetalhes.replaceChildren(...montarDetalhes(pedido, null, 'Sem conexão com o servidor.'));
+  }
   }
 
   function fecharDetalhes() {

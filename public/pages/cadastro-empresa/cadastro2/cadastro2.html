@@ -97,7 +97,7 @@
 
           <div class="form-check mt-4">
             <input class="form-check-input" type="checkbox" id="termos" required>
-            <label class="form-check-label link-login" for="termos">Li e aceito os <a href="#">Termos de uso</a> e a <a href="#">Política de privacidade</a></label>
+            <label class="form-check-label link-login" for="termos">Li e aceito os <a href="#" id="link-termos">Termos de uso</a></label>
           </div>
 
           <p id="erro-geral" class="text-danger small mt-3 mb-0" role="alert" hidden></p>
@@ -123,5 +123,34 @@
     </div>
 
   </div>
+
+  <!-- Modal: termos de uso -->
+<div class="termos-fundo" id="modal-termos" hidden>
+  <div class="termos-modal" role="dialog" aria-modal="true" aria-labelledby="termos-titulo" tabindex="-1">
+
+    <div class="termos-cabecalho">
+      <h2 id="termos-titulo">Termos de uso</h2>
+      <button type="button" class="termos-fechar" data-fechar-termos aria-label="Fechar">&times;</button>
+    </div>
+
+    <div class="termos-corpo" id="termos-corpo">
+
+
+      <!-- COLE O TEXTO DOS TERMOS AQUI (use <h3> para títulos e <p> para parágrafos) -->
+        <!-- rafael grespan -->
+
+      <h3>1. Título da seção</h3>
+        <p>Texto do termo de uso...</p>
+        <h3>2. Título da seção</h3>
+        <p>Texto do termo de uso...</p>
+      </div>
+
+    <div class="termos-rodape">
+      <button type="button" class="termos-btn" data-fechar-termos>Fechar</button>
+      <button type="button" class="termos-btn termos-btn--principal" id="termos-aceitar">Li e aceito</button>
+    </div>
+
+  </div>
+</div>
 
 </section>

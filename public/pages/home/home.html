@@ -1,3 +1,4 @@
+
 <section class="home">
 
   <!-- Header -->
@@ -23,15 +24,21 @@
 
     <div class="container-imagem">
       <a href="#/cadastro-empresa/cadastro1" class="row align-items-center">
-        <img src="" class="imagem-PII" alt="Imagem que leva até a área de empresas, para elas doarem o tempo de uso de suas impressoras 3D para a AACD">
-        <p class="texto-imagem">Clique na imagem para <br> se tornar um membro</p>
+        <img
+          src="../shared/img/chamada-membro2.png"
+          class="imagem-PII"
+          alt="Pessoa utilizando uma prótese de braço impressa em 3D"
+        >
       </a>
     </div>
 
     <!-- Nossa atuação -->
     <section id="atuacao" class="my-5">
       <h2 class="section-title">Nossa atuação</h2>
-      <p class="text-muted mb-4">A AACD é referência em ortopedia, neuro-ortopedia e na reabilitação de pessoas com mobilidade reduzida permanente ou temporária.</p>
+      <p class="text-muted mb-4">
+        A AACD é referência em ortopedia, neuro-ortopedia e na reabilitação
+        de pessoas com mobilidade reduzida permanente ou temporária.
+      </p>
 
       <div class="row g-4 align-items-stretch">
         <div class="col-lg-6 col-atuacao">
@@ -54,13 +61,19 @@
             </div>
           </div>
           <div>
-            <button type="button" class="btn btn-link fw-bold ps-0 mt-3" data-vista="atuacao">Conheça nossos serviços &gt;</button>
+            <button type="button" class="btn btn-link fw-bold ps-0 mt-3" data-vista="atuacao">
+              Conheça nossos serviços &gt;
+            </button>
           </div>
         </div>
 
         <div class="col-lg-6">
           <div class="card foto-atuacao border-0 rounded-4 overflow-hidden shadow-sm h-100">
-            <img src="https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?auto=format&fit=crop&w=800&q=80" alt="Fisioterapeuta auxiliando paciente idoso na reabilitação" class="w-100 h-100 object-fit-cover">
+            <img
+              src="../shared/img/aacd-imagem3.png"
+              alt="Pessoa experimentando uma prótese impressa em 3D"
+              class="w-100 h-100 object-fit-cover"
+            >
           </div>
         </div>
       </div>
@@ -71,61 +84,168 @@
       <div class="banner-curvo">
         <div class="curved-box">
           <h2 class="fw-bold mb-3">Faça sua parte, doe para AACD.</h2>
-          <p class="text-muted mb-4">Cada doação contribui ainda mais para um atendimento de qualidade.</p>
-          <a href="https://aacd.org.br/como-ajudar-a-aacd" target="_blank" rel="noopener noreferrer" class="btn btn-doe px-4">
+          <p class="text-muted mb-4">
+            Cada doação contribui ainda mais para um atendimento de qualidade.
+          </p>
+          <a
+            href="https://aacd.org.br/como-ajudar-a-aacd"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn btn-doe px-4"
+          >
             Quero doar
           </a>
-          <p class="aviso-doacao mt-3 mb-0">Este botão leva a uma página oficial da AACD, não a uma página do projeto.</p>
+          <p class="aviso-doacao mt-3 mb-0">
+            Este botão leva a uma página oficial da AACD, não a uma página do projeto.
+          </p>
         </div>
       </div>
     </section>
 
   </div>
 
-  <!-- Vista: A AACD -->
-  <div id="vista-aacd" class="vista container my-4" hidden>
-    <button type="button" class="btn btn-link ps-0" data-vista="inicio">&lt; Voltar</button>
-    <h2 class="section-title">A AACD</h2>
-    <p>Texto institucional da AACD (substituir pelo texto oficial).</p>
-  </div>
+  
+<!-- Vista: A AACD -->
+<div id="vista-aacd" class="vista pagina-institucional container my-4" hidden>
+  <button type="button" class="btn btn-link ps-0" data-vista="inicio">&lt; Voltar</button>
 
-  <!-- Vista: Nossa atuação -->
-  <div id="vista-atuacao" class="vista container my-4" hidden>
-    <button type="button" class="btn btn-link ps-0" data-vista="inicio">&lt; Voltar</button>
-    <h2 class="section-title">Nossa atuação</h2>
-    <p>Detalhes de cada área: hospital ortopédico, ensino, reabilitação e produtos ortopédicos (substituir pelo texto oficial).</p>
+  <h1 class="section-title">A AACD</h1>
+  <p class="institucional-subtitulo">
+    Cuidado, inclusão e qualidade de vida para pessoas com deficiência física e mobilidade reduzida.
+  </p>
+
+  <section class="institucional-texto institucional-secao">
+    <h2>Quem somos</h2>
+    <p>
+      A AACD é uma instituição sem fins lucrativos que oferece atendimento
+      especializado em Ortopedia, Neuro-Ortopedia e Reabilitação para pessoas
+      de todas as idades.
+    </p>
+    <p>
+      Reunimos profissionais, tecnologia e cuidado humanizado para que cada
+      paciente conquiste mais autonomia e qualidade de vida, e para contribuir
+      com uma sociedade mais inclusiva.
+    </p>
+  </section>
+
+  <section class="institucional-texto institucional-secao">
+    <h2>Nossa missão</h2>
+    <p>
+      Promover possibilidades, estimular a autonomia e transformar vidas.
+      Acreditamos que cada pessoa tem sua própria jornada, e nosso compromisso
+      é contribuir para que ela seja repleta de conquistas.
+    </p>
+  </section>
+
+  <section class="institucional-secao">
+    <h2 class="institucional-titulo">Onde atuamos</h2>
+    <div class="atuacao-grid">
+      <article class="servico-card">
+        <i class="bi bi-hospital"></i>
+        <h3>Ortopedia</h3>
+        <p>Tratamento clínico e cirúrgico de condições do sistema musculoesquelético.</p>
+      </article>
+      <article class="servico-card">
+        <i class="bi bi-activity"></i>
+        <h3>Neuro-Ortopedia</h3>
+        <p>Cuidado de pessoas com condições neurológicas que afetam o movimento.</p>
+      </article>
+      <article class="servico-card">
+        <i class="bi bi-person-wheelchair"></i>
+        <h3>Reabilitação</h3>
+        <p>Terapias e acompanhamento individualizado para recuperar e desenvolver capacidades.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="institucional-texto institucional-secao">
+    <h2>Imprimindo Inclusão</h2>
+    <p>
+      Neste projeto, empresas parceiras que têm impressoras 3D cedem o tempo de
+      uso delas para produzir peças como órteses e próteses, que ajudam a AACD
+      a atender mais pessoas.
+    </p>
+    <p>
+      A AACD envia o pedido com o modelo da peça, a empresa escolhe se aceita,
+      imprime e acompanha a entrega, tudo por este portal.
+    </p>
+
+  </section>
+</div>
+
+<!-- Vista: Nossa atuação -->
+<div id="vista-atuacao" class="vista pagina-institucional container my-4" hidden>
+  <button type="button" class="btn btn-link ps-0" data-vista="inicio">&lt; Voltar</button>
+
+  <h1 class="section-title">Nossa atuação</h1>
+  <p class="institucional-subtitulo">
+    A AACD acompanha o paciente em cada etapa, do diagnóstico à recuperação funcional.
+  </p>
+
+  <div class="atuacao-grid">
+    <article class="servico-card">
+      <i class="bi bi-hospital"></i>
+      <h3>Hospital Ortopédico</h3>
+      <p>Cirurgias ortopédicas e neurocirurgias, com estrutura para procedimentos de diferentes complexidades.</p>
+    </article>
+
+    <article class="servico-card">
+      <i class="bi bi-person-wheelchair"></i>
+      <h3>Reabilitação</h3>
+      <p>Atendimento multidisciplinar e acompanhamento individualizado para desenvolver habilidades e autonomia.</p>
+    </article>
+
+    <article class="servico-card">
+      <i class="bi bi-tools"></i>
+      <h3>Oficinas Ortopédicas</h3>
+      <p>Produção personalizada de órteses, próteses, coletes e adaptações para cadeiras de rodas.</p>
+    </article>
+
+    <article class="servico-card">
+      <i class="bi bi-mortarboard"></i>
+      <h3>Ensino e Pesquisa</h3>
+      <p>Formação de profissionais e pesquisas que contribuem para a evolução da Ortopedia e da Reabilitação.</p>
+    </article>
+
+    <article class="servico-card">
+      <i class="bi bi-trophy"></i>
+      <h3>Inclusão e Esporte</h3>
+      <p>Iniciativas que incentivam a participação social e a prática esportiva.</p>
+    </article>
   </div>
+</div>
+
 
   <!-- Rodapé -->
   <footer id="rodape" class="rodape">
-  <div class="container">
-    <div class="row g-4">
-      <div class="col-md-4">
-        <h6>Conheça</h6>
-        <div class="d-flex flex-column gap-2 align-items-start">
-          <button type="button" class="rodape-link" data-vista="aacd">A AACD</button>
-          <button type="button" class="rodape-link" data-vista="atuacao">Nossa atuação</button>
+    <div class="container">
+      <div class="row g-4 align-items-start">
+        <div class="col-md-4">
+          <h6>Conheça</h6>
+          <div class="d-flex flex-column gap-2 align-items-start">
+            <button type="button" class="rodape-link" data-vista="aacd">A AACD</button>
+            <button type="button" class="rodape-link" data-vista="atuacao">Nossa atuação</button>
+          </div>
+        </div>
+        <div class="col-md-5">
+          <h6>Unidades</h6>
+          <ul class="rodape-unidades">
+            <li>Ibirapuera (SP)</li>
+            <li>Mogi das Cruzes (SP)</li>
+            <li>Mooca (SP)</li>
+            <li>Osasco (SP)</li>
+            <li>Porto Alegre (RS)</li>
+            <li>Recife (PE)</li>
+            <li>Uberlândia (MG)</li>
+          </ul>
+        </div>
+        <div class="col-md-3 align-self-center d-flex justify-content-md-end">
+          <button type="button" id="btn-topo" class="btn-topo">
+            <i class="bi bi-arrow-up"></i> Voltar ao topo
+          </button>
         </div>
       </div>
-      <div class="col-md-5">
-        <h6>Unidades</h6>
-        <ul class="rodape-unidades">
-          <li>Ibirapuera (SP)</li>
-          <li>Mogi das Cruzes (SP)</li>
-          <li>Mooca (SP)</li>
-          <li>Osasco (SP)</li>
-          <li>Porto Alegre (RS)</li>
-          <li>Recife (PE)</li>
-          <li>Uberlândia (MG)</li>
-        </ul>
-      </div>
-      <div class="col-md-3 d-flex align-items-end justify-content-md-end">
-        <button type="button" id="btn-topo" class="btn-topo">
-          <i class="bi bi-arrow-up"></i> Voltar ao topo
-        </button>
-      </div>
     </div>
-  </div>
-</footer>
+  </footer>
 
 </section>

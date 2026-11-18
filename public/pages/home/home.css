@@ -4,18 +4,52 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* ===== Estrutura: header e rodapé cobrem a tela toda ===== */
+html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* ===== Casco: na home o header e o <main> do casco somem ===== */
+body:has(main > .home) > header {
+    display: none;
+}
+
+.imagem-PII {
+    width: 100%;
+    height: 430px;
+    object-fit: cover;
+    object-position: center 45%;
+    border-radius: 24px;
+    display: block;
+}
+
+.foto-atuacao {
+    min-height: 420px;
+}
+
+.foto-atuacao img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+main:has(> .home) {
+    padding: 0;
+}
+
+#conteudo {
+    margin: 0 !important;
+    padding: 0 !important;
+    max-width: none !important;
+    width: 100% !important;
+}
+
+/* ===== Estrutura ===== */
 .home {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    overflow-x: clip;
-}
-
-.home .main-header,
-.home .rodape {
-    width: 100vw;
-    margin-left: calc(50% - 50vw);
 }
 
 .vista { flex: 1; }
@@ -23,16 +57,22 @@ body {
 
 /* ===== Header ===== */
 .main-header {
-    background-color: var(--cor-superficie);
-    border-bottom: 2px solid #eef0f2;
+    width: 100%;
+    background-color: var(--cor-cabecalho);
     position: sticky;
     top: 0;
     z-index: 1000;
 }
 
+/* Logo dentro de uma bola branca */
 #imagem_aacd {
-    width: 40px;
-    height: 40px;
+    box-sizing: border-box;
+    width: 46px;
+    height: 46px;
+    padding: 6px;
+    border-radius: 50%;
+    background: var(--cor-superficie);
+    object-fit: contain;
 }
 
 .nav-home { gap: 1.75rem; }
@@ -43,11 +83,12 @@ body {
     border: 0;
     padding: 0.25rem 0;
     font-weight: 600;
-    color: var(--cor-texto);
+    color: #000;
     cursor: pointer;
     transition: color 0.2s;
 }
 
+/* Indicador amarelo no hover */
 .link-nav::after {
     content: '';
     position: absolute;
@@ -55,31 +96,35 @@ body {
     bottom: -2px;
     width: 0;
     height: 2px;
-    background: var(--cor-cabecalho);
+    background: var(--cor-botao-principal);
     transition: width 0.2s;
 }
 
 .link-nav:hover,
-.link-nav:focus-visible { color: var(--cor-cabecalho); }
+.link-nav:focus-visible { color: #fff; }
 
 .link-nav:hover::after,
 .link-nav:focus-visible::after { width: 100%; }
 
+/* Botão Entrar: pílula só com contorno preto; no hover enche de branco */
 .link-perfil {
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
     padding: 0.4rem 1rem;
-    border: 2px solid var(--cor-cabecalho);
+    border: 2px solid #000;
     border-radius: 999px;
-    color: var(--cor-cabecalho);
+    background: transparent;
+    color: #000;
     font-weight: 700;
     text-decoration: none;
-    transition: background-color 0.2s, color 0.2s;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
 }
 
-.link-perfil:hover {
-    background-color: var(--cor-cabecalho);
+.link-perfil:hover,
+.link-perfil:focus-visible {
+    background: transparent;
+    border-color: #fff;
     color: #fff;
 }
 
@@ -198,10 +243,11 @@ body {
 
 /* ===== Rodapé ===== */
 .rodape {
+    width: 100%;
     margin-top: auto;
-    background: #2B2B2B;
+    background: var(--cor-cabecalho);
     color: #fff;
-    border-top: 4px solid var(--cor-cabecalho);
+    border-top: 4px solid orange;
     padding: 2.5rem 0 1.75rem;
 }
 
@@ -253,24 +299,34 @@ body {
     break-inside: avoid;
 }
 
-/* ===== Botão voltar ao topo ===== */
+/* ===== Botão voltar ao topo (vazado, integrado ao vermelho) ===== */
 .btn-topo {
     display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
-    padding: 0.55rem 1.3rem;
-    border: 0;
+    gap: 0.5rem;
+    padding: 0.5rem 1.2rem;
+    border: 1.5px solid rgba(255, 255, 255, 0.55);
     border-radius: 999px;
-    background: var(--cor-botao-principal);
-    color: var(--cor-texto);
-    font-weight: 700;
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    font-weight: 600;
     cursor: pointer;
-    transition: transform 0.2s, background-color 0.2s;
+    transition: background-color 0.2s, border-color 0.2s;
 }
 
-.btn-topo:hover {
-    background: var(--cor-botao-principal-hover);
-    transform: translateY(-2px);
+.btn-topo i {
+    transition: transform 0.2s;
+}
+
+.btn-topo:hover,
+.btn-topo:focus-visible {
+    background: rgba(255, 255, 255, 0.18);
+    border-color: #fff;
+}
+
+.btn-topo:hover i,
+.btn-topo:focus-visible i {
+    transform: translateY(-3px);
 }
 
 /* ===== Responsividade ===== */
@@ -300,32 +356,107 @@ body.high-contrast .rodape {
     border-top-color: #FFFF00 !important;
 }
 
-body.high-contrast .btn-doe,
+body.high-contrast .btn-doe {
+    background-color: #FFFF00 !important;
+    color: #000000 !important;
+}
+
 body.high-contrast .btn-topo {
     background-color: #FFFF00 !important;
+    border-color: #FFFF00 !important;
     color: #000000 !important;
 }
 
 body.high-contrast .link-nav,
 body.high-contrast .link-perfil {
     color: #FFFF00 !important;
-    border-color: #FFFF00;
+    border-color: #FFFF00 !important;
 }
 
-html, body {
-    margin: 0 !important;
-    padding: 0 !important;
+
+/* =========================================
+   PÁGINAS INSTITUCIONAIS (A AACD e Nossa atuação)
+========================================= */
+
+.pagina-institucional {
+    padding-bottom: 3rem;
+    min-height: 480px;
 }
 
-#conteudo {
-    margin: 0 !important;
-    padding: 0 !important;
-    max-width: none !important;
-    width: 100% !important;
+.pagina-institucional h1 {
+    margin-bottom: 0.5rem;
 }
 
-.home .main-header,
-.home .rodape {
-    width: 100%;
-    margin-left: 0;
+.institucional-subtitulo {
+    max-width: 46rem;
+    margin-bottom: 2rem;
+    color: var(--cor-texto-suave);
+}
+
+/* ===== A AACD ===== */
+.institucional-texto {
+    max-width: 46rem;
+}
+
+.institucional-texto h2 {
+    margin-bottom: 0.75rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.institucional-texto p {
+    line-height: 1.7;
+}
+
+/* ===== Nossa atuação ===== */
+.atuacao-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+
+.servico-card {
+    background: var(--cor-superficie);
+    border: 1px solid var(--cor-borda);
+    border-radius: 12px;
+    padding: 1.25rem;
+}
+
+.servico-card i {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 1.75rem;
+    color: var(--cor-cabecalho);
+}
+
+.servico-card h3 {
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.servico-card p {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: var(--cor-texto-suave);
+}
+
+.institucional-secao {
+    margin-bottom: 2.5rem;
+}
+
+.institucional-titulo {
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+/* ===== Responsividade ===== */
+@media (max-width: 991.98px) {
+    .atuacao-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 575.98px) {
+    .atuacao-grid { grid-template-columns: 1fr; }
 }
